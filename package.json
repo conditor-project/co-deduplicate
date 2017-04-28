@@ -1,0 +1,21 @@
+{
+  "name": "co-undoubler",
+  "version": "1.0.0",
+  "description": "Module de dédoublonnage",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://genicot@vsistex.intra.inist.fr:22222/genicot/co-undoubler.git"
+  },
+  "keywords": [
+    "conditor"
+  ],
+  "author": "Genicot JB",
+  "license": "SEE LICENSE IN LICENSE.txt"
+}
