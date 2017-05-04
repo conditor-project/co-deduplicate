@@ -17,5 +17,12 @@
     "conditor"
   ],
   "author": "Genicot JB",
-  "license": "SEE LICENSE IN LICENSE.txt"
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "dependencies": {
+    "chai": "^3.5.0",
+    "elasticsearch": "^13.0.0",
+    "fs": "0.0.1-security",
+    "lodash": "^4.17.4",
+    "mocha": "^3.3.0"
+  }
 }

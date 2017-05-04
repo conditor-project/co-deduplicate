@@ -1,0 +1,177 @@
+{
+  "settings": {
+    "similarity": {
+      "conditor_similarity_default": {
+        "type": "BM25",
+        "b": 0.75,
+        "k1": 1.2
+      }
+    }
+  },
+  "mappings": {
+    "_default_": {
+      "_source": {
+        "excludes": [
+          "fulltext"
+        ]
+      },
+      "dynamic": false,
+      "properties": {
+        "auteur": {
+          "properties": {
+            "value": {
+              "type": "string",
+              "fields": {
+                "raw": {
+                  "type": "string",
+                  "index": "analyzed"
+                }
+              }
+            },
+            "normalized": {
+              "type": "string",
+              "fields": {
+                "raw": {
+                  "type": "string",
+                  "index": "analyzed"
+                }
+              }
+            }
+          }
+        },
+        "titre": {
+          "properties": {
+            "value": {
+              "type": "string",
+              "fields": {
+                "raw": {
+                  "type": "string",
+                  "index": "analyzed"
+                }
+              }
+            },
+            "normalized": {
+              "type": "string",
+              "fields": {
+                "raw": {
+                  "type": "string",
+                  "index": "analyzed"
+                }
+              }
+            }
+          }
+        },
+        "doi": {
+          "properties": {
+            "value": {
+              "type": "string",
+              "fields": {
+                "raw": {
+                  "type": "string",
+                  "index": "analyzed"
+                }
+              }
+            },
+            "normalized": {
+              "type": "string",
+              "fields": {
+                "raw": {
+                  "type": "string",
+                  "index": "analyzed"
+                }
+              }
+            }
+          }
+        },
+        "issn": {
+          "properties": {
+            "value": {
+              "type": "string",
+              "fields": {
+                "raw": {
+                  "type": "string",
+                  "index": "analyzed"
+                }
+              }
+            },
+            "normalized": {
+              "type": "string",
+              "fields": {
+                "raw": {
+                  "type": "string",
+                  "index": "analyzed"
+                }
+              }
+            }
+          }
+        },
+        "numero": {
+          "properties": {
+            "value": {
+              "type": "string",
+              "fields": {
+                "raw": {
+                  "type": "string",
+                  "index": "analyzed"
+                }
+              }
+            },
+            "normalized": {
+              "type": "string",
+              "fields": {
+                "raw": {
+                  "type": "string",
+                  "index": "analyzed"
+                }
+              }
+            }
+          }
+        },
+        "volume": {
+          "properties": {
+            "value": {
+              "type": "string",
+              "fields": {
+                "raw": {
+                  "type": "string",
+                  "index": "analyzed"
+                }
+              }
+            },
+            "normalized": {
+              "type": "string",
+              "fields": {
+                "raw": {
+                  "type": "string",
+                  "index": "analyzed"
+                }
+              }
+            }
+          }
+        },
+        "page": {
+          "properties": {
+            "value": {
+              "type": "string",
+              "fields": {
+                "raw": {
+                  "type": "string",
+                  "index": "analyzed"
+                }
+              }
+            },
+            "normalized": {
+              "type": "string",
+              "fields": {
+                "raw": {
+                  "type": "string",
+                  "index": "analyzed"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

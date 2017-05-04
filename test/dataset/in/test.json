@@ -1,0 +1,67 @@
+[
+  {
+    "titre": {
+      "value" : "A la pêche je ne veux plus aller moman ?",
+      "normalized" : "alapechejeneveuxplusallermoman"
+    },
+    "auteur": {
+      "value" : "Qu'est ce que j'en sais",
+      "normalized" : "questcequejensais"
+    } ,
+    "doi":{
+      "value": "10.1093/bioinformatics/btu019ut=WOS:000336095100034",
+      "normalized" : "101093bioinformaticsbtu019utWOS000336095100034"
+    },
+    "issn":{
+      "value":"1367-4803",
+      "normalized" : "13674803"
+    },
+    "numero":{
+      "value":"n°5",
+      "normalized":"5"
+    },
+    "volume":{
+      "value":"v12",
+      "normalized":"12"
+    },
+    "page":{
+      "value":"page 1589",
+      "normalized":"1589"
+    },
+    "path":"/applis/istex/li/corpus-resources-conditor/notice-hal.xml",
+    "source":"WOS"
+  },
+
+  {
+    "titre": {
+      "value" : "A la pêche je ne veux plus aller moman ?",
+      "normalized" : "alapechejeneveuxplusallermoman"
+    },
+    "auteur": {
+      "value" : "Qu'est ce que j'en sais",
+      "normalized" : "questcequejensais"
+    } ,
+    "doi":{
+      "value": "10.1093/bioinformatics/btu019ut=WOS:000336095100034",
+      "normalized" : "101093bioinformaticsbtu019utWOS000336095100034"
+    },
+    "issn":{
+      "value":"1367-4803",
+      "normalized" : "13674803"
+    },
+    "numero":{
+      "value":"n°5",
+      "normalized":"5"
+    },
+    "volume":{
+      "value":"v12",
+      "normalized":"12"
+    },
+    "page":{
+      "value":"page 1589",
+      "normalized":"1589"
+    },
+    "path":"/applis/istex/li/corpus-resources-conditor/notice-hal.xml",
+    "source":"HAL"
+  }
+]
