@@ -1,172 +1,88 @@
 {
-  "settings": {
-    "similarity": {
-      "conditor_similarity_default": {
-        "type": "BM25",
-        "b": 0.75,
-        "k1": 1.2
-      }
-    }
-  },
-  "mappings": {
-    "_default_": {
-      "_source": {
-        "excludes": [
-          "fulltext"
-        ]
-      },
-      "dynamic": false,
-      "properties": {
-        "auteur": {
-          "properties": {
-            "value": {
-              "type": "string",
-              "fields": {
-                "raw": {
-                  "type": "string",
-                  "index": "analyzed"
-                }
-              }
-            },
-            "normalized": {
-              "type": "string",
-              "fields": {
-                "raw": {
-                  "type": "string",
-                  "index": "analyzed"
-                }
+  "notices": {
+    "mappings": {
+      "notice": {
+        "dynamic": "false",
+        "_source": {
+          "excludes": [
+            "fulltext"
+          ]
+        },
+        "properties": {
+          "auteur": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
               }
             }
-          }
-        },
-        "titre": {
-          "properties": {
-            "value": {
-              "type": "string",
-              "fields": {
-                "raw": {
-                  "type": "string",
-                  "index": "analyzed"
-                }
-              }
-            },
-            "normalized": {
-              "type": "string",
-              "fields": {
-                "raw": {
-                  "type": "string",
-                  "index": "analyzed"
-                }
+          },
+          "doi": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
               }
             }
-          }
-        },
-        "doi": {
-          "properties": {
-            "value": {
-              "type": "string",
-              "fields": {
-                "raw": {
-                  "type": "string",
-                  "index": "analyzed"
-                }
-              }
-            },
-            "normalized": {
-              "type": "string",
-              "fields": {
-                "raw": {
-                  "type": "string",
-                  "index": "analyzed"
-                }
+          },
+          "issn": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
               }
             }
-          }
-        },
-        "issn": {
-          "properties": {
-            "value": {
-              "type": "string",
-              "fields": {
-                "raw": {
-                  "type": "string",
-                  "index": "analyzed"
-                }
-              }
-            },
-            "normalized": {
-              "type": "string",
-              "fields": {
-                "raw": {
-                  "type": "string",
-                  "index": "analyzed"
-                }
+          },
+          "numero": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
               }
             }
-          }
-        },
-        "numero": {
-          "properties": {
-            "value": {
-              "type": "string",
-              "fields": {
-                "raw": {
-                  "type": "string",
-                  "index": "analyzed"
-                }
-              }
-            },
-            "normalized": {
-              "type": "string",
-              "fields": {
-                "raw": {
-                  "type": "string",
-                  "index": "analyzed"
-                }
+          },
+          "page": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
               }
             }
-          }
-        },
-        "volume": {
-          "properties": {
-            "value": {
-              "type": "string",
-              "fields": {
-                "raw": {
-                  "type": "string",
-                  "index": "analyzed"
-                }
-              }
-            },
-            "normalized": {
-              "type": "string",
-              "fields": {
-                "raw": {
-                  "type": "string",
-                  "index": "analyzed"
-                }
+          },
+          "path": {
+            "type": "keyword",
+            "index": false
+          },
+          "source": {
+            "type": "text"
+          },
+          "titre": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
               }
             }
-          }
-        },
-        "page": {
-          "properties": {
-            "value": {
-              "type": "string",
-              "fields": {
-                "raw": {
-                  "type": "string",
-                  "index": "analyzed"
-                }
-              }
-            },
-            "normalized": {
-              "type": "string",
-              "fields": {
-                "raw": {
-                  "type": "string",
-                  "index": "analyzed"
-                }
+          },
+          "volume": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
               }
             }
           }
