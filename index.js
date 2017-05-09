@@ -1,7 +1,7 @@
 /* global module */
 /*jslint node: true */
 /*jslint indent: 2 */
-"use strict";
+'use strict';
 
 var es = require('elasticsearch'),
 	_ = require('lodash'),
@@ -16,81 +16,112 @@ var esClient = new es.Client({
 
 var business = {};
 
+function dispatch(data) {
+
+  console.log('data : ' + data.hits.hits.length);
+
+  if (data.hits.hits.length===0){
+    // si aucun hit alors on insère la donnée
+	console.log('pas de doublon.');
+  }
+  else if (data.hits.hits.length===1){
+    //si un hit alors on aggrège la donnée
+	console.log('on a un doublon.');
+  }
+  else{
+    console.log('on a plus d\'un doublon');
+  }
+  /**
+  return new Promise(function(resolve,reject){
+		return true;
+  });
+  **/
+}
+
+
 // on teste si l'entrée existe
-// si oui global alors on alimente le fichier de bulk en update
-// si non global alors on alimente le fichier de bulk en création
-// si oui partiel alors on met en quarantaine en attendant décision humaine
+
 
 function existNotice(jsonLine){
-
-
-	var found=false;
-
-	esClient.search({
-		query : {
-			field : {
-				titre: {normalized: jsonLine.titre.normalized},
-				doi: {normalized: jsonLine.doi.normalized}
-
-			}
-		}
-	},function(err,data){
-
-		console.log('########################');
-		console.log(err);
-		console.log('########################');
-		console.log(data)
-
-		return found;
-	});
-
-
+  return esClient.search({index : 'notices'},
+    {"query" : {
+      "bool":{
+        "must":[
+          {"match":{"title.normalized":jsonLine.titre.normalized}},
+          {"match":{"doi.normalized":jsonLine.doi.normalized}}
+        ]
+      }
+    }
+  }).then(dispatch);
 }
+
 
 
 business.doTheJob = function (jsonLine, cb) {
 
-	try {
-
-		jsonLine.bulk = [];
-
-		var result = {},
-			bulk = {
-				_type: esConf._type,
-			};
-
-		if (existNotice(jsonLine)) {
-			result = {
-				update: bulk
-			};
-			result.update._index = jsonLine.elasticIndex;
-		} else {
-			result = {
-				index: bulk
-			};
-		}
-
-		jsonLine.bulk.push(result);
-		jsonLine.bulk.push(fs.readFileSync(jsonLine.path, "utf8"));
 
 
-	} catch(e) {
+  jsonLine.bulk = [];
+  var error;
 
-		var err = {};
-		jsonLine.errCode = 1701;
-		jsonLine.errMessage = 'Erreur lors de l\'ajout du champ bulk : '+e;
-		return cb({
-			errCode: jsonLine.errCode,
-			errMessage:jsonLine.errMessage
-		});
-
+  existNotice(jsonLine).then(function(err){
+  	if (err){
+  	  error = {
+	    errCode:1811,
+		errMessage: "erreur de dédoublonnage : "+err
+	  };
+  	  return cb(error);
 	}
+	else return cb();
 
-	return cb();
+  });
+
 
 }
 
 
+// Fonction d'ajout de l'alias si nécessaire
+function createAlias(aliasArgs, options, aliasCallback) {
+
+  var error;
+
+  // Vérification de l'existance de l'alias, création si nécessaire, ajout de l'index nouvellement créé à l'alias
+  esClient.indices.existsAlias(aliasArgs, function(err, response, status) {
+    if (!!!response) {
+      esClient.indices.putAlias(aliasArgs, function(err, response, status) {
+
+        if (!err) {
+          options.processLogs.push("Création d'un nouvel alias OK. Status : " + status + "\n");
+        } else {
+         options.errLogs.push("Erreur création d'alias. Status : " + status + "\n");
+          error = {
+            errCode: 1703,
+            errMessage: 'Erreur lors de la création de l\'alias : ' + err
+          };
+        }
+        aliasCallback(error);
+      });
+    } else {
+      esClient.indices.updateAliases({
+        "actions": [{
+        "add": aliasArgs
+        }]
+      }, function(err, response, status) {
+
+        if (!err) {
+          options.processLogs.push("Update d'alias OK. Status : " + status + "\n");
+        } else {
+          options.errLogs.push("Erreur update d'alias. Status : " + status + "\n");
+          error = {
+            errCode: 1703,
+            errMessage: 'Erreur lors de la création de l\'alias : ' + err
+          };
+        }
+        aliasCallback(error);
+      });
+    }
+  });
+}
 
 
 // fonction préalable de création d'index si celui-ci absent.
@@ -98,160 +129,69 @@ business.doTheJob = function (jsonLine, cb) {
 
 function createIndex(conditorSession,options,indexCallback){
 
-	var reqParams = {
-		_index:conditorSession
-	};
+  var reqParams = {
+    index:conditorSession
+  };
 
-	var mappingExists = true;
-	var error;
+  var mappingExists = true;
+  var error;
 
-	esClient.indices.exists(reqParams,function(err,response,status){
+  esClient.indices.exists(reqParams,function(err,response,status){
 
-		if (status !== 200) {
-			options.processLogs.push("... Mapping et index introuvables, on les créé\n");
-			mappingExists = false;
-		} else {
-			options.processLogs.push("... Mapping et index déjà existants\n");
-		}
+    if (status !== 200) {
+      options.processLogs.push("... Mapping et index introuvables, on les créé\n");
+      mappingExists = false;
+	} else {
+      options.processLogs.push("... Mapping et index déjà existants\n");
+    }
 
-		if (!mappingExists) {
+    if (!mappingExists) {
 
-			esMapping.settings.index = {
-				"number_of_replicas" : 0
-			};
-			reqParams.body = esMapping;
+    //esMapping.settings.index = {
+    //	"number_of_replicas" : 0
+    //};
+      reqParams.body = esMapping;
 
-			esClient.indices.create(reqParams,function(err,response,status){
-				console.log(JSON.stringify(reqParams));
-				if (status !== 200){
-					options.errLogs.push("... Erreur lors de la création de l'index :\n" + err);
-					error = {
-						errCode: '001',
-						errMessage: 'Erreur lors de la création de l\'index : ' +err
-					};
-					return indexCallback(error);
-				}
+      esClient.indices.create(reqParams,function(err,response,status){
+        //console.log(JSON.stringify(reqParams));
+        if (status !== 200){
+          options.errLogs.push("... Erreur lors de la création de l'index :\n" + err);
+          error = {
+            errCode: '001',
+            errMessage: 'Erreur lors de la création de l\'index : ' +err
+          };
+          return indexCallback(error);
+        }
 
-				createAlias({
-					"name": "integration",
-					"index": 'conditor'
-				},options,function(err){
-					indexCallback(err);
-				});
+        createAlias({
+          "name": "integration",
+          "index": 'notices'
+        },options,function(err){
+          indexCallback(err);
+        });
 
-			});
+      });
 
-		}
-		else {
-			indexCallback();
-		}
-	});
+    }
+    else {
+      indexCallback();
+	}
+  });
 }
 
 
 business.beforeAnyJob = function(cbBefore){
-	var options = {
-		processLogs:[],
-		errLogs:[]
-	};
+  var options = {
+    processLogs:[],
+    errLogs:[]
+  };
 
-	var conditorSession = process.env.CONDITOR_SESSION || 'conditor';
-	createIndex(conditorSession,options,function(err){
-		options.errLogs.push("callback createIndex, err="+err);
-		return cbBefore(err,options);
-	});
+  var conditorSession = process.env.CONDITOR_SESSION || 'notices';
+  createIndex(conditorSession,options,function(err){
+  options.errLogs.push("callback createIndex, err="+err);
+  return cbBefore(err,options);
+  });
 }
 
-// Fonction d'envoi du bulk
-business.finalJob = function(docObjects, cb) {
-
-	var options = {
-		processLogs: [],
-		errLogs: []
-	};
-
-	options.processLogs.push(`finalJob sur ${docObjects.length} documents`);
-
-	if (docObjects.length && docObjects[0].elasticIndex) {
-		var body = [];
-		for (var i = 0; i < docObjects.length; i++) {
-			for (var j = 0; j < docObjects[i].bulk.length; j++) {
-				body.push((j === 0) ? docObjects[i].bulk[j] : { doc : JSON.parse(docObjects[i].bulk[j]) });
-			}
-		}
-		esClient.bulk({
-			body: body,
-			refresh: "wait_for"
-		}, function(err, resp) {
-			cb(err);
-		});
-		return;
-	}
-
-	// On parcourt docObjects en retirant les champs bulk, ajoutés dans bulkBody
-	var bulkBody = [],
-		i;
-
-	for (i = 0; i < docObjects.length; i++) {
-		bulkBody = bulkBody.concat(_.cloneDeep(docObjects[i].bulk));
-		_.unset(docObjects[i], 'bulk');
-	}
-
-	esClient.bulk({
-		body: bulkBody
-	}, function(err, response, status) {
-
-		options.processLogs.push("Bulk fini avec le code "+status,err);
-
-		var errDocObjects = [];
-
-		if (err) {
-			options.processLogs.push("err true dans retour de bulk callback "+status,err);
-			options.errLogs.push('Erreur durant l\'indexation : ' + err + '\n');
-
-			// On récupère alors tous les docObjects que l'on place dans errDocObjects
-			errDocObjects = _.cloneDeep(docObjects);
-			docObjects = [];
-
-			// On ajoute le code erreur et message (sur le premier docObject, à voir si nécessaire de répliquer sur tous)
-			errDocObjects[0].index.errCode = 1704;
-			errDocObjects[0].index.errMessage = 'Erreur sur tout le fichier durant l\'indexation : ' + err + '\n';
-			esClient.close();
-			return cb(errDocObjects, options);
-
-		} else {
-
-			options.processLogs.push("err false dans retour de bulk callback "+status,err);
-
-			if (response.errors) {
-				options.processLogs.push("response.errors true dans retour de bulk callback "+status,err);
-				response.items.forEach(function(index) {
-
-					if (index.index.error) {
-
-						options.errLogs.push('Index ' + index.index._id + ' en erreur : ' + index.index.error + '\n');
-						var indexErrDoc = _.findIndex(docObjects, {
-							idIstex: index.index._id
-						});
-						errDocObjects.push(_.cloneDeep(docObjects[indexErrDoc]));
-						_.pullAt(docObjects, indexErrDoc);
-						_.last(errDocObjects).errCode = 1705;
-						_.last(errDocObjects).errMessage = 'Erreur durant l\'indexation : ' + index.index.error;
-					}
-				});
-
-				options.processLogs.push('... Envoyé mais comporte une(des) erreur(s)\n');
-				esClient.close();
-				return cb(errDocObjects, options);
-
-			} else {
-
-				options.processLogs.push('... Bien envoyé\n');
-				esClient.close();
-				return cb(null, options);
-			}
-		}
-	});
-}
 
 module.exports = business;
