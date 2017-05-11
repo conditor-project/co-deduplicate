@@ -8,5 +8,6 @@ var elasticUrl = process.env.ELASTIC_URL || "http://localhost:9200";
 
 module.exports = {
 	"host": elasticUrl,
-	"_type": "notice"
+	"index":"notices",
+	"type": "notice"
 };

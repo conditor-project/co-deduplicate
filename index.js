@@ -1,4 +1,3 @@
-/* global module */
 /*jslint node: true */
 /*jslint indent: 2 */
 'use strict';
@@ -11,32 +10,71 @@ const esConf = require('./es.js');
 const esMapping = require('./mapping.json');
 
 const esClient = new es.Client({
-	host: esConf.host
+	host: esConf.host,
+	log: {
+		type: 'file',
+		level: 'trace'
+	}
 });
 
 const business = {};
 
 
-function insereNotice(jsonLine,data){
+function insereNotice(jsonLine){
 
-	let options = {'index' : 'notices','type':'notice'};
-
-	let commands = [
-		{'create':{'index':'notices','type':'notice' }},
-		{'titre.value':jsonLine.titre.value ,'titre.normalized':jsonLine.titre.normalized,'auteur.value':jsonLine.auteur.value,'auteur.normalized':jsonLine.auteur.normalized,'doi.value':jsonLine.doi.value,'doi.normalized':jsonLine.doi.normalized, 'issn.value':jsonLine.issn.value,'issn.normalized':jsonLine.issn.normalized, 'numero.value':jsonLine.numero.value,'numero.normalized':jsonLine.numero.normalized, 'volume.value':jsonLine.volume.value,'volume.normalized':jsonLine.volume.normalized, 'page.value':jsonLine.page.value,'page.normalized':jsonLine.page.normalized}
-		 ];
 	
-	esClient.bulk(options,commands,function(err,response,status){
-		
-		console.log('creation faite '+err+' : '+response+' : '+status);
-		
-	});
+	let options = {index : 'notices',type : 'notice'};
 
+	console.log(esConf);
+	
+	
+	options.body= {
+		'titre':{'value':jsonLine.titre.value ,
+							'normalized':jsonLine.titre.normalized},
+		'auteur':{'value':jsonLine.auteur.value,
+							'normalized':jsonLine.auteur.normalized},
+			'doi':{'value':jsonLine.doi.value,
+							'normalized':jsonLine.doi.normalized},
+			'issn':{'value':jsonLine.issn.value,
+							'normalized':jsonLine.issn.normalized},
+			'numero':{'value':jsonLine.numero.value,
+								'normalized':jsonLine.numero.normalized},
+			'volume':{'value':jsonLine.volume.value,
+								'normalized':jsonLine.volume.normalized},
+			'page':{'value':jsonLine.page.value,
+							'normalized':jsonLine.page.normalized},
+			'source':[{'name':jsonLine.source,'path':jsonLine.path}]
+	};
+	
+	
+	//console.log(doc);
+	
+	return esClient.index(options);
 
 }
 
 function aggregeNotice(jsonLine,data){
 
+	let source = data.hits.hits[0]._source;
+	let id_es=data.hits.hits[0]._id;
+	
+	let options = {index:'notices',type:'notice',id:id_es};
+	
+	let sourceData = source.source;
+	
+	let future_source=[];
+	
+	_.each(sourceData,function(arraysource){
+		if (arraysource.name!==jsonLine.source) future_source.push(arraysource);
+	});
+	
+	future_source.push({'name':jsonLine.source+'2','path':jsonLine.path});
+	
+	source.source=future_source;
+	
+	options.body=source;
+	
+	return esClient.index(options);
 }
 
 
@@ -47,7 +85,7 @@ function dispatch(jsonLine,data) {
   if (data.hits.hits.length===0){
     // si aucun hit alors on insère la donnée
 	console.log('pas de doublon.');
-	return insereNotice(jsonLine,data);
+	return insereNotice(jsonLine);
   }
   else if (data.hits.hits.length===1){
     //si un hit alors on aggrège la donnée
@@ -57,11 +95,7 @@ function dispatch(jsonLine,data) {
   else{
     console.log('on a plus d\'un doublon');
   }
-  /**
-  return new Promise(function(resolve,reject){
-		return true;
-  });
-  **/
+ 
 }
 
 
@@ -69,38 +103,46 @@ function dispatch(jsonLine,data) {
 
 
 function existNotice(jsonLine){
-  return esClient.search({index : 'notices'},
-    {'query' : {
-      'bool':{
-        'must':[
-          {'match':{'title.normalized':jsonLine.titre.normalized}},
-          {'match':{'doi.normalized':jsonLine.doi.normalized}}
-        ]
-      }
-    }
-  }).then(dispatch.bind(null,jsonLine));
+	
+  return esClient.search({index : 'notices',
+						query : {
+      			'bool':{
+        			'must':[
+          			{'match':{'title.normalized':jsonLine.titre.normalized}},
+          			{'match':{'doi.normalized':jsonLine.doi.normalized}}
+        			]
+     			 	}
+    			}
+  			
+  }).then(dispatch.bind(null,jsonLine),function(error){
+  		console.log(error);
+	});
+  
+  
+  
 }
 
 
 
 business.doTheJob = function (jsonLine, cb) {
-
-
-
-  jsonLine.bulk = [];
+	
   let error;
 
-  existNotice(jsonLine).then(function(err){
-  	if (err){
-  	  error = {
-	    errCode:1811,
-		errMessage: 'erreur de dédoublonnage : '+err
-	  };
-  	  return cb(error);
-	}
-	else return cb();
-
-  });
+  existNotice(jsonLine).then(function(result) {
+	
+  		console.log(result);
+  		return cb();
+  	
+		},
+	function(err){
+			if (err){
+				error = {
+					errCode:1811,
+					errMessage: 'erreur de dédoublonnage : '+err
+				};
+			return cb(error);
+		}
+	});
 
 
 }
