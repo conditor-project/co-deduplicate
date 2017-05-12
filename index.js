@@ -23,7 +23,7 @@ const business = {};
 function insereNotice(jsonLine){
 
 	
-	let options = {index : 'notices',type : 'notice'};
+	let options = {index : 'notices',type : 'notice',refresh:true};
 
 	console.log(esConf);
 	
@@ -64,7 +64,7 @@ function aggregeNotice(jsonLine,data){
 	let source = data.hits.hits[0]._source;
 	let id_es=data.hits.hits[0]._id;
 	
-	let options = {index:'notices',type:'notice',id:id_es};
+	let options = {index:'notices',type:'notice',id:id_es,refresh:true};
 	
 	let sourceData = source.source;
 	
@@ -86,7 +86,7 @@ function aggregeNotice(jsonLine,data){
 
 function dispatch(jsonLine,data) {
 
-  console.log('data : ' + data.hits.hits.length);
+  console.log('nb occurence : ' + data.hits.hits.length);
 
   if (data.hits.hits.length===0 && jsonLine.conditor_ident===6){
     // si aucun hit alors on insère la donnée
@@ -233,9 +233,6 @@ function existNotice(jsonLine){
 			console.log(error);
 		});
 	}
-  
-  
-  
 }
 
 
