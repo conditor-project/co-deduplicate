@@ -43,7 +43,11 @@ function insereNotice(jsonLine){
 								'normalized':jsonLine.volume.normalized},
 			'page':{'value':jsonLine.page.value,
 							'normalized':jsonLine.page.normalized},
-			'source':[{'name':jsonLine.source,'path':jsonLine.path}]
+			'source':[{'name':jsonLine.source,
+				'path':jsonLine.path,
+				'date_integration':new Date().toISOString().replace(/T/,' ').replace(/\..+/,'')
+				}],
+			'date_creation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,'')
 	};
 	
 	
@@ -68,7 +72,7 @@ function aggregeNotice(jsonLine,data){
 		if (arraysource.name!==jsonLine.source) future_source.push(arraysource);
 	});
 	
-	future_source.push({'name':jsonLine.source+'2','path':jsonLine.path});
+	future_source.push({'name':jsonLine.source,'path':jsonLine.path,'date_integration':new Date().toISOString().replace(/T/,' ').replace(/\..+/,'')});
 	
 	source.source=future_source;
 	
@@ -82,11 +86,15 @@ function dispatch(jsonLine,data) {
 
   console.log('data : ' + data.hits.hits.length);
 
-  if (data.hits.hits.length===0){
+  if (data.hits.hits.length===0 && jsonLine.conditor_ident===6){
     // si aucun hit alors on insère la donnée
 	console.log('pas de doublon.');
 	return insereNotice(jsonLine);
   }
+  else if (data.hits.hits.length===0 && jsonLine.conditor_ident<=6){
+  	console.log('on continue à chercher');
+  	return existNotice(jsonLine);
+	}
   else if (data.hits.hits.length===1){
     //si un hit alors on aggrège la donnée
 	console.log('on a un doublon.');
@@ -104,19 +112,125 @@ function dispatch(jsonLine,data) {
 
 function existNotice(jsonLine){
 	
-  return esClient.search({index : 'notices',
-						query : {
-      			'bool':{
-        			'must':[
-          			{'match':{'title.normalized':jsonLine.titre.normalized}},
-          			{'match':{'doi.normalized':jsonLine.doi.normalized}}
-        			]
-     			 	}
-    			}
-  			
-  }).then(dispatch.bind(null,jsonLine),function(error){
-  		console.log(error);
-	});
+	if (jsonLine.conditor_ident==0) {
+		
+		jsonLine.conditor_ident=1;
+		
+		return esClient.search({
+			index: 'notices',
+			query: {
+				'bool': {
+					'must': [
+						{'match': {'title.normalized': jsonLine.titre.normalized}},
+						{'match': {'doi.normalized': jsonLine.doi.normalized}}
+					]
+				}
+			}
+			
+		}).then(dispatch.bind(null, jsonLine), function (error) {
+			console.log(error);
+		});
+	}
+	else if (jsonLine.conditor_ident==1){
+		
+		jsonLine.conditor_ident=2;
+		
+		return esClient.search({
+			index: 'notices',
+			query: {
+				'bool': {
+					'must': [
+						{'match': {'title.normalized': jsonLine.titre.normalized}},
+						{'match': {'volume.normalized': jsonLine.volume.normalized}},
+						{'match': {'numero.normalized': jsonLine.numero.normalized}},
+						{'match': {'issn.normalized': jsonLine.issn.normalized}}
+					]
+				}
+			}
+			
+		}).then(dispatch.bind(null, jsonLine), function (error) {
+			console.log(error);
+		});
+	}
+	else if (jsonLine.conditor_ident==2){
+		
+		jsonLine.conditor_ident=3;
+		
+		return esClient.search({
+			index: 'notices',
+			query: {
+				'bool': {
+					'must': [
+						{'match': {'doi.normalized': jsonLine.doi.normalized}}
+					]
+				}
+			}
+			
+		}).then(dispatch.bind(null, jsonLine), function (error) {
+			console.log(error);
+		});
+	}
+	else if (jsonLine.conditor_ident==3){
+		
+		jsonLine.conditor_ident=4;
+		
+		return esClient.search({
+			index: 'notices',
+			query: {
+				'bool': {
+					'must': [
+						{'match': {'title.normalized': jsonLine.titre.normalized}},
+						{'match': {'auteur.normalized': jsonLine.auteur.normalized}},
+						{'match': {'issn.normalized': jsonLine.issn.normalized}}
+					]
+				}
+			}
+			
+		}).then(dispatch.bind(null, jsonLine), function (error) {
+			console.log(error);
+		});
+	}
+	else if (jsonLine.conditor_ident==4){
+		
+		jsonLine.conditor_ident=5;
+		
+		return esClient.search({
+			index: 'notices',
+			query: {
+				'bool': {
+					'must': [
+						{'match': {'title.normalized': jsonLine.titre.normalized}},
+						{'match': {'auteur.normalized': jsonLine.auteur.normalized}},
+						{'match': {'issn.normalized': jsonLine.issn.normalized}}
+					]
+				}
+			}
+			
+		}).then(dispatch.bind(null, jsonLine), function (error) {
+			console.log(error);
+		});
+	}
+	else if (jsonLine.conditor_ident==5){
+		
+		jsonLine.conditor_ident=6;
+		
+		return esClient.search({
+			index: 'notices',
+			query: {
+				'bool': {
+					'must': [
+						{'match': {'issn.normalized': jsonLine.issn.normalized}},
+						{'match': {'volume.normalized': jsonLine.volume.normalized}},
+						{'match': {'numero.normalized': jsonLine.numero.normalized}},
+						{'match': {'page.normalized': jsonLine.page.normalized}}
+					]
+				}
+			}
+			
+		}).then(dispatch.bind(null, jsonLine), function (error) {
+			console.log(error);
+		});
+	}
   
   
   
@@ -127,6 +241,7 @@ function existNotice(jsonLine){
 business.doTheJob = function (jsonLine, cb) {
 	
   let error;
+  jsonLine.conditor_ident=0;
 
   existNotice(jsonLine).then(function(result) {
 	
