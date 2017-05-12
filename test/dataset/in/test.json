@@ -5,9 +5,13 @@
       "normalized" : "alapechejeneveuxplusallermoman"
     },
     "auteur": {
-      "value" : "Qu'est ce que j'en sais",
-      "normalized" : "questcequejensais"
+      "value" : "Eduardo Molinaro",
+      "normalized" : "eduardomolinaro"
     } ,
+    "auteur_init":{
+      "value": "Eduardo M",
+      "normalized" : "eduardom"
+    },
     "doi":{
       "value": "10.1093/bioinformatics/btu019ut=WOS:000336095100034",
       "normalized" : "101093bioinformaticsbtu019utWOS000336095100034"
@@ -37,9 +41,13 @@
       "normalized" : "alapechejeneveuxplusallermoman"
     },
     "auteur": {
-      "value" : "Qu'est ce que j'en sais",
-      "normalized" : "questcequejensais"
+      "value" : "Eduardo Molinaro",
+      "normalized" : "eduardomolinaro"
     } ,
+    "auteur_init":{
+      "value": "Eduardo M",
+      "normalized" : "eduardom"
+    },
     "doi":{
       "value": "10.1093/bioinformatics/btu019ut=WOS:000336095100034",
       "normalized" : "101093bioinformaticsbtu019utWOS000336095100034"

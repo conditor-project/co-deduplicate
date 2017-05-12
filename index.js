@@ -33,21 +33,23 @@ function insereNotice(jsonLine){
 							'normalized':jsonLine.titre.normalized},
 		'auteur':{'value':jsonLine.auteur.value,
 							'normalized':jsonLine.auteur.normalized},
-			'doi':{'value':jsonLine.doi.value,
-							'normalized':jsonLine.doi.normalized},
-			'issn':{'value':jsonLine.issn.value,
-							'normalized':jsonLine.issn.normalized},
-			'numero':{'value':jsonLine.numero.value,
-								'normalized':jsonLine.numero.normalized},
-			'volume':{'value':jsonLine.volume.value,
-								'normalized':jsonLine.volume.normalized},
-			'page':{'value':jsonLine.page.value,
-							'normalized':jsonLine.page.normalized},
-			'source':[{'name':jsonLine.source,
-				'path':jsonLine.path,
-				'date_integration':new Date().toISOString().replace(/T/,' ').replace(/\..+/,'')
-				}],
-			'date_creation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,'')
+		'auteur_init':{'value':jsonLine.auteur_init.value,
+							'normalized':jsonLine.auteur_init.normalized},
+		'doi':{'value':jsonLine.doi.value,
+						'normalized':jsonLine.doi.normalized},
+		'issn':{'value':jsonLine.issn.value,
+						'normalized':jsonLine.issn.normalized},
+		'numero':{'value':jsonLine.numero.value,
+							'normalized':jsonLine.numero.normalized},
+		'volume':{'value':jsonLine.volume.value,
+							'normalized':jsonLine.volume.normalized},
+		'page':{'value':jsonLine.page.value,
+						'normalized':jsonLine.page.normalized},
+		'source':[{'name':jsonLine.source,
+			'path':jsonLine.path,
+			'date_integration':new Date().toISOString().replace(/T/,' ').replace(/\..+/,'')
+			}],
+		'date_creation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,'')
 	};
 	
 	
@@ -200,7 +202,7 @@ function existNotice(jsonLine){
 				'bool': {
 					'must': [
 						{'match': {'title.normalized': jsonLine.titre.normalized}},
-						{'match': {'auteur.normalized': jsonLine.auteur.normalized}},
+						{'match': {'auteur_init.normalized': jsonLine.auteur_init.normalized}},
 						{'match': {'issn.normalized': jsonLine.issn.normalized}}
 					]
 				}

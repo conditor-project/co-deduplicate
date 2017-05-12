@@ -19,6 +19,16 @@
               }
             }
           },
+          "auteur_init": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
+              }
+            }
+          },
           "doi": {
             "properties": {
               "normalized": {
