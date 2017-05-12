@@ -59,12 +59,8 @@
               }
             }
           },
-          "path": {
-            "type": "keyword",
-            "index": false
-          },
           "source": {
-            "type": "text"
+            "type": "object"
           },
           "titre": {
             "properties": {
@@ -85,6 +81,10 @@
                 "type": "text"
               }
             }
+          },
+          "date_creation":{
+            "type":"date",
+            "format": "yyy-MM-dd HH:mm:ss||yyy-MM-dd||epoch_millis"
           }
         }
       }
