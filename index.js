@@ -47,8 +47,42 @@ function insereNotice(jsonLine){
 						'normalized':jsonLine.page.normalized},
 		'source':[{'name':jsonLine.source,
 			'path':jsonLine.path,
-			'date_integration':new Date().toISOString().replace(/T/,' ').replace(/\..+/,'')
-			}],
+			'date_integration':new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
+			'champs': {
+				'titre': {
+					'value': jsonLine.titre.value,
+					'normalized': jsonLine.titre.normalized
+				},
+				'auteur': {
+					'value': jsonLine.auteur.value,
+					'normalized': jsonLine.auteur.normalized
+				},
+				'auteur_init': {
+					'value': jsonLine.auteur_init.value,
+					'normalized': jsonLine.auteur_init.normalized
+				},
+				'doi': {
+					'value': jsonLine.doi.value,
+					'normalized': jsonLine.doi.normalized
+				},
+				'issn': {
+					'value': jsonLine.issn.value,
+					'normalized': jsonLine.issn.normalized
+				},
+				'numero': {
+					'value': jsonLine.numero.value,
+					'normalized': jsonLine.numero.normalized
+				},
+				'volume': {
+					'value': jsonLine.volume.value,
+					'normalized': jsonLine.volume.normalized
+				},
+				'page': {
+					'value': jsonLine.page.value,
+					'normalized': jsonLine.page.normalized
+				},
+			}
+		}],
 		'date_creation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,'')
 	};
 	
@@ -74,7 +108,44 @@ function aggregeNotice(jsonLine,data){
 		if (arraysource.name!==jsonLine.source) future_source.push(arraysource);
 	});
 	
-	future_source.push({'name':jsonLine.source,'path':jsonLine.path,'date_integration':new Date().toISOString().replace(/T/,' ').replace(/\..+/,'')});
+	future_source.push({'name':jsonLine.source,
+											'path':jsonLine.path,
+											'date_integration':new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
+											'champs': {
+												'titre': {
+													'value': jsonLine.titre.value,
+													'normalized': jsonLine.titre.normalized
+												},
+												'auteur': {
+													'value': jsonLine.auteur.value,
+													'normalized': jsonLine.auteur.normalized
+												},
+												'auteur_init': {
+													'value': jsonLine.auteur_init.value,
+													'normalized': jsonLine.auteur_init.normalized
+												},
+												'doi': {
+													'value': jsonLine.doi.value,
+													'normalized': jsonLine.doi.normalized
+												},
+												'issn': {
+													'value': jsonLine.issn.value,
+													'normalized': jsonLine.issn.normalized
+												},
+												'numero': {
+													'value': jsonLine.numero.value,
+													'normalized': jsonLine.numero.normalized
+												},
+												'volume': {
+													'value': jsonLine.volume.value,
+													'normalized': jsonLine.volume.normalized
+												},
+												'page': {
+													'value': jsonLine.page.value,
+													'normalized': jsonLine.page.normalized
+												},
+											}
+										});
 	
 	source.source=future_source;
 	
@@ -121,11 +192,26 @@ function existNotice(jsonLine){
 		return esClient.search({
 			index: 'notices',
 			query: {
-				'bool': {
-					'must': [
-						{'match': {'title.normalized': jsonLine.titre.normalized}},
-						{'match': {'doi.normalized': jsonLine.doi.normalized}}
-					]
+				'bool':{
+					'should':[
+						{
+							'bool': {
+								'must': [
+									{'match': {'title.normalized': jsonLine.titre.normalized}},
+									{'match': {'doi.normalized': jsonLine.doi.normalized}}
+									]
+							}
+						},
+						{
+							'bool': {
+								'must': [
+									{'match': {'source.champs.title.normalized': jsonLine.titre.normalized}},
+									{'match': {'source.champs.doi.normalized': jsonLine.doi.normalized}}
+								]
+							}
+						}
+					],
+					'minimum_should_match':1
 				}
 			}
 			
@@ -140,16 +226,32 @@ function existNotice(jsonLine){
 		return esClient.search({
 			index: 'notices',
 			query: {
-				'bool': {
-					'must': [
-						{'match': {'title.normalized': jsonLine.titre.normalized}},
-						{'match': {'volume.normalized': jsonLine.volume.normalized}},
-						{'match': {'numero.normalized': jsonLine.numero.normalized}},
-						{'match': {'issn.normalized': jsonLine.issn.normalized}}
-					]
+				'bool':{
+					'should':[
+						{
+							'bool': {
+								'must': [
+									{'match': {'title.normalized': jsonLine.titre.normalized}},
+									{'match': {'volume.normalized': jsonLine.volume.normalized}},
+									{'match': {'numero.normalized': jsonLine.numero.normalized}},
+									{'match': {'issn.normalized': jsonLine.issn.normalized}}
+								]
+							}
+						},
+						{
+							'bool': {
+								'must': [
+									{'match': {'source.champs.title.normalized': jsonLine.titre.normalized}},
+									{'match': {'source.champs.volume.normalized': jsonLine.volume.normalized}},
+									{'match': {'source.champs.numero.normalized': jsonLine.numero.normalized}},
+									{'match': {'source.champs.issn.normalized': jsonLine.issn.normalized}}
+								]
+							}
+						}
+					],
+					'minimum_should_match':1
 				}
 			}
-			
 		}).then(dispatch.bind(null, jsonLine), function (error) {
 			console.log(error);
 		});
@@ -161,13 +263,26 @@ function existNotice(jsonLine){
 		return esClient.search({
 			index: 'notices',
 			query: {
-				'bool': {
-					'must': [
-						{'match': {'doi.normalized': jsonLine.doi.normalized}}
-					]
+				'bool':{
+					'should':[
+						{
+							'bool': {
+								'must': [
+									{'match': {'doi.normalized': jsonLine.doi.normalized}}
+								]
+							}
+						},
+						{
+							'bool': {
+								'must': [
+									{'match': {'source.champs.doi.normalized': jsonLine.doi.normalized}}
+								]
+							}
+						}
+					],
+					'minimum_should_match':1
 				}
 			}
-			
 		}).then(dispatch.bind(null, jsonLine), function (error) {
 			console.log(error);
 		});
@@ -179,15 +294,30 @@ function existNotice(jsonLine){
 		return esClient.search({
 			index: 'notices',
 			query: {
-				'bool': {
-					'must': [
-						{'match': {'title.normalized': jsonLine.titre.normalized}},
-						{'match': {'auteur.normalized': jsonLine.auteur.normalized}},
-						{'match': {'issn.normalized': jsonLine.issn.normalized}}
-					]
+				'bool':{
+					'should':[
+						{
+							'bool': {
+								'must': [
+									{'match': {'title.normalized': jsonLine.titre.normalized}},
+									{'match': {'auteur.normalized': jsonLine.auteur.normalized}},
+									{'match': {'issn.normalized': jsonLine.issn.normalized}}
+								]
+							}
+						},
+						{
+							'bool': {
+								'must': [
+									{'match': {'source.champs.title.normalized': jsonLine.titre.normalized}},
+									{'match': {'source.champs.auteur.normalized': jsonLine.auteur.normalized}},
+									{'match': {'source.champs.issn.normalized': jsonLine.issn.normalized}}
+								]
+							}
+						}
+					],
+					'minimum_should_match':1
 				}
 			}
-			
 		}).then(dispatch.bind(null, jsonLine), function (error) {
 			console.log(error);
 		});
@@ -199,15 +329,30 @@ function existNotice(jsonLine){
 		return esClient.search({
 			index: 'notices',
 			query: {
-				'bool': {
-					'must': [
-						{'match': {'title.normalized': jsonLine.titre.normalized}},
-						{'match': {'auteur_init.normalized': jsonLine.auteur_init.normalized}},
-						{'match': {'issn.normalized': jsonLine.issn.normalized}}
-					]
+				'bool':{
+					'should':[
+						{
+							'bool': {
+								'must': [
+									{'match': {'title.normalized': jsonLine.titre.normalized}},
+									{'match': {'auteur_init.normalized': jsonLine.auteur_init.normalized}},
+									{'match': {'issn.normalized': jsonLine.issn.normalized}}
+								]
+							}
+						},
+						{
+							'bool': {
+								'must': [
+									{'match': {'source.champs.title.normalized': jsonLine.titre.normalized}},
+									{'match': {'source.champs.auteur_init.normalized': jsonLine.auteur_init.normalized}},
+									{'match': {'source.champs.issn.normalized': jsonLine.issn.normalized}}
+								]
+							}
+						}
+					],
+					'minimum_should_match':1
 				}
 			}
-			
 		}).then(dispatch.bind(null, jsonLine), function (error) {
 			console.log(error);
 		});
@@ -219,16 +364,32 @@ function existNotice(jsonLine){
 		return esClient.search({
 			index: 'notices',
 			query: {
-				'bool': {
-					'must': [
-						{'match': {'issn.normalized': jsonLine.issn.normalized}},
-						{'match': {'volume.normalized': jsonLine.volume.normalized}},
-						{'match': {'numero.normalized': jsonLine.numero.normalized}},
-						{'match': {'page.normalized': jsonLine.page.normalized}}
-					]
+				'bool':{
+					'should':[
+						{
+							'bool': {
+								'must': [
+									{'match': {'issn.normalized': jsonLine.issn.normalized}},
+									{'match': {'volume.normalized': jsonLine.volume.normalized}},
+									{'match': {'numero.normalized': jsonLine.numero.normalized}},
+									{'match': {'page.normalized': jsonLine.page.normalized}}
+								]
+							}
+						},
+						{
+							'bool': {
+								'must': [
+									{'match': {'source.champs.issn.normalized': jsonLine.issn.normalized}},
+									{'match': {'source.champs.volume.normalized': jsonLine.volume.normalized}},
+									{'match': {'source.champs.numero.normalized': jsonLine.numero.normalized}},
+									{'match': {'source.champs.page.normalized': jsonLine.page.normalized}}
+								]
+							}
+						}
+					],
+					'minimum_should_match':1
 				}
 			}
-			
 		}).then(dispatch.bind(null, jsonLine), function (error) {
 			console.log(error);
 		});
