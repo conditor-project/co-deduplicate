@@ -188,7 +188,7 @@ function existNotice(jsonLine){
 	if (jsonLine.conditor_ident==0) {
 		
 		jsonLine.conditor_ident=1;
-		
+		console.log('test sur titre+doi');
 		return esClient.search({
 			index: 'notices',
 			body: {
@@ -224,7 +224,7 @@ function existNotice(jsonLine){
 	else if (jsonLine.conditor_ident==1){
 		
 		jsonLine.conditor_ident=2;
-		
+		console.log('test sur titre+volume+numero+issn');
 		return esClient.search({
 			index: 'notices',
 			body: {
@@ -263,7 +263,7 @@ function existNotice(jsonLine){
 	else if (jsonLine.conditor_ident==2){
 		
 		jsonLine.conditor_ident=3;
-		
+		console.log('test sur doi');
 		return esClient.search({
 			index: 'notices',
 			body: {
@@ -296,7 +296,7 @@ function existNotice(jsonLine){
 	else if (jsonLine.conditor_ident==3){
 		
 		jsonLine.conditor_ident=4;
-		
+		console.log('test sur titre+auteur+issn');
 		return esClient.search({
 			index: 'notices',
 			body: {
@@ -334,7 +334,7 @@ function existNotice(jsonLine){
 	else if (jsonLine.conditor_ident==4){
 		
 		jsonLine.conditor_ident=5;
-		
+		console.log('test sur titre+auteur_init+issn');
 		return esClient.search({
 			index: 'notices',
 			body: {
@@ -372,7 +372,7 @@ function existNotice(jsonLine){
 	else if (jsonLine.conditor_ident==5){
 		
 		jsonLine.conditor_ident=6;
-		
+		console.log('test sur issn+volume+numero+page');
 		return esClient.search({
 			index: 'notices',
 			body: {
@@ -445,7 +445,7 @@ function createAlias(aliasArgs, options, aliasCallback) {
 
   // Vérification de l'existance de l'alias, création si nécessaire, ajout de l'index nouvellement créé à l'alias
   esClient.indices.existsAlias(aliasArgs, function(err, response, status) {
-    if (!response) {
+    if (status!=="200") {
       esClient.indices.putAlias(aliasArgs, function(err, response, status) {
 
         if (!err) {
@@ -464,6 +464,7 @@ function createAlias(aliasArgs, options, aliasCallback) {
         'actions': [{
         'add': aliasArgs
         }]
+        
       }, function(err, response, status) {
 
         if (!err) {
@@ -471,7 +472,7 @@ function createAlias(aliasArgs, options, aliasCallback) {
         } else {
           options.errLogs.push('Erreur update d\'alias. Status : ' + status + '\n');
           error = {
-            errCode: 1703,
+            errCode: 1704,
             errMessage: 'Erreur lors de la création de l\'alias : ' + err
           };
         }
@@ -505,9 +506,12 @@ function createIndex(conditorSession,options,indexCallback){
 
     if (!mappingExists) {
 
-    //esMapping.settings.index = {
-    //	'number_of_replicas' : 0
-    //};
+    
+			esMapping.settings= { 'index' :{
+				'number_of_replicas' : 0
+				}
+			};
+			
       reqParams.body = esMapping;
 
       esClient.indices.create(reqParams,function(err,response,status){
@@ -522,8 +526,9 @@ function createIndex(conditorSession,options,indexCallback){
         }
 
         createAlias({
-          'alias': 'integration',
-          'index': 'notices'
+          index: 'notices',
+					name : 'integration',
+					body: {'actions':{'add':{'index':'notices','alias':'integration'}}}
         },options,function(err){
           indexCallback(err);
         });
