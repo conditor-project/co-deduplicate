@@ -191,27 +191,29 @@ function existNotice(jsonLine){
 		
 		return esClient.search({
 			index: 'notices',
-			query: {
-				'bool':{
-					'should':[
-						{
-							'bool': {
-								'must': [
-									{'match': {'title.normalized': jsonLine.titre.normalized}},
-									{'match': {'doi.normalized': jsonLine.doi.normalized}}
+			body: {
+				'query': {
+					'bool': {
+						'should': [
+							{
+								'bool': {
+									'must': [
+										{'match': {'title.normalized': jsonLine.titre.normalized}},
+										{'match': {'doi.normalized': jsonLine.doi.normalized}}
 									]
+								}
+							},
+							{
+								'bool': {
+									'must': [
+										{'match': {'source.champs.title.normalized': jsonLine.titre.normalized}},
+										{'match': {'source.champs.doi.normalized': jsonLine.doi.normalized}}
+									]
+								}
 							}
-						},
-						{
-							'bool': {
-								'must': [
-									{'match': {'source.champs.title.normalized': jsonLine.titre.normalized}},
-									{'match': {'source.champs.doi.normalized': jsonLine.doi.normalized}}
-								]
-							}
-						}
-					],
-					'minimum_should_match':1
+						],
+						'minimum_should_match': 1
+					}
 				}
 			}
 			
@@ -225,31 +227,33 @@ function existNotice(jsonLine){
 		
 		return esClient.search({
 			index: 'notices',
-			query: {
-				'bool':{
-					'should':[
-						{
-							'bool': {
-								'must': [
-									{'match': {'title.normalized': jsonLine.titre.normalized}},
-									{'match': {'volume.normalized': jsonLine.volume.normalized}},
-									{'match': {'numero.normalized': jsonLine.numero.normalized}},
-									{'match': {'issn.normalized': jsonLine.issn.normalized}}
-								]
+			body: {
+				'query' :{
+					'bool':{
+						'should':[
+							{
+								'bool': {
+									'must': [
+										{'match': {'title.normalized': jsonLine.titre.normalized}},
+										{'match': {'volume.normalized': jsonLine.volume.normalized}},
+										{'match': {'numero.normalized': jsonLine.numero.normalized}},
+										{'match': {'issn.normalized': jsonLine.issn.normalized}}
+									]
+								}
+							},
+							{
+								'bool': {
+									'must': [
+										{'match': {'source.champs.title.normalized': jsonLine.titre.normalized}},
+										{'match': {'source.champs.volume.normalized': jsonLine.volume.normalized}},
+										{'match': {'source.champs.numero.normalized': jsonLine.numero.normalized}},
+										{'match': {'source.champs.issn.normalized': jsonLine.issn.normalized}}
+									]
+								}
 							}
-						},
-						{
-							'bool': {
-								'must': [
-									{'match': {'source.champs.title.normalized': jsonLine.titre.normalized}},
-									{'match': {'source.champs.volume.normalized': jsonLine.volume.normalized}},
-									{'match': {'source.champs.numero.normalized': jsonLine.numero.normalized}},
-									{'match': {'source.champs.issn.normalized': jsonLine.issn.normalized}}
-								]
-							}
-						}
-					],
-					'minimum_should_match':1
+						],
+						'minimum_should_match':1
+					}
 				}
 			}
 		}).then(dispatch.bind(null, jsonLine), function (error) {
@@ -262,25 +266,27 @@ function existNotice(jsonLine){
 		
 		return esClient.search({
 			index: 'notices',
-			query: {
-				'bool':{
-					'should':[
-						{
-							'bool': {
-								'must': [
-									{'match': {'doi.normalized': jsonLine.doi.normalized}}
-								]
+			body: {
+				'query': {
+					'bool': {
+						'should': [
+							{
+								'bool': {
+									'must': [
+										{'match': {'doi.normalized': jsonLine.doi.normalized}}
+									]
+								}
+							},
+							{
+								'bool': {
+									'must': [
+										{'match': {'source.champs.doi.normalized': jsonLine.doi.normalized}}
+									]
+								}
 							}
-						},
-						{
-							'bool': {
-								'must': [
-									{'match': {'source.champs.doi.normalized': jsonLine.doi.normalized}}
-								]
-							}
-						}
-					],
-					'minimum_should_match':1
+						],
+						'minimum_should_match': 1
+					}
 				}
 			}
 		}).then(dispatch.bind(null, jsonLine), function (error) {
@@ -293,31 +299,34 @@ function existNotice(jsonLine){
 		
 		return esClient.search({
 			index: 'notices',
-			query: {
-				'bool':{
-					'should':[
-						{
-							'bool': {
-								'must': [
-									{'match': {'title.normalized': jsonLine.titre.normalized}},
-									{'match': {'auteur.normalized': jsonLine.auteur.normalized}},
-									{'match': {'issn.normalized': jsonLine.issn.normalized}}
-								]
+			body: {
+				'query': {
+					'bool': {
+						'should': [
+							{
+								'bool': {
+									'must': [
+										{'match': {'title.normalized': jsonLine.titre.normalized}},
+										{'match': {'auteur.normalized': jsonLine.auteur.normalized}},
+										{'match': {'issn.normalized': jsonLine.issn.normalized}}
+									]
+								}
+							},
+							{
+								'bool': {
+									'must': [
+										{'match': {'source.champs.title.normalized': jsonLine.titre.normalized}},
+										{'match': {'source.champs.auteur.normalized': jsonLine.auteur.normalized}},
+										{'match': {'source.champs.issn.normalized': jsonLine.issn.normalized}}
+									]
+								}
 							}
-						},
-						{
-							'bool': {
-								'must': [
-									{'match': {'source.champs.title.normalized': jsonLine.titre.normalized}},
-									{'match': {'source.champs.auteur.normalized': jsonLine.auteur.normalized}},
-									{'match': {'source.champs.issn.normalized': jsonLine.issn.normalized}}
-								]
-							}
-						}
-					],
-					'minimum_should_match':1
+						],
+						'minimum_should_match': 1
+					}
 				}
 			}
+	
 		}).then(dispatch.bind(null, jsonLine), function (error) {
 			console.log(error);
 		});
@@ -328,31 +337,34 @@ function existNotice(jsonLine){
 		
 		return esClient.search({
 			index: 'notices',
-			query: {
-				'bool':{
-					'should':[
-						{
-							'bool': {
-								'must': [
-									{'match': {'title.normalized': jsonLine.titre.normalized}},
-									{'match': {'auteur_init.normalized': jsonLine.auteur_init.normalized}},
-									{'match': {'issn.normalized': jsonLine.issn.normalized}}
-								]
+			body: {
+				'query': {
+					'bool': {
+						'should': [
+							{
+								'bool': {
+									'must': [
+										{'match': {'title.normalized': jsonLine.titre.normalized}},
+										{'match': {'auteur_init.normalized': jsonLine.auteur_init.normalized}},
+										{'match': {'issn.normalized': jsonLine.issn.normalized}}
+									]
+								}
+							},
+							{
+								'bool': {
+									'must': [
+										{'match': {'source.champs.title.normalized': jsonLine.titre.normalized}},
+										{'match': {'source.champs.auteur_init.normalized': jsonLine.auteur_init.normalized}},
+										{'match': {'source.champs.issn.normalized': jsonLine.issn.normalized}}
+									]
+								}
 							}
-						},
-						{
-							'bool': {
-								'must': [
-									{'match': {'source.champs.title.normalized': jsonLine.titre.normalized}},
-									{'match': {'source.champs.auteur_init.normalized': jsonLine.auteur_init.normalized}},
-									{'match': {'source.champs.issn.normalized': jsonLine.issn.normalized}}
-								]
-							}
-						}
-					],
-					'minimum_should_match':1
+						],
+						'minimum_should_match': 1
+					}
 				}
 			}
+		
 		}).then(dispatch.bind(null, jsonLine), function (error) {
 			console.log(error);
 		});
@@ -363,33 +375,36 @@ function existNotice(jsonLine){
 		
 		return esClient.search({
 			index: 'notices',
-			query: {
-				'bool':{
-					'should':[
-						{
-							'bool': {
-								'must': [
-									{'match': {'issn.normalized': jsonLine.issn.normalized}},
-									{'match': {'volume.normalized': jsonLine.volume.normalized}},
-									{'match': {'numero.normalized': jsonLine.numero.normalized}},
-									{'match': {'page.normalized': jsonLine.page.normalized}}
-								]
+			body: {
+				'query': {
+					'bool': {
+						'should': [
+							{
+								'bool': {
+									'must': [
+										{'match': {'issn.normalized': jsonLine.issn.normalized}},
+										{'match': {'volume.normalized': jsonLine.volume.normalized}},
+										{'match': {'numero.normalized': jsonLine.numero.normalized}},
+										{'match': {'page.normalized': jsonLine.page.normalized}}
+									]
+								}
+							},
+							{
+								'bool': {
+									'must': [
+										{'match': {'source.champs.issn.normalized': jsonLine.issn.normalized}},
+										{'match': {'source.champs.volume.normalized': jsonLine.volume.normalized}},
+										{'match': {'source.champs.numero.normalized': jsonLine.numero.normalized}},
+										{'match': {'source.champs.page.normalized': jsonLine.page.normalized}}
+									]
+								}
 							}
-						},
-						{
-							'bool': {
-								'must': [
-									{'match': {'source.champs.issn.normalized': jsonLine.issn.normalized}},
-									{'match': {'source.champs.volume.normalized': jsonLine.volume.normalized}},
-									{'match': {'source.champs.numero.normalized': jsonLine.numero.normalized}},
-									{'match': {'source.champs.page.normalized': jsonLine.page.normalized}}
-								]
-							}
-						}
-					],
-					'minimum_should_match':1
+						],
+						'minimum_should_match': 1
+					}
 				}
 			}
+		
 		}).then(dispatch.bind(null, jsonLine), function (error) {
 			console.log(error);
 		});
@@ -507,7 +522,7 @@ function createIndex(conditorSession,options,indexCallback){
         }
 
         createAlias({
-          'name': 'integration',
+          'alias': 'integration',
           'index': 'notices'
         },options,function(err){
           indexCallback(err);

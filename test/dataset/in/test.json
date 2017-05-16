@@ -1,7 +1,7 @@
 [
   {
     "titre": {
-      "value" : "A la pêche je ne veux plus aller moman ?",
+      "value" : "A la pêche je ne veux -  plus aller moman ?",
       "normalized" : "alapechejeneveuxplusallermoman"
     },
     "auteur": {
@@ -37,7 +37,7 @@
   },
   {
     "titre": {
-      "value" : "A la pêche je ne veux plus aller moman ?",
+      "value" : "A la pêche je ne veux - plus aller moman ?",
       "normalized" : "alapechejeneveuxplusallermoman"
     },
     "auteur": {

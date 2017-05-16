@@ -1,5 +1,4 @@
 {
-  "notices": {
     "mappings": {
       "notice": {
         "dynamic": "false",
@@ -100,4 +99,3 @@
       }
     }
   }
-}

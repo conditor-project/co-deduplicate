@@ -60,7 +60,7 @@ describe(pkg.name + '/index.js', function () {
 		it('insertion ou intégration de la notice 2', function (done) {
 			let docObject;
 		
-			business.doTheJob(docObject = testData[0], function (err) {
+			business.doTheJob(docObject = testData[1], function (err) {
 				if (err) {
 					console.log(err.errCode);
 					console.log(err.errMessage);
