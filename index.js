@@ -161,8 +161,9 @@ function dispatch(jsonLine,data) {
 
   if (data.hits.hits.length===0 && jsonLine.conditor_ident===6){
     // si aucun hit alors on insère la donnée
-	console.log('pas de doublon.');
-	return insereNotice(jsonLine);
+		jsonLine.conditor_ident=99;
+		console.log('pas de doublon.');
+		return insereNotice(jsonLine);
   }
   else if (data.hits.hits.length===0 && jsonLine.conditor_ident<=6){
   	console.log('on continue à chercher');
