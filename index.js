@@ -418,10 +418,14 @@ business.doTheJob = function (jsonLine, cb) {
   let error;
   jsonLine.conditor_ident=0;
 
-  existNotice(jsonLine).then(function(result) {
+  return existNotice(jsonLine).then(function(result) {
 	
-  		console.log(result);
-  		return cb();
+  		//console.log(result);
+			jsonLine.id_elasticsearch=result._id;
+			console.log(jsonLine);
+			return cb();
+  	
+  	
   	
 		},
 	function(err){
