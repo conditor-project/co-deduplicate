@@ -28,12 +28,12 @@ describe(pkg.name + '/index.js', function () {
 
   	it('before any job va créer l\'index et le mapping si ils n\'existent pas',function(done){
 	  	business.beforeAnyJob(function(err){
-				if (err) {
-					console.log(err);
-					console.log(err.errCode);
-					console.log(err.errMessage);
-					process.exit(1);
-				}
+        if (err) {
+          console.log(err.errCode);
+          console.log(err.errMessage);
+          process.exit(1);
+        }
+				expect(err).to.be.undefined;
 				done();
 	  	});
 	  	
@@ -45,13 +45,13 @@ describe(pkg.name + '/index.js', function () {
 	
 			it('insertion ou intégration de la notice 1', function (done) {
 				let docObject;
-				
 				business.doTheJob(docObject = testData[0], function (err) {
-					if (err) {
-						console.log(err.errCode);
-						console.log(err.errMessage);
-						process.exit(1);
-					}
+          if (err) {
+            console.log(err.errCode);
+            console.log(err.errMessage);
+            process.exit(1);
+          }
+          expect(err).to.be.undefined;
 					done();
 				});
 			});
@@ -59,13 +59,13 @@ describe(pkg.name + '/index.js', function () {
 	
 		it('insertion ou intégration de la notice 2', function (done) {
 			let docObject;
-		
 			business.doTheJob(docObject = testData[1], function (err) {
-				if (err) {
-					console.log(err.errCode);
-					console.log(err.errMessage);
-					process.exit(1);
-				}
+        if (err) {
+          console.log(err.errCode);
+          console.log(err.errMessage);
+          process.exit(1);
+        }
+        expect(err).to.be.undefined;
 				done();
 			});
 		});

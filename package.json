@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://genicot@vsistex.intra.inist.fr:22222/genicot/co-undoubler.git"
+    "url": "https://github.com/conditor-project/co-undoubler.git"
   },
   "keywords": [
     "conditor"
