@@ -199,7 +199,7 @@ function existNotice(jsonLine){
 							{
 								'bool': {
 									'must': [
-										{'match': {'title.normalized': jsonLine.titre.normalized}},
+										{'match': {'titre.normalized': jsonLine.titre.normalized}},
 										{'match': {'doi.normalized': jsonLine.doi.normalized}}
 									]
 								}
@@ -207,7 +207,7 @@ function existNotice(jsonLine){
 							{
 								'bool': {
 									'must': [
-										{'match': {'source.champs.title.normalized': jsonLine.titre.normalized}},
+										{'match': {'source.champs.titre.normalized': jsonLine.titre.normalized}},
 										{'match': {'source.champs.doi.normalized': jsonLine.doi.normalized}}
 									]
 								}
@@ -235,7 +235,7 @@ function existNotice(jsonLine){
 							{
 								'bool': {
 									'must': [
-										{'match': {'title.normalized': jsonLine.titre.normalized}},
+										{'match': {'titre.normalized': jsonLine.titre.normalized}},
 										{'match': {'volume.normalized': jsonLine.volume.normalized}},
 										{'match': {'numero.normalized': jsonLine.numero.normalized}},
 										{'match': {'issn.normalized': jsonLine.issn.normalized}}
@@ -245,7 +245,7 @@ function existNotice(jsonLine){
 							{
 								'bool': {
 									'must': [
-										{'match': {'source.champs.title.normalized': jsonLine.titre.normalized}},
+										{'match': {'source.champs.titre.normalized': jsonLine.titre.normalized}},
 										{'match': {'source.champs.volume.normalized': jsonLine.volume.normalized}},
 										{'match': {'source.champs.numero.normalized': jsonLine.numero.normalized}},
 										{'match': {'source.champs.issn.normalized': jsonLine.issn.normalized}}
@@ -307,7 +307,7 @@ function existNotice(jsonLine){
 							{
 								'bool': {
 									'must': [
-										{'match': {'title.normalized': jsonLine.titre.normalized}},
+										{'match': {'titre.normalized': jsonLine.titre.normalized}},
 										{'match': {'auteur.normalized': jsonLine.auteur.normalized}},
 										{'match': {'issn.normalized': jsonLine.issn.normalized}}
 									]
@@ -316,7 +316,7 @@ function existNotice(jsonLine){
 							{
 								'bool': {
 									'must': [
-										{'match': {'source.champs.title.normalized': jsonLine.titre.normalized}},
+										{'match': {'source.champs.titre.normalized': jsonLine.titre.normalized}},
 										{'match': {'source.champs.auteur.normalized': jsonLine.auteur.normalized}},
 										{'match': {'source.champs.issn.normalized': jsonLine.issn.normalized}}
 									]
@@ -345,7 +345,7 @@ function existNotice(jsonLine){
 							{
 								'bool': {
 									'must': [
-										{'match': {'title.normalized': jsonLine.titre.normalized}},
+										{'match': {'titre.normalized': jsonLine.titre.normalized}},
 										{'match': {'auteur_init.normalized': jsonLine.auteur_init.normalized}},
 										{'match': {'issn.normalized': jsonLine.issn.normalized}}
 									]
@@ -354,7 +354,7 @@ function existNotice(jsonLine){
 							{
 								'bool': {
 									'must': [
-										{'match': {'source.champs.title.normalized': jsonLine.titre.normalized}},
+										{'match': {'source.champs.titre.normalized': jsonLine.titre.normalized}},
 										{'match': {'source.champs.auteur_init.normalized': jsonLine.auteur_init.normalized}},
 										{'match': {'source.champs.issn.normalized': jsonLine.issn.normalized}}
 									]
