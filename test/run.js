@@ -1,5 +1,3 @@
-/* global __dirname, require, process, it */
-
 'use strict';
 
 const
@@ -27,7 +25,11 @@ describe(pkg.name + '/index.js', function () {
   describe('#beforeAnyJob', function(){
 
   	it('before any job va créer l\'index et le mapping si ils n\'existent pas',function(done){
-	  	business.beforeAnyJob(function(err){
+	  	
+  		//esClient.indices.delete({'index':'notices'});
+  		
+  		
+  		business.beforeAnyJob(function(err){
         if (err) {
           console.log(err.errCode);
           console.log(err.errMessage);
