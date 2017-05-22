@@ -154,7 +154,6 @@ function aggregeNotice(jsonLine,data){
 	return esClient.index(options);
 }
 
-
 function dispatch(jsonLine,data) {
 
   console.log('nb occurence : ' + data.hits.hits.length);
