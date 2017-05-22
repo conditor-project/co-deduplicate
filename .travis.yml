@@ -1,12 +1,11 @@
 language: node_js
+jdk: oraclejdk8
 before_script:
   - sleep 10
 node_js:
   - "6"
-script:
-  - jdk_switcher use oraclejdk8
 before_install:
-  - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.4.0.deb && sudo dpkg -i --force-confnew elasticsearch-5.4.0.deb && sudo service elasticsearch restart
+  - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.4.0.deb && dpkg -i --force-confnew elasticsearch-5.4.0.deb && sudo service elasticsearch restart
 services:
   - elasticsearch
 notifications:
