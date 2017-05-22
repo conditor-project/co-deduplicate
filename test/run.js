@@ -19,31 +19,43 @@ const esClient = new es.Client({
 	}
 });
 
-describe(pkg.name + '/index.js', function () {
+
+	describe(pkg.name + '/index.js', function () {
 
   // test sur la méthode beforeAnyJob
-  describe('#beforeAnyJob', function(){
-
-  	it('before any job va créer l\'index et le mapping si ils n\'existent pas',function(done){
-	  	
-  		//esClient.indices.delete({'index':'notices'});
+  	describe('#beforeAnyJob', function(){
+  	
+  		it('préalable : suppression index et mapping',function(done){
+  			esClient.indices.exists({'index':'notices'}).then(function(data){
+  					if (data===true){
+  						esClient.indices.delete({'index':'notices'}).then(
+  							function(){
+  								done();
+  							});
+						}
+						else
+						{
+							done();
+						}
+				});
+			});
+  	
+  	
+			it('before any job va créer l\'index et le mapping si ils n\'existent pas',function(done){
   		
-  		
-  		business.beforeAnyJob(function(err){
-        if (err) {
+  			business.beforeAnyJob(function(err){
+  			
+  			if (err) {
           console.log(err.errCode);
           console.log(err.errMessage);
-          process.exit(1);
+          //process.exit(1);
         }
-				expect(err).to.be.undefined;
-				done();
+				console.log('post-beforeAnyJob');
+  			done();
+				
 	  	});
 	  	
 		});
-  });
-
-  // test sur la méthode doTheJob
-  describe('#doTheJob', function () {
 	
 			it('insertion ou intégration de la notice 1', function (done) {
 				let docObject;
@@ -51,29 +63,12 @@ describe(pkg.name + '/index.js', function () {
           if (err) {
             console.log(err.errCode);
             console.log(err.errMessage);
-            process.exit(1);
+            //process.exit(1);
           }
-          expect(err).to.be.undefined;
-					done();
+					console.log('post-doTheJob-doc1');
+          done();
+     
 				});
 			});
-	
-	
-		it('insertion ou intégration de la notice 2', function (done) {
-			let docObject;
-			business.doTheJob(docObject = testData[1], function (err) {
-        if (err) {
-          console.log(err.errCode);
-          console.log(err.errMessage);
-          process.exit(1);
-        }
-        expect(err).to.be.undefined;
-				done();
-			});
-		});
   });
-
-
-
-
 });

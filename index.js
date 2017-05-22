@@ -186,7 +186,7 @@ function dispatch(jsonLine,data) {
 
 function existNotice(jsonLine){
 	
-	if (jsonLine.conditor_ident==0) {
+	if (jsonLine.conditor_ident===0) {
 		
 		jsonLine.conditor_ident=1;
 		console.log('test sur titre+doi');
@@ -222,7 +222,7 @@ function existNotice(jsonLine){
 			console.log(error);
 		});
 	}
-	else if (jsonLine.conditor_ident==1){
+	else if (jsonLine.conditor_ident===1){
 		
 		jsonLine.conditor_ident=2;
 		console.log('test sur titre+volume+numero+issn');
@@ -261,7 +261,7 @@ function existNotice(jsonLine){
 			console.log(error);
 		});
 	}
-	else if (jsonLine.conditor_ident==2){
+	else if (jsonLine.conditor_ident===2){
 		
 		jsonLine.conditor_ident=3;
 		console.log('test sur doi');
@@ -294,7 +294,7 @@ function existNotice(jsonLine){
 			console.log(error);
 		});
 	}
-	else if (jsonLine.conditor_ident==3){
+	else if (jsonLine.conditor_ident===3){
 		
 		jsonLine.conditor_ident=4;
 		console.log('test sur titre+auteur+issn');
@@ -332,7 +332,7 @@ function existNotice(jsonLine){
 			console.log(error);
 		});
 	}
-	else if (jsonLine.conditor_ident==4){
+	else if (jsonLine.conditor_ident===4){
 		
 		jsonLine.conditor_ident=5;
 		console.log('test sur titre+auteur_init+issn');
@@ -370,7 +370,7 @@ function existNotice(jsonLine){
 			console.log(error);
 		});
 	}
-	else if (jsonLine.conditor_ident==5){
+	else if (jsonLine.conditor_ident===5){
 		
 		jsonLine.conditor_ident=6;
 		console.log('test sur issn+volume+numero+page');
@@ -407,7 +407,7 @@ function existNotice(jsonLine){
 			}
 		
 		}).then(dispatch.bind(null, jsonLine), function (error) {
-			console.log(error);
+			console.log('Error :'+error);
 		});
 	}
 }

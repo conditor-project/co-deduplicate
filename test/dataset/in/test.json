@@ -1,58 +1,38 @@
 [
   {
     "titre": {
-      "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
+      "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+      "normalized" : "probmetabanrpackageforbayesianprobalisticannotationoflcmsbasedmetabolomics"
     },
     "auteur": {
-      "value" : "Guidetti-Gonzalez Simone"
+      "value" : "Guidetti-Gonzalez Simone",
+      "normalized" : "guidettigonzalezsimone"
     } ,
     "auteur_init":{
-      "value": "Guidetti-Gonzalez S"
+      "value": "Guidetti-Gonzalez S",
+      "normalized": "guidettigonzalezs"
     },
     "doi":{
-      "value": "10.1093/bioinformatics/btu019ut=WOS:000336095100034"
+      "value": "10.1093/bioinformatics/btu019ut=WOS:000336095100034",
+      "normalized": "101093bioinformaticsbtu019utwos000336095100034"
     },
     "issn":{
-      "value":"1367-4803"
+      "value":"1367-4803",
+      "normalized": "13764803"
     },
     "numero":{
-      "value":"n°5"
+      "value":"n°5",
+      "normalized":"5"
     },
     "volume":{
-      "value":"v12"
+      "value":"v12",
+      "normalized": "12"
     },
     "page":{
-      "value":"page 1589"
+      "value":"page 1589",
+      "normalized": "1589"
     },
     "path":"/applis/istex/li/corpus-resources-conditor/notice-hal.xml",
     "source":"WOS"
-  },
-  {
-    "titre": {
-      "value" : "A la pêche je ne veux - plus aller moman ?"
-    },
-    "auteur": {
-      "value" : "Molinaro Eduardo"
-    } ,
-    "auteur_init":{
-      "value": "MolinaroE"
-    },
-    "doi":{
-      "value": "10.1093/bioinformatics/btu019ut=WOS:000336095100034"
-    },
-    "issn":{
-      "value":"1367-4803"
-    },
-    "numero":{
-      "value":"n°5"
-    },
-    "volume":{
-      "value":"v12"
-    },
-    "page":{
-      "value":"page 1589"
-    },
-    "path":"/applis/istex/li/corpus-resources-conditor/notice-hal.xml",
-    "source":"HAL"
   }
 ]
