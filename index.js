@@ -23,7 +23,7 @@ const business = {};
 function insereNotice(jsonLine){
 
 	
-	let options = {index : 'notices',type : 'notice',refresh:true};
+	let options = {index : esConf.index,type : esConf.type,refresh:true};
 
 	console.log(esConf);
 	
@@ -98,7 +98,7 @@ function aggregeNotice(jsonLine,data){
 	let source = data.hits.hits[0]._source;
 	let id_es=data.hits.hits[0]._id;
 	
-	let options = {index:'notices',type:'notice',id:id_es,refresh:true};
+	let options = {index:esConf.index,type:esConf.type,id:id_es,refresh:true};
 	
 	let sourceData = source.source;
 	
@@ -190,7 +190,7 @@ function existNotice(jsonLine){
 		jsonLine.conditor_ident=1;
 		console.log('test sur titre+doi');
 		return esClient.search({
-			index: 'notices',
+			index: esConf.index,
 			body: {
 				'query': {
 					'bool': {
@@ -226,7 +226,7 @@ function existNotice(jsonLine){
 		jsonLine.conditor_ident=2;
 		console.log('test sur titre+volume+numero+issn');
 		return esClient.search({
-			index: 'notices',
+			index: esConf.index,
 			body: {
 				'query' :{
 					'bool':{
@@ -265,7 +265,7 @@ function existNotice(jsonLine){
 		jsonLine.conditor_ident=3;
 		console.log('test sur doi');
 		return esClient.search({
-			index: 'notices',
+			index: esConf.index,
 			body: {
 				'query': {
 					'bool': {
@@ -298,7 +298,7 @@ function existNotice(jsonLine){
 		jsonLine.conditor_ident=4;
 		console.log('test sur titre+auteur+issn');
 		return esClient.search({
-			index: 'notices',
+			index: esConf.index,
 			body: {
 				'query': {
 					'bool': {
@@ -336,7 +336,7 @@ function existNotice(jsonLine){
 		jsonLine.conditor_ident=5;
 		console.log('test sur titre+auteur_init+issn');
 		return esClient.search({
-			index: 'notices',
+			index: esConf.index,
 			body: {
 				'query': {
 					'bool': {
@@ -374,7 +374,7 @@ function existNotice(jsonLine){
 		jsonLine.conditor_ident=6;
 		console.log('test sur issn+volume+numero+page');
 		return esClient.search({
-			index: 'notices',
+			index: esConf.index,
 			body: {
 				'query': {
 					'bool': {
@@ -530,9 +530,9 @@ function createIndex(conditorSession,options,indexCallback){
         }
 
         createAlias({
-          index: 'notices',
+          index: esConf.index,
 					name : 'integration',
-					body: {'actions':{'add':{'index':'notices','alias':'integration'}}}
+					body: {'actions':{'add':{'index':esConf.index,'alias':'integration'}}}
         },options,function(err){
           indexCallback(err);
         });
@@ -553,7 +553,7 @@ business.beforeAnyJob = function(cbBefore){
     errLogs:[]
   };
 
-  let conditorSession = process.env.CONDITOR_SESSION || 'notices';
+  let conditorSession = process.env.CONDITOR_SESSION || esConf.index;
   createIndex(conditorSession,options,function(err){
   options.errLogs.push('callback createIndex, err='+err);
   return cbBefore(err,options);
