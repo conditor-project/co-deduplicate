@@ -20,6 +20,7 @@
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "chai": "^3.5.0",
+    "debug": "^2.6.8",
     "elasticsearch": "^13.0.1",
     "fs": "0.0.1-security",
     "lodash": "^4.17.4",
