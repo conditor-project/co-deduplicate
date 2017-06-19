@@ -21,41 +21,54 @@ const esClient = new es.Client({
 });
 
 
+//fonction de vérification et suppression de l'index pour les tests
+let checkAndDeleteIndex = function(cbCheck) {
+  esClient.indices.exists({index: esConf.index}, function (errorExists, exists) {
+    if (errorExists) {
+      console.err(`Problème dans la vérification de l'index ${esConf.index}\n${errorExists.message}`);
+      process.exit(1);
+    }
+    if (!exists) return cbCheck();
+    esClient.indices.delete({index: esConf.index}, function (errorDelete, responseDelete) {
+      if (errorDelete) {
+        console.err(`Problème dans la suppression de l'index ${esConf.index}\n${errorDelete.message}`);
+        process.exit(1);
+      }
+      return cbCheck;
+    });
+  });
+};
+
+
 describe(pkg.name + '/index.js', function () {
 
   // Méthde d'initialisation s'exécutant en tout premier
   before(function (done) {
-    esClient.indices.exists({index: esConf.index}).then(function (data) {
-      if (data === true) {
-        console.log(`l'index ${esConf.index} existait déjà, on le supprime`);
-        esClient.indices.delete({index: esConf.index}).then(
-          function () {
-            done();
-          });
+
+    checkAndDeleteIndex(function (errCheck) {
+
+      if (errCheck) {
+        console.log("Erreur checkAndDelete() : " + err.errMessage);
+        process.exit(1);
       }
-    });
-    done();
-  });
 
-  // test sur la méthode beforeAnyJob
-  describe('#beforeAnyJob', function () {
-
-
-    it('before any job va créer l\'index et le mapping si ils n\'existent pas', function (done) {
-
-      business.beforeAnyJob(function (err) {
-
-        if (err) {
-          console.log(err.errCode);
-          console.log(err.errMessage);
-          //process.exit(1);
+      business.beforeAnyJob(function (errBeforeAnyJob) {
+        if (errBeforeAnyJob) {
+          console.log("Erreur beforeAnyJob(), code " + errBeforeAnyJob.errCode);
+          console.log(errBeforeAnyJob.errMessage);
+          process.exit(1);
         }
-        console.log('post-beforeAnyJob');
+        console.log("before OK");
         done();
-
       });
 
     });
+
+  });
+
+  // test sur l'insertion d'une 1ere notice
+  describe('#insert notice 1', function () {
+
 
     it('insertion ou intégration de la notice 1', function (done) {
       let docObject;
@@ -67,7 +80,6 @@ describe(pkg.name + '/index.js', function () {
         }
         console.log('post-doTheJob-doc1');
         done();
-
       });
     });
   });
