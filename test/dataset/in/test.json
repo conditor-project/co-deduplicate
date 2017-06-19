@@ -112,4 +112,42 @@
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
     "source":"TU3"
   }
+,
+  {
+    "_comment" : " === Notice 4, sensée matcher avec DOI seul (REGLE 3) ===",
+    "titre": {
+      "value" : "ProbMetab: an R package for Bayan probabilistic annotation of LC-MS-based metabolomics",
+      "normalized" : "probmetabanrpackageforbayanprobalisticannotationoflcmsbasedmetabolomics"
+    },
+    "auteur": {
+      "value" : "Gonzalez Speedy",
+      "normalized" : "guidettigonzalezsimone"
+    } ,
+    "auteur_init":{
+      "value": "Gonzalez S",
+      "normalized": "gonzalezs"
+    },
+    "doi":{
+      "value": "10.1093/bioinformatics/btu019ut=WOS:000336095100034",
+      "normalized": "101093bioinformaticsbtu019utwos000336095100034"
+    },
+    "issn":{
+      "value":"1367-480",
+      "normalized": "1376480"
+    },
+    "numero":{
+      "value":"n°5",
+      "normalized":"5"
+    },
+    "volume":{
+      "value":"v12",
+      "normalized": "12"
+    },
+    "page":{
+      "value":"page 1588",
+      "normalized": "1588"
+    },
+    "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
+    "source":"TU4"
+  }
 ]
