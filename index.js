@@ -4,7 +4,8 @@
 
 const es = require('elasticsearch'),
 	_ = require('lodash'),
-	fs = require('fs');
+	fs = require('fs'),
+  debug = require('debug')('co-undoubler');
 
 const esConf = require('./es.js');
 const esMapping = require('./mapping.json');
@@ -25,7 +26,7 @@ function insereNotice(jsonLine){
 	
 	let options = {index : esConf.index,type : esConf.type,refresh:true};
 
-	console.log(esConf);
+	debug(esConf);
 	
 	
 	options.body= {
@@ -156,25 +157,25 @@ function aggregeNotice(jsonLine,data){
 
 function dispatch(jsonLine,data) {
 
-  console.log('nb occurence : ' + data.hits.hits.length);
+  debug('nb occurence : ' + data.hits.hits.length);
 
   if (data.hits.hits.length===0 && jsonLine.conditor_ident===6){
     // si aucun hit alors on insère la donnée
 		jsonLine.conditor_ident=99;
-		console.log('pas de doublon.');
+		debug('pas de doublon.');
 		return insereNotice(jsonLine);
   }
   else if (data.hits.hits.length===0 && jsonLine.conditor_ident<=6){
-  	console.log('on continue à chercher');
+  	debug('on continue à chercher');
   	return existNotice(jsonLine);
 	}
   else if (data.hits.hits.length===1){
     //si un hit alors on aggrège la donnée
-	console.log('on a un doublon.');
+	debug('on a un doublon.');
 	return aggregeNotice(jsonLine,data);
   }
   else{
-    console.log('on a plus d\'un doublon');
+    debug('on a plus d\'un doublon');
   }
  
 }
@@ -188,7 +189,7 @@ function existNotice(jsonLine){
 	if (jsonLine.conditor_ident===0) {
 		
 		jsonLine.conditor_ident=1;
-		console.log('test sur titre+doi');
+		debug('test sur titre+doi');
 		return esClient.search({
 			index: esConf.index,
 			body: {
@@ -218,13 +219,13 @@ function existNotice(jsonLine){
 			}
 			
 		}).then(dispatch.bind(null, jsonLine), function (error) {
-			console.log(error);
+			console.error(error);
 		});
 	}
 	else if (jsonLine.conditor_ident===1){
 		
 		jsonLine.conditor_ident=2;
-		console.log('test sur titre+volume+numero+issn');
+		debug('test sur titre+volume+numero+issn');
 		return esClient.search({
 			index: esConf.index,
 			body: {
@@ -257,13 +258,13 @@ function existNotice(jsonLine){
 				}
 			}
 		}).then(dispatch.bind(null, jsonLine), function (error) {
-			console.log(error);
+			console.error(error);
 		});
 	}
 	else if (jsonLine.conditor_ident===2){
 		
 		jsonLine.conditor_ident=3;
-		console.log('test sur doi');
+		debug('test sur doi');
 		return esClient.search({
 			index: esConf.index,
 			body: {
@@ -290,13 +291,13 @@ function existNotice(jsonLine){
 				}
 			}
 		}).then(dispatch.bind(null, jsonLine), function (error) {
-			console.log(error);
+			console.error(error);
 		});
 	}
 	else if (jsonLine.conditor_ident===3){
 		
 		jsonLine.conditor_ident=4;
-		console.log('test sur titre+auteur+issn');
+		debug('test sur titre+auteur+issn');
 		return esClient.search({
 			index: esConf.index,
 			body: {
@@ -328,13 +329,13 @@ function existNotice(jsonLine){
 			}
 	
 		}).then(dispatch.bind(null, jsonLine), function (error) {
-			console.log(error);
+			console.error(error);
 		});
 	}
 	else if (jsonLine.conditor_ident===4){
 		
 		jsonLine.conditor_ident=5;
-		console.log('test sur titre+auteur_init+issn');
+		debug('test sur titre+auteur_init+issn');
 		return esClient.search({
 			index: esConf.index,
 			body: {
@@ -366,13 +367,13 @@ function existNotice(jsonLine){
 			}
 		
 		}).then(dispatch.bind(null, jsonLine), function (error) {
-			console.log(error);
+			console.error(error);
 		});
 	}
 	else if (jsonLine.conditor_ident===5){
 		
 		jsonLine.conditor_ident=6;
-		console.log('test sur issn+volume+numero+page');
+		debug('test sur issn+volume+numero+page');
 		return esClient.search({
 			index: esConf.index,
 			body: {
@@ -406,7 +407,7 @@ function existNotice(jsonLine){
 			}
 		
 		}).then(dispatch.bind(null, jsonLine), function (error) {
-			console.log('Error :'+error);
+			debug('Error :'+error);
 		});
 	}
 }
@@ -420,9 +421,9 @@ business.doTheJob = function (jsonLine, cb) {
 
   return existNotice(jsonLine).then(function(result) {
 	
-  		//console.log(result);
+  		//debug(result);
 			jsonLine.id_elasticsearch=result._id;
-			console.log(jsonLine);
+			debug(jsonLine);
 			return cb();
   	
   	
@@ -519,7 +520,7 @@ function createIndex(conditorSession,options,indexCallback){
       reqParams.body = esMapping;
 
       esClient.indices.create(reqParams,function(err,response,status){
-        //console.log(JSON.stringify(reqParams));
+        //debug(JSON.stringify(reqParams));
         if (status !== 200){
           options.errLogs.push('... Erreur lors de la création de l\'index :\n' + err);
           error = {
