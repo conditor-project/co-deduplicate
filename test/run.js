@@ -116,7 +116,7 @@ describe(pkg.name + '/index.js', function () {
         });
       });
     });
-
+  
     it('insertion ou intégration de la notice 4', function (done) {
       let docObject;
       business.doTheJob(docObject = testData[3], function (err) {
@@ -132,10 +132,26 @@ describe(pkg.name + '/index.js', function () {
         });
       });
     });
-
+  
+  it('insertion ou intégration de la notice 5', function (done) {
+    let docObject;
+    business.doTheJob(docObject = testData[4], function (err) {
+      expect(err).to.be.undefined;
+      expect(docObject.conditor_ident).to.be.equal(4);
+      esClient.search({
+        index: esConf.index
+      }, function (esError, response) {
+        expect(esError).to.be.undefined;
+        expect(response.hits.total).to.be.equal(1);
+        expect(response.hits.hits[0]._source.source[4].name).to.be.equal("TU5");
+        done();
+      });
+    });
   });
+  
+});
 
-  // Méthde finale sensée faire du nettoyage après les tests
+// Méthde finale sensée faire du nettoyage après les tests
   after(function (done) {
     esClient.indices.delete({index: esConf.index}).then(
       function () {
