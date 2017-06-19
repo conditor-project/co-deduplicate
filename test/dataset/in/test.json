@@ -1,5 +1,6 @@
 [
   {
+    "_comment" : " === Notice initiale ===",
     "titre": {
       "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
       "normalized" : "probmetabanrpackageforbayesianprobalisticannotationoflcmsbasedmetabolomics"
@@ -32,7 +33,45 @@
       "value":"page 1589",
       "normalized": "1589"
     },
-    "path":"/applis/istex/li/corpus-resources-conditor/notice-hal.xml",
-    "source":"WOS"
+    "path":"/applis/istex/li/corpus-resources-conditor/notice-1.xml",
+    "source":"TU1"
+  }
+,
+  {
+    "_comment" : " === Notice initiale ===",
+    "titre": {
+      "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+      "normalized" : "probmetabanrpackageforbayesianprobalisticannotationoflcmsbasedmetabolomics"
+    },
+    "auteur": {
+      "value" : "Gonzalez Speedy",
+      "normalized" : "guidettigonzalezsimone"
+    } ,
+    "auteur_init":{
+      "value": "Gonzalez S",
+      "normalized": "gonzalezs"
+    },
+    "doi":{
+      "value": "10.1093/bioinformatics/btu019ut=WOS:000336095100034",
+      "normalized": "101093bioinformaticsbtu019utwos000336095100034"
+    },
+    "issn":{
+      "value":"1367-4804",
+      "normalized": "13764804"
+    },
+    "numero":{
+      "value":"n°6",
+      "normalized":"6"
+    },
+    "volume":{
+      "value":"v13",
+      "normalized": "13"
+    },
+    "page":{
+      "value":"page 1588",
+      "normalized": "1588"
+    },
+    "path":"/applis/istex/li/corpus-resources-conditor/notice-2.xml",
+    "source":"TU2"
   }
 ]

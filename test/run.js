@@ -25,13 +25,13 @@ const esClient = new es.Client({
 let checkAndDeleteIndex = function(cbCheck) {
   esClient.indices.exists({index: esConf.index}, function (errorExists, exists) {
     if (errorExists) {
-      console.err(`Problème dans la vérification de l'index ${esConf.index}\n${errorExists.message}`);
+      console.error(`Problème dans la vérification de l'index ${esConf.index}\n${errorExists.message}`);
       process.exit(1);
     }
     if (!exists) return cbCheck();
     esClient.indices.delete({index: esConf.index}, function (errorDelete, responseDelete) {
       if (errorDelete) {
-        console.err(`Problème dans la suppression de l'index ${esConf.index}\n${errorDelete.message}`);
+        console.error(`Problème dans la suppression de l'index ${esConf.index}\n${errorDelete.message}`);
         process.exit(1);
       }
       return cbCheck;
@@ -74,14 +74,40 @@ describe(pkg.name + '/index.js', function () {
       let docObject;
       business.doTheJob(docObject = testData[0], function (err) {
         if (err) {
-          console.log(err.errCode);
-          console.log(err.errMessage);
-          //process.exit(1);
+          console.error(err.errCode);
+          console.error(err.errMessage);
+          expect(err).to.be(undefined);
         }
-        console.log('post-doTheJob-doc1');
-        done();
+        esClient.search({
+          index: esConf.index
+        }, function (esError, response) {
+          expect(esError).to.be.undefined;
+          expect(response.hits.total).to.be.equal(1);
+          done();
+        });
       });
     });
+
+    it('insertion ou intégration de la notice 2', function (done) {
+      let docObject;
+      business.doTheJob(docObject = testData[1], function (err) {
+        if (err) {
+          console.error(err.errCode);
+          console.error(err.errMessage);
+          expect(err).to.be(undefined);
+        }
+        esClient.search({
+          index: esConf.index
+        }, function (esError, response) {
+          expect(esError).to.be.undefined;
+          expect(response.hits.total).to.be.equal(1);
+          expect(response.hits.hits[0]._source.source[1].name).to.be.equal("TU2");
+          done();
+        });
+      });
+    });
+
+
   });
 
   // Méthde finale sensée faire du nettoyage après les tests
