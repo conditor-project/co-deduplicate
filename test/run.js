@@ -73,11 +73,8 @@ describe(pkg.name + '/index.js', function () {
     it('insertion ou intégration de la notice 1', function (done) {
       let docObject;
       business.doTheJob(docObject = testData[0], function (err) {
-        if (err) {
-          console.error(err.errCode);
-          console.error(err.errMessage);
-          expect(err).to.be(undefined);
-        }
+        expect(err).to.be.undefined;
+        expect(docObject.conditor_ident).to.be.equal(99);
         esClient.search({
           index: esConf.index
         }, function (esError, response) {
@@ -91,17 +88,30 @@ describe(pkg.name + '/index.js', function () {
     it('insertion ou intégration de la notice 2', function (done) {
       let docObject;
       business.doTheJob(docObject = testData[1], function (err) {
-        if (err) {
-          console.error(err.errCode);
-          console.error(err.errMessage);
-          expect(err).to.be(undefined);
-        }
+        expect(err).to.be.undefined;
+        expect(docObject.conditor_ident).to.be.equal(1);
         esClient.search({
           index: esConf.index
         }, function (esError, response) {
           expect(esError).to.be.undefined;
           expect(response.hits.total).to.be.equal(1);
           expect(response.hits.hits[0]._source.source[1].name).to.be.equal("TU2");
+          done();
+        });
+      });
+    });
+
+    it('insertion ou intégration de la notice 3', function (done) {
+      let docObject;
+      business.doTheJob(docObject = testData[2], function (err) {
+        expect(err).to.be.undefined;
+        expect(docObject.conditor_ident).to.be.equal(2);
+        esClient.search({
+          index: esConf.index
+        }, function (esError, response) {
+          expect(esError).to.be.undefined;
+          expect(response.hits.total).to.be.equal(1);
+          expect(response.hits.hits[0]._source.source[2].name).to.be.equal("TU3");
           done();
         });
       });
