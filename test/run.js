@@ -22,7 +22,7 @@ const esClient = new es.Client({
 
 
 //fonction de vérification et suppression de l'index pour les tests
-let checkAndDeleteIndex = function(cbCheck) {
+let checkAndDeleteIndex = function (cbCheck) {
   esClient.indices.exists({index: esConf.index}, function (errorExists, exists) {
     if (errorExists) {
       console.error(`Problème dans la vérification de l'index ${esConf.index}\n${errorExists.message}`);
@@ -116,7 +116,7 @@ describe(pkg.name + '/index.js', function () {
         });
       });
     });
-  
+
     it('insertion ou intégration de la notice 4', function (done) {
       let docObject;
       business.doTheJob(docObject = testData[3], function (err) {
@@ -132,24 +132,41 @@ describe(pkg.name + '/index.js', function () {
         });
       });
     });
-  
-  it('insertion ou intégration de la notice 5', function (done) {
-    let docObject;
-    business.doTheJob(docObject = testData[4], function (err) {
-      expect(err).to.be.undefined;
-      expect(docObject.conditor_ident).to.be.equal(4);
-      esClient.search({
-        index: esConf.index
-      }, function (esError, response) {
-        expect(esError).to.be.undefined;
-        expect(response.hits.total).to.be.equal(1);
-        expect(response.hits.hits[0]._source.source[4].name).to.be.equal("TU5");
-        done();
+
+    it('insertion ou intégration de la notice 5', function (done) {
+      let docObject;
+      business.doTheJob(docObject = testData[4], function (err) {
+        expect(err).to.be.undefined;
+        expect(docObject.conditor_ident).to.be.equal(4);
+        esClient.search({
+          index: esConf.index
+        }, function (esError, response) {
+          expect(esError).to.be.undefined;
+          expect(response.hits.total).to.be.equal(1);
+          expect(response.hits.hits[0]._source.source[4].name).to.be.equal("TU5");
+          done();
+        });
       });
     });
+
+
+    it('insertion ou intégration de la notice 6', function (done) {
+      let docObject;
+      business.doTheJob(docObject = testData[5], function (err) {
+        expect(err).to.be.undefined;
+        expect(docObject.conditor_ident).to.be.equal(5);
+        esClient.search({
+          index: esConf.index
+        }, function (esError, response) {
+          expect(esError).to.be.undefined;
+          expect(response.hits.total).to.be.equal(1);
+          expect(response.hits.hits[0]._source.source[5].name).to.be.equal("TU6");
+          done();
+        });
+      });
+    });
+
   });
-  
-});
 
 // Méthde finale sensée faire du nettoyage après les tests
   after(function (done) {
