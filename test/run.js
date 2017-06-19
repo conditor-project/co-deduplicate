@@ -69,9 +69,10 @@ describe(pkg.name + '/index.js', function () {
   // test sur l'insertion d'une 1ere notice
   describe('#insert notice 1', function () {
 
+    let docObject;
 
-    it('insertion ou intégration de la notice 1', function (done) {
-      let docObject;
+    it('La notice 1 devrait être intégrée et seule dans l\'index ES - regle 99', function (done) {
+      docObject = testData[0];
       business.doTheJob(docObject = testData[0], function (err) {
         expect(err).to.be.undefined;
         expect(docObject.conditor_ident).to.be.equal(99);
@@ -85,9 +86,9 @@ describe(pkg.name + '/index.js', function () {
       });
     });
 
-    it('insertion ou intégration de la notice 2', function (done) {
-      let docObject;
-      business.doTheJob(docObject = testData[1], function (err) {
+    it('La notice 2 devrait matcher sur titre+DOI - regle 1', function (done) {
+      docObject = testData[1];
+      business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
         expect(docObject.conditor_ident).to.be.equal(1);
         esClient.search({
@@ -101,9 +102,9 @@ describe(pkg.name + '/index.js', function () {
       });
     });
 
-    it('insertion ou intégration de la notice 3', function (done) {
-      let docObject;
-      business.doTheJob(docObject = testData[2], function (err) {
+    it('La notice 3 devrait matcher sur titre+volume+numero+issn - regle 2', function (done) {
+      docObject = testData[2];
+      business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
         expect(docObject.conditor_ident).to.be.equal(2);
         esClient.search({
@@ -117,9 +118,9 @@ describe(pkg.name + '/index.js', function () {
       });
     });
 
-    it('insertion ou intégration de la notice 4', function (done) {
-      let docObject;
-      business.doTheJob(docObject = testData[3], function (err) {
+    it('La notice 4 devrait matcher sur DOI seul - regle 3', function (done) {
+      docObject = testData[3];
+      business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
         expect(docObject.conditor_ident).to.be.equal(3);
         esClient.search({
@@ -133,9 +134,9 @@ describe(pkg.name + '/index.js', function () {
       });
     });
 
-    it('insertion ou intégration de la notice 5', function (done) {
-      let docObject;
-      business.doTheJob(docObject = testData[4], function (err) {
+    it('La notice 5 devrait matcher sur titre+auteur+issn - regle 4', function (done) {
+      docObject = testData[4];
+      business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
         expect(docObject.conditor_ident).to.be.equal(4);
         esClient.search({
@@ -150,9 +151,9 @@ describe(pkg.name + '/index.js', function () {
     });
 
 
-    it('insertion ou intégration de la notice 6', function (done) {
-      let docObject;
-      business.doTheJob(docObject = testData[5], function (err) {
+    it('La notice 6 devrait match sur titre+auteur_init+issn - regle 5', function (done) {
+      docObject = testData[5];
+      business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
         expect(docObject.conditor_ident).to.be.equal(5);
         esClient.search({
@@ -161,6 +162,22 @@ describe(pkg.name + '/index.js', function () {
           expect(esError).to.be.undefined;
           expect(response.hits.total).to.be.equal(1);
           expect(response.hits.hits[0]._source.source[5].name).to.be.equal("TU6");
+          done();
+        });
+      });
+    });
+
+    it('La notice 7 devrait être reconnue comme un vrai doublon', function (done) {
+      docObject = testData[6];
+      business.doTheJob(docObject, function (err) {
+        expect(err).to.be.undefined;
+        expect(docObject.conditor_ident).to.be.equal(99);
+        esClient.search({
+          index: esConf.index
+        }, function (esError, response) {
+          expect(esError).to.be.undefined;
+          expect(response.hits.total).to.be.equal(2);
+          expect(response.hits.hits[1]._source.source[0].name).to.be.equal("TU7");
           done();
         });
       });

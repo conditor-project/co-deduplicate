@@ -226,4 +226,42 @@
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
     "source":"TU6"
   }
+,
+  {
+    "_comment" : " === Notice 7, sensée ne pas matcher => PAS UN DOUBLON ===",
+    "titre": {
+      "value" : "ProbMetab: an R package for mayan probabilistic annotation of LC-MS-based metabolomics",
+      "normalized" : "probmetabanrpackageformayanprobalisticannotationoflcmsbasedmetabolomics"
+    },
+    "auteur": {
+      "value" : "Gonzales Simone",
+      "normalized" : "gonzalessimone"
+    } ,
+    "auteur_init":{
+      "value": "Gonzalez S",
+      "normalized": "gonzalezs"
+    },
+    "doi":{
+      "value": "10.1093/bioinformatics/btu019ut=WOS:0003360951000342",
+      "normalized": "101093bioinformaticsbtu019utwos0003360951000342"
+    },
+    "issn":{
+      "value":"1367-4804",
+      "normalized": "13764804"
+    },
+    "numero":{
+      "value":"n°6",
+      "normalized":"6"
+    },
+    "volume":{
+      "value":"v12",
+      "normalized": "12"
+    },
+    "page":{
+      "value":"page 1588",
+      "normalized": "1588"
+    },
+    "path":"/applis/istex/li/corpus-resources-conditor/notice-7.xml",
+    "source":"TU7"
+  }
 ]
