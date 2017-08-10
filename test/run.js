@@ -42,6 +42,8 @@ let checkAndDeleteIndex = function (cbCheck) {
 
 describe(pkg.name + '/index.js', function () {
 
+  this.timeout(10000);
+
   // Méthde d'initialisation s'exécutant en tout premier
   before(function (done) {
 
