@@ -76,13 +76,15 @@ describe(pkg.name + '/index.js', function () {
       business.doTheJob(docObject = testData[0], function (err) {
         expect(err).to.be.undefined;
         expect(docObject.conditor_ident).to.be.equal(99);
-        esClient.search({
-          index: esConf.index
-        }, function (esError, response) {
-          expect(esError).to.be.undefined;
-          expect(response.hits.total).to.be.equal(1);
-          done();
-        });
+        setTimeout(function() {
+          esClient.search({
+            index: esConf.index
+          }, function (esError, response) {
+            expect(esError).to.be.undefined;
+            expect(response.hits.total).to.be.equal(1);
+            done();
+          });
+        }, 300);
       });
     });
 
@@ -91,14 +93,16 @@ describe(pkg.name + '/index.js', function () {
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
         expect(docObject.conditor_ident).to.be.equal(1);
-        esClient.search({
-          index: esConf.index
-        }, function (esError, response) {
-          expect(esError).to.be.undefined;
-          expect(response.hits.total).to.be.equal(1);
-          expect(response.hits.hits[0]._source.source[1].name).to.be.equal("TU2");
-          done();
-        });
+        setTimeout(function() {
+          esClient.search({
+            index: esConf.index
+          }, function (esError, response) {
+            expect(esError).to.be.undefined;
+            expect(response.hits.total).to.be.equal(1);
+            expect(response.hits.hits[0]._source.source[1].name).to.be.equal("TU2");
+            done();
+          });
+        }, 300);
       });
     });
 
@@ -107,14 +111,16 @@ describe(pkg.name + '/index.js', function () {
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
         expect(docObject.conditor_ident).to.be.equal(2);
-        esClient.search({
-          index: esConf.index
-        }, function (esError, response) {
-          expect(esError).to.be.undefined;
-          expect(response.hits.total).to.be.equal(1);
-          expect(response.hits.hits[0]._source.source[2].name).to.be.equal("TU3");
-          done();
-        });
+        setTimeout(function() {
+          esClient.search({
+            index: esConf.index
+          }, function (esError, response) {
+            expect(esError).to.be.undefined;
+            expect(response.hits.total).to.be.equal(1);
+            expect(response.hits.hits[0]._source.source[2].name).to.be.equal("TU3");
+            done();
+          });
+        }, 300);
       });
     });
 
@@ -123,14 +129,16 @@ describe(pkg.name + '/index.js', function () {
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
         expect(docObject.conditor_ident).to.be.equal(3);
-        esClient.search({
-          index: esConf.index
-        }, function (esError, response) {
-          expect(esError).to.be.undefined;
-          expect(response.hits.total).to.be.equal(1);
-          expect(response.hits.hits[0]._source.source[3].name).to.be.equal("TU4");
-          done();
-        });
+        setTimeout(function() {
+          esClient.search({
+            index: esConf.index
+          }, function (esError, response) {
+            expect(esError).to.be.undefined;
+            expect(response.hits.total).to.be.equal(1);
+            expect(response.hits.hits[0]._source.source[3].name).to.be.equal("TU4");
+            done();
+          });
+        }, 300);
       });
     });
 
@@ -139,14 +147,16 @@ describe(pkg.name + '/index.js', function () {
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
         expect(docObject.conditor_ident).to.be.equal(4);
-        esClient.search({
-          index: esConf.index
-        }, function (esError, response) {
-          expect(esError).to.be.undefined;
-          expect(response.hits.total).to.be.equal(1);
-          expect(response.hits.hits[0]._source.source[4].name).to.be.equal("TU5");
-          done();
-        });
+        setTimeout(function() {
+          esClient.search({
+            index: esConf.index
+          }, function (esError, response) {
+            expect(esError).to.be.undefined;
+            expect(response.hits.total).to.be.equal(1);
+            expect(response.hits.hits[0]._source.source[4].name).to.be.equal("TU5");
+            done();
+          });
+        }, 300);
       });
     });
 
@@ -156,14 +166,16 @@ describe(pkg.name + '/index.js', function () {
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
         expect(docObject.conditor_ident).to.be.equal(5);
-        esClient.search({
-          index: esConf.index
-        }, function (esError, response) {
-          expect(esError).to.be.undefined;
-          expect(response.hits.total).to.be.equal(1);
-          expect(response.hits.hits[0]._source.source[5].name).to.be.equal("TU6");
-          done();
-        });
+        setTimeout(function() {
+          esClient.search({
+            index: esConf.index
+          }, function (esError, response) {
+            expect(esError).to.be.undefined;
+            expect(response.hits.total).to.be.equal(1);
+            expect(response.hits.hits[0]._source.source[5].name).to.be.equal("TU6");
+            done();
+          });
+        }, 300);
       });
     });
 
@@ -172,14 +184,16 @@ describe(pkg.name + '/index.js', function () {
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
         expect(docObject.conditor_ident).to.be.equal(99);
-        esClient.search({
-          index: esConf.index
-        }, function (esError, response) {
-          expect(esError).to.be.undefined;
-          expect(response.hits.total).to.be.equal(2);
-          expect(response.hits.hits[1]._source.source[0].name).to.be.equal("TU7");
-          done();
-        });
+        setTimeout(function() {
+          esClient.search({
+            index: esConf.index
+          }, function (esError, response) {
+            expect(esError).to.be.undefined;
+            expect(response.hits.total).to.be.equal(2);
+            expect(response.hits.hits[1]._source.source[0].name).to.be.equal("TU7");
+            done();
+          });
+        }, 300);
       });
     });
 
