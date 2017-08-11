@@ -1,5 +1,5 @@
 {
-  "name": "co-undoubler",
+  "name": "co-deduplicate",
   "version": "1.0.0",
   "description": "Module de dédoublonnage",
   "main": "index.js",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/conditor-project/co-undoubler.git"
+    "url": "https://github.com/conditor-project/co-deduplicate.git"
   },
   "keywords": [
     "conditor"
