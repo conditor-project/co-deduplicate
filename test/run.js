@@ -5,6 +5,7 @@ const
   pkg = require('../package.json'),
   business = require('../index.js'),
   testData = require('./dataset/in/test.json'),
+  badData = require('./dataset/in/badDocs.json'),
   chai = require('chai'),
   expect = chai.expect,
   es = require('elasticsearch');
@@ -126,6 +127,7 @@ describe(pkg.name + '/index.js', function () {
       });
     });
 
+
     it('La notice 4 devrait matcher sur DOI seul - regle 3', function (done) {
       docObject = testData[3];
       business.doTheJob(docObject, function (err) {
@@ -161,8 +163,6 @@ describe(pkg.name + '/index.js', function () {
         }, 300);
       });
     });
-
-
     it('La notice 6 devrait match sur titre+auteur_init+issn - regle 5', function (done) {
       docObject = testData[5];
       business.doTheJob(docObject, function (err) {
@@ -180,6 +180,7 @@ describe(pkg.name + '/index.js', function () {
         }, 300);
       });
     });
+
 
     it('La notice 7 devrait être reconnue comme un vrai doublon', function (done) {
       docObject = testData[6];
@@ -199,12 +200,32 @@ describe(pkg.name + '/index.js', function () {
       });
     });
 
+
+    it('Les notice 3-1 et 3-2 ne devraient pas matcher entre elles - regle 3bis', function (done) {
+      docObject = badData.R3.emptyDOI1;
+      business.doTheJob(docObject, function (err) {
+        expect(err).to.be.undefined;
+        expect(docObject.conditor_ident).to.be.equal(99);
+        setTimeout(function() {
+          let doc2 = badData.R3.emptyDOI2;
+          business.doTheJob(doc2, function (err2) {
+            expect(err2).to.be.undefined;
+            expect(doc2.conditor_ident).to.be.equal(99);
+            setTimeout(function() {
+              done();
+            },300);
+          });
+        },300);
+      });
+    });
+
   });
 
 // Méthde finale sensée faire du nettoyage après les tests
   after(function (done) {
     esClient.indices.delete({index: esConf.index}).then(
       function () {
+        console.log("nettoyage index de test OK");
         done();
       });
     done();

@@ -1,0 +1,47 @@
+{
+  "R3": {
+    "emptyDOI1": {
+      "_comment" : " === Notice de test avec DOI vide (pour REGLE 3) ===",
+      "titre": {
+        "value" : "On est tombés par hasard sur ce cas",
+        "normalized" : "onesttombesparhasardsurcecas"
+      },
+      "auteur": {
+        "value" : "Ate Tom",
+        "normalized" : "atetom"
+      } ,
+      "auteur_init":{
+        "value": "T Ate",
+        "normalized": "tate"
+      },
+      "doi":{
+        "value": "",
+        "normalized": ""
+      },
+      "path":"/on/s/en/fiche.xml",
+      "source":"TU3-1"
+    },
+    "emptyDOI2": {
+      "_comment" : " === Notice de test avec DOI vide (pour REGLE 3) ===",
+      "titre": {
+        "value" : "Il faut pas que ça matche",
+        "normalized" : "ilfautpasquecamatche"
+      },
+      "auteur": {
+        "value" : "Ate Pat",
+        "normalized" : "atepat"
+      } ,
+      "auteur_init":{
+        "value": "P Ate",
+        "normalized": "pate"
+      },
+      "doi":{
+        "value": "",
+        "normalized": ""
+      },
+      "path":"/on/s/en/fiche-encore-plus.xml",
+      "source":"TU3-2"
+    }
+
+  }
+}

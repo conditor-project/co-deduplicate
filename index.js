@@ -19,6 +19,7 @@ const esClient = new es.Client({
 });
 
 const business = {};
+const nbRegles = 6;
 
 
 function insereNotice(jsonLine){
@@ -27,70 +28,53 @@ function insereNotice(jsonLine){
 	let options = {index : esConf.index,type : esConf.type,refresh:true};
 
 	debug(esConf);
-	
-	
+
 	options.body= {
-		'titre':{'value':jsonLine.titre.value ,
-							'normalized':jsonLine.titre.normalized},
-		'auteur':{'value':jsonLine.auteur.value,
-							'normalized':jsonLine.auteur.normalized},
-		'auteur_init':{'value':jsonLine.auteur_init.value,
-							'normalized':jsonLine.auteur_init.normalized},
-		'doi':{'value':jsonLine.doi.value,
-						'normalized':jsonLine.doi.normalized},
-		'issn':{'value':jsonLine.issn.value,
-						'normalized':jsonLine.issn.normalized},
-		'numero':{'value':jsonLine.numero.value,
-							'normalized':jsonLine.numero.normalized},
-		'volume':{'value':jsonLine.volume.value,
-							'normalized':jsonLine.volume.normalized},
-		'page':{'value':jsonLine.page.value,
-						'normalized':jsonLine.page.normalized},
-		'source':[{'name':jsonLine.source,
-			'path':jsonLine.path,
-			'date_integration':new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
-			'champs': {
-				'titre': {
-					'value': jsonLine.titre.value,
-					'normalized': jsonLine.titre.normalized
-				},
-				'auteur': {
-					'value': jsonLine.auteur.value,
-					'normalized': jsonLine.auteur.normalized
-				},
-				'auteur_init': {
-					'value': jsonLine.auteur_init.value,
-					'normalized': jsonLine.auteur_init.normalized
-				},
-				'doi': {
-					'value': jsonLine.doi.value,
-					'normalized': jsonLine.doi.normalized
-				},
-				'issn': {
-					'value': jsonLine.issn.value,
-					'normalized': jsonLine.issn.normalized
-				},
-				'numero': {
-					'value': jsonLine.numero.value,
-					'normalized': jsonLine.numero.normalized
-				},
-				'volume': {
-					'value': jsonLine.volume.value,
-					'normalized': jsonLine.volume.normalized
-				},
-				'page': {
-					'value': jsonLine.page.value,
-					'normalized': jsonLine.page.normalized
-				},
-			}
-		}],
-		'date_creation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,'')
+		'date_creation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
+    'source': []
 	};
-	
-	
-	//console.log(doc);
-	
-	return esClient.index(options);
+  let source = {
+    'name':jsonLine.source,
+    'path':jsonLine.path,
+    'date_integration':new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
+    'champs': {}
+  };
+
+  if (jsonLine.titre && jsonLine.titre.value && jsonLine.titre.normalized && jsonLine.titre.normalized!=='') {
+    options.body.titre = {'value':jsonLine.titre.value,'normalized':jsonLine.titre.normalized};
+    source.champs.titre = {'value':jsonLine.titre.value,'normalized':jsonLine.titre.normalized};
+  }
+  if (jsonLine.auteur && jsonLine.auteur.value && jsonLine.auteur.normalized && jsonLine.auteur.normalized!=='') {
+    options.body.auteur = {'value':jsonLine.auteur.value,'normalized':jsonLine.auteur.normalized};
+    source.champs.auteur = {'value':jsonLine.auteur.value,'normalized':jsonLine.auteur.normalized};
+  }
+  if (jsonLine.auteur_init && jsonLine.auteur_init.value && jsonLine.auteur_init.normalized && jsonLine.auteur_init.normalized!=='') {
+    options.body.auteur_init = {'value':jsonLine.auteur_init.value,'normalized':jsonLine.auteur_init.normalized};
+    source.champs.auteur_init = {'value':jsonLine.auteur_init.value,'normalized':jsonLine.auteur_init.normalized};
+  }
+  if (jsonLine.doi && jsonLine.doi.value && jsonLine.doi.normalized && jsonLine.doi.normalized!=='') {
+    options.body.doi = {'value':jsonLine.doi.value,'normalized':jsonLine.doi.normalized};
+    source.champs.doi = {'value':jsonLine.doi.value,'normalized':jsonLine.doi.normalized};
+  }
+  if (jsonLine.issn && jsonLine.issn.value && jsonLine.issn.normalized && jsonLine.issn.normalized!=='') {
+    options.body.issn = {'value':jsonLine.issn.value,'normalized':jsonLine.issn.normalized};
+    source.champs.issn = {'value':jsonLine.issn.value,'normalized':jsonLine.issn.normalized};
+  }
+  if (jsonLine.numero && jsonLine.numero.value && jsonLine.numero.normalized && jsonLine.numero.normalized!=='') {
+    options.body.numero = {'value':jsonLine.numero.value,'normalized':jsonLine.numero.normalized};
+    source.champs.numero = {'value':jsonLine.numero.value,'normalized':jsonLine.numero.normalized};
+  }
+  if (jsonLine.volume && jsonLine.volume.value && jsonLine.volume.normalized && jsonLine.volume.normalized!=='') {
+    options.body.volume = {'value':jsonLine.volume.value,'normalized':jsonLine.volume.normalized};
+    source.champs.volume = {'value':jsonLine.volume.value,'normalized':jsonLine.volume.normalized};
+  }
+  if (jsonLine.page && jsonLine.page.value && jsonLine.page.normalized && jsonLine.page.normalized!=='') {
+    options.body.page = {'value':jsonLine.page.value,'normalized':jsonLine.page.normalized};
+    source.champs.page = {'value':jsonLine.page.value,'normalized':jsonLine.page.normalized};
+  }
+  options.body.source.push(source);
+
+  return esClient.index(options);
 
 }
 
@@ -157,25 +141,29 @@ function aggregeNotice(jsonLine,data){
 
 function dispatch(jsonLine,data) {
 
-  debug('nb occurence : ' + data.hits.hits.length);
-
-  if (data.hits.hits.length===0 && jsonLine.conditor_ident===6){
+  if (!data && jsonLine.conditor_ident<nbRegles) {
+    debug('on continue à chercher (le test précédent était inutile ou en erreur)');
+    return existNotice(jsonLine);
+  }
+  else if (jsonLine.conditor_ident===nbRegles && (!data || data.hits.hits.length===0)){
     // si aucun hit alors on insère la donnée
 		jsonLine.conditor_ident=99;
 		debug('pas de doublon.');
 		return insereNotice(jsonLine);
   }
-  else if (data.hits.hits.length===0 && jsonLine.conditor_ident<=6){
+  else if (data.hits.hits.length===0 && jsonLine.conditor_ident<=nbRegles){
   	debug('on continue à chercher');
   	return existNotice(jsonLine);
 	}
   else if (data.hits.hits.length===1){
     //si un hit alors on aggrège la donnée
 	debug('on a un doublon.');
-	return aggregeNotice(jsonLine,data);
+  debug('nb occurence : ' + data.hits.hits.length);
+  return aggregeNotice(jsonLine,data);
   }
   else{
     debug('on a plus d\'un doublon');
+    debug('nb occurence : ' + data.hits.hits.length);
   }
  
 }
@@ -190,6 +178,10 @@ function existNotice(jsonLine){
 		
 		jsonLine.conditor_ident=1;
 		debug('test sur titre+doi');
+
+    const fieldsOK = jsonLine.titre && jsonLine.titre.normalized && jsonLine.titre.normalized !=='';
+    if (!fieldsOK) return dispatch(jsonLine);
+
 		return esClient.search({
 			index: esConf.index,
 			body: {
@@ -226,6 +218,13 @@ function existNotice(jsonLine){
 		
 		jsonLine.conditor_ident=2;
 		debug('test sur titre+volume+numero+issn');
+    
+    const fieldsOK = jsonLine.titre && jsonLine.titre.normalized && jsonLine.titre.normalized !==''
+      && jsonLine.volume && jsonLine.volume.normalized && jsonLine.volume.normalized !==''
+      && jsonLine.numero && jsonLine.numero.normalized && jsonLine.numero.normalized !==''
+      && jsonLine.issn && jsonLine.issn.normalized && jsonLine.issn.normalized !=='';
+    if (!fieldsOK) return dispatch(jsonLine);
+
 		return esClient.search({
 			index: esConf.index,
 			body: {
@@ -265,6 +264,10 @@ function existNotice(jsonLine){
 		
 		jsonLine.conditor_ident=3;
 		debug('test sur doi');
+
+    const fieldsOK = jsonLine.doi && jsonLine.doi.normalized && jsonLine.doi.normalized !=='';
+    if (!fieldsOK) return dispatch(jsonLine);
+
 		return esClient.search({
 			index: esConf.index,
 			body: {
@@ -298,6 +301,12 @@ function existNotice(jsonLine){
 		
 		jsonLine.conditor_ident=4;
 		debug('test sur titre+auteur+issn');
+
+    const fieldsOK = jsonLine.titre && jsonLine.titre.normalized && jsonLine.titre.normalized !==''
+      && jsonLine.auteur && jsonLine.auteur.normalized && jsonLine.auteur.normalized !==''
+      && jsonLine.issn && jsonLine.issn.normalized && jsonLine.issn.normalized !=='';
+    if (!fieldsOK) return dispatch(jsonLine);
+
 		return esClient.search({
 			index: esConf.index,
 			body: {
@@ -336,6 +345,12 @@ function existNotice(jsonLine){
 		
 		jsonLine.conditor_ident=5;
 		debug('test sur titre+auteur_init+issn');
+
+    const fieldsOK = jsonLine.titre && jsonLine.titre.normalized && jsonLine.titre.normalized !==''
+      && jsonLine.auteur_init && jsonLine.auteur_init.normalized && jsonLine.auteur_init.normalized !==''
+      && jsonLine.issn && jsonLine.issn.normalized && jsonLine.issn.normalized !=='';
+    if (!fieldsOK) return dispatch(jsonLine);
+
 		return esClient.search({
 			index: esConf.index,
 			body: {
@@ -374,7 +389,14 @@ function existNotice(jsonLine){
 		
 		jsonLine.conditor_ident=6;
 		debug('test sur issn+volume+numero+page');
-		return esClient.search({
+		
+    const fieldsOK = jsonLine.page && jsonLine.page.normalized && jsonLine.page.normalized !==''
+      && jsonLine.volume && jsonLine.volume.normalized && jsonLine.volume.normalized !==''
+      && jsonLine.numero && jsonLine.numero.normalized && jsonLine.numero.normalized !==''
+      && jsonLine.issn && jsonLine.issn.normalized && jsonLine.issn.normalized !=='';
+    if (!fieldsOK) return dispatch(jsonLine);
+
+    return esClient.search({
 			index: esConf.index,
 			body: {
 				'query': {
