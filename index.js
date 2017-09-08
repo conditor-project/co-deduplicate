@@ -3,24 +3,23 @@
 'use strict';
 
 const es = require('elasticsearch'),
-	_ = require('lodash'),
-	fs = require('fs'),
-  debug = require('debug')('co-undoubler');
+    _ = require('lodash'),
+    fs = require('fs'),
+    debug = require('debug')('co-deduplicate');
 
 const esConf = require('./es.js');
 const esMapping = require('./mapping.json');
 
 const esClient = new es.Client({
-	host: esConf.host,
-	log: {
-		type: 'file',
-		level: 'trace'
-	}
+    host: esConf.host,
+    log: {
+        type: 'file',
+        level: 'trace'
+    }
 });
 
 const business = {};
 const nbRegles = 6;
-
 
 function insereNotice(jsonLine){
 
@@ -78,65 +77,66 @@ function insereNotice(jsonLine){
 
 }
 
-function aggregeNotice(jsonLine,data){
+function aggregeNotice(jsonLine, data) {
 
-	let source = data.hits.hits[0]._source;
-	let id_es=data.hits.hits[0]._id;
-	
-	let options = {index:esConf.index,type:esConf.type,id:id_es,refresh:true};
-	
-	let sourceData = source.source;
-	
-	let future_source=[];
-	
-	_.each(sourceData,function(arraysource){
-		if (arraysource.name!==jsonLine.source) future_source.push(arraysource);
-	});
-	
-	future_source.push({'name':jsonLine.source,
-											'path':jsonLine.path,
-											'date_integration':new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
-											'champs': {
-												'titre': {
-													'value': jsonLine.titre.value,
-													'normalized': jsonLine.titre.normalized
-												},
-												'auteur': {
-													'value': jsonLine.auteur.value,
-													'normalized': jsonLine.auteur.normalized
-												},
-												'auteur_init': {
-													'value': jsonLine.auteur_init.value,
-													'normalized': jsonLine.auteur_init.normalized
-												},
-												'doi': {
-													'value': jsonLine.doi.value,
-													'normalized': jsonLine.doi.normalized
-												},
-												'issn': {
-													'value': jsonLine.issn.value,
-													'normalized': jsonLine.issn.normalized
-												},
-												'numero': {
-													'value': jsonLine.numero.value,
-													'normalized': jsonLine.numero.normalized
-												},
-												'volume': {
-													'value': jsonLine.volume.value,
-													'normalized': jsonLine.volume.normalized
-												},
-												'page': {
-													'value': jsonLine.page.value,
-													'normalized': jsonLine.page.normalized
-												},
-											}
-										});
-	
-	source.source=future_source;
-	
-	options.body=source;
-	
-	return esClient.index(options);
+    let source = data.hits.hits[0]._source;
+    let id_es = data.hits.hits[0]._id;
+
+    let options = { index: esConf.index, type: esConf.type, id: id_es, refresh: true };
+
+    let sourceData = source.source;
+
+    let future_source = [];
+
+    _.each(sourceData, function(arraysource) {
+        if (arraysource.name !== jsonLine.source) future_source.push(arraysource);
+    });
+
+    future_source.push({
+        'name': jsonLine.source,
+        'path': jsonLine.path,
+        'date_integration': new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
+        'champs': {
+            'titre': {
+                'value': jsonLine.titre.value,
+                'normalized': jsonLine.titre.normalized
+            },
+            'auteur': {
+                'value': jsonLine.auteur.value,
+                'normalized': jsonLine.auteur.normalized
+            },
+            'auteur_init': {
+                'value': jsonLine.auteur_init.value,
+                'normalized': jsonLine.auteur_init.normalized
+            },
+            'doi': {
+                'value': jsonLine.doi.value,
+                'normalized': jsonLine.doi.normalized
+            },
+            'issn': {
+                'value': jsonLine.issn.value,
+                'normalized': jsonLine.issn.normalized
+            },
+            'numero': {
+                'value': jsonLine.numero.value,
+                'normalized': jsonLine.numero.normalized
+            },
+            'volume': {
+                'value': jsonLine.volume.value,
+                'normalized': jsonLine.volume.normalized
+            },
+            'page': {
+                'value': jsonLine.page.value,
+                'normalized': jsonLine.page.normalized
+            },
+        }
+    });
+
+    source.source = future_source;
+
+    options.body = source;
+
+    return esClient.index(options);
 }
 
 function dispatch(jsonLine,data) {
@@ -165,13 +165,9 @@ function dispatch(jsonLine,data) {
     debug('on a plus d\'un doublon');
     debug('nb occurence : ' + data.hits.hits.length);
   }
- 
 }
 
-
 // on teste si l'entrée existe
-
-
 function existNotice(jsonLine){
 	
 	if (jsonLine.conditor_ident===0) {
@@ -437,30 +433,30 @@ function existNotice(jsonLine){
 
 
 
-business.doTheJob = function (jsonLine, cb) {
-	
-  let error;
-  jsonLine.conditor_ident=0;
+business.doTheJob = function(jsonLine, cb) {
 
-  return existNotice(jsonLine).then(function(result) {
-	
-  		//debug(result);
-			jsonLine.id_elasticsearch=result._id;
-			debug(jsonLine);
-			return cb();
-  	
-  	
-  	
-		},
-	function(err){
-			if (err){
-				error = {
-					errCode:1811,
-					errMessage: 'erreur de dédoublonnage : '+err
-				};
-			return cb(error);
-		}
-	});
+    let error;
+    jsonLine.conditor_ident = 0;
+
+    return existNotice(jsonLine).then(function(result) {
+
+            //debug(result);
+            jsonLine.id_elasticsearch = result._id;
+            debug(jsonLine);
+            return cb();
+
+
+
+        },
+        function(err) {
+            if (err) {
+                error = {
+                    errCode: 1811,
+                    errMessage: 'erreur de dédoublonnage : ' + err
+                };
+                return cb(error);
+            }
+        });
 
 
 }
@@ -469,119 +465,119 @@ business.doTheJob = function (jsonLine, cb) {
 // Fonction d'ajout de l'alias si nécessaire
 function createAlias(aliasArgs, options, aliasCallback) {
 
-  let error;
+    let error;
 
-  // Vérification de l'existance de l'alias, création si nécessaire, ajout de l'index nouvellement créé à l'alias
-  esClient.indices.existsAlias(aliasArgs, function(err, response, status) {
-    if (status!=="200") {
-      esClient.indices.putAlias(aliasArgs, function(err, response, status) {
+    // Vérification de l'existance de l'alias, création si nécessaire, ajout de l'index nouvellement créé à l'alias
+    esClient.indices.existsAlias(aliasArgs, function(err, response, status) {
+        if (status !== "200") {
+            esClient.indices.putAlias(aliasArgs, function(err, response, status) {
 
-        if (!err) {
-          options.processLogs.push('Création d\'un nouvel alias OK. Status : ' + status + '\n');
+                if (!err) {
+                    options.processLogs.push('Création d\'un nouvel alias OK. Status : ' + status + '\n');
+                } else {
+                    options.errLogs.push('Erreur création d\'alias. Status : ' + status + '\n');
+                    error = {
+                        errCode: 1703,
+                        errMessage: 'Erreur lors de la création de l\'alias : ' + err
+                    };
+                }
+                aliasCallback(error);
+            });
         } else {
-         options.errLogs.push('Erreur création d\'alias. Status : ' + status + '\n');
-          error = {
-            errCode: 1703,
-            errMessage: 'Erreur lors de la création de l\'alias : ' + err
-          };
-        }
-        aliasCallback(error);
-      });
-    } else {
-      esClient.indices.updateAliases({
-        'actions': [{
-        'add': aliasArgs
-        }]
-        
-      }, function(err, response, status) {
+            esClient.indices.updateAliases({
+                'actions': [{
+                    'add': aliasArgs
+                }]
 
-        if (!err) {
-          options.processLogs.push('Update d\'alias OK. Status : ' + status + '\n');
-        } else {
-          options.errLogs.push('Erreur update d\'alias. Status : ' + status + '\n');
-          error = {
-            errCode: 1704,
-            errMessage: 'Erreur lors de la création de l\'alias : ' + err
-          };
+            }, function(err, response, status) {
+
+                if (!err) {
+                    options.processLogs.push('Update d\'alias OK. Status : ' + status + '\n');
+                } else {
+                    options.errLogs.push('Erreur update d\'alias. Status : ' + status + '\n');
+                    error = {
+                        errCode: 1704,
+                        errMessage: 'Erreur lors de la création de l\'alias : ' + err
+                    };
+                }
+                aliasCallback(error);
+            });
         }
-        aliasCallback(error);
-      });
-    }
-  });
+    });
 }
 
 
 // fonction préalable de création d'index si celui-ci absent.
 // appelé dans beforeAnyJob
 
-function createIndex(conditorSession,options,indexCallback){
+function createIndex(conditorSession, options, indexCallback) {
 
-  let reqParams = {
-    index:conditorSession
-  };
+    let reqParams = {
+        index: conditorSession
+    };
 
-  let mappingExists = true;
-  let error;
+    let mappingExists = true;
+    let error;
 
-  esClient.indices.exists(reqParams,function(err,response,status){
+    esClient.indices.exists(reqParams, function(err, response, status) {
 
-    if (status !== 200) {
-      options.processLogs.push('... Mapping et index introuvables, on les créé\n');
-      mappingExists = false;
-	} else {
-      options.processLogs.push('... Mapping et index déjà existants\n');
-    }
-
-    if (!mappingExists) {
-
-    
-			esMapping.settings= { 'index' :{
-				'number_of_replicas' : 0
-				}
-			};
-			
-      reqParams.body = esMapping;
-
-      esClient.indices.create(reqParams,function(err,response,status){
-        //debug(JSON.stringify(reqParams));
-        if (status !== 200){
-          options.errLogs.push('... Erreur lors de la création de l\'index :\n' + err);
-          error = {
-            errCode: '001',
-            errMessage: 'Erreur lors de la création de l\'index : ' +err
-          };
-          return indexCallback(error);
+        if (status !== 200) {
+            options.processLogs.push('... Mapping et index introuvables, on les créé\n');
+            mappingExists = false;
+        } else {
+            options.processLogs.push('... Mapping et index déjà existants\n');
         }
 
-        createAlias({
-          index: esConf.index,
-					name : 'integration',
-					body: {'actions':{'add':{'index':esConf.index,'alias':'integration'}}}
-        },options,function(err){
-          indexCallback(err);
-        });
+        if (!mappingExists) {
 
-      });
 
-    }
-    else {
-      indexCallback();
-	}
-  });
+            esMapping.settings = {
+                'index': {
+                    'number_of_replicas': 0
+                }
+            };
+
+            reqParams.body = esMapping;
+
+            esClient.indices.create(reqParams, function(err, response, status) {
+                //debug(JSON.stringify(reqParams));
+                if (status !== 200) {
+                    options.errLogs.push('... Erreur lors de la création de l\'index :\n' + err);
+                    error = {
+                        errCode: '001',
+                        errMessage: 'Erreur lors de la création de l\'index : ' + err
+                    };
+                    return indexCallback(error);
+                }
+
+                createAlias({
+                    index: esConf.index,
+                    name: 'integration',
+                    body: { 'actions': { 'add': { 'index': esConf.index, 'alias': 'integration' } } }
+                }, options, function(err) {
+                    indexCallback(err);
+                });
+
+            });
+
+        } else {
+            indexCallback();
+        }
+    });
 }
 
 
-business.beforeAnyJob = function(cbBefore){
-  let options = {
-    processLogs:[],
-    errLogs:[]
-  };
+business.beforeAnyJob = function(cbBefore) {
+    let options = {
+        processLogs: [],
+        errLogs: []
+    };
 
-  let conditorSession = process.env.CONDITOR_SESSION || esConf.index;
-  createIndex(conditorSession,options,function(err){
-  options.errLogs.push('callback createIndex, err='+err);
-  return cbBefore(err,options);
-  });
+    let conditorSession = process.env.CONDITOR_SESSION || esConf.index;
+    createIndex(conditorSession, options, function(err) {
+        options.errLogs.push('callback createIndex, err=' + err);
+        return cbBefore(err, options);
+    });
 }
 
 
