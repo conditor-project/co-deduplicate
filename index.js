@@ -179,7 +179,8 @@ function existNotice(jsonLine){
 		jsonLine.conditor_ident=1;
 		debug('test sur titre+doi');
 
-    const fieldsOK = jsonLine.titre && jsonLine.titre.normalized && jsonLine.titre.normalized !=='';
+    const fieldsOK = jsonLine.titre && jsonLine.titre.normalized && jsonLine.titre.normalized !==''
+      && jsonLine.doi && jsonLine.doi.normalized && jsonLine.doi.normalized !=='';
     if (!fieldsOK) return dispatch(jsonLine);
 
 		return esClient.search({
