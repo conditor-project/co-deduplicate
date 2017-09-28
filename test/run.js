@@ -8,6 +8,7 @@ const
   badData = require('./dataset/in/badDocs.json'),
   chai = require('chai'),
   expect = chai.expect,
+  _ = require('lodash'),
   es = require('elasticsearch');
 
 var esConf = require('../es.js');
@@ -184,6 +185,7 @@ describe(pkg.name + '/index.js', function () {
 
     it('La notice 7 devrait être reconnue comme une notice originale', function (done) {
       docObject = testData[6];
+      let goodCall;
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
         expect(docObject.conditor_ident).to.be.equal(99);
@@ -193,7 +195,10 @@ describe(pkg.name + '/index.js', function () {
           }, function (esError, response) {
             expect(esError).to.be.undefined;
             expect(response.hits.total).to.be.equal(2);
-            expect(response.hits.hits[1]._source.source[0].name).to.be.equal("TU7");
+            _.each(response.hits.hits,(hit)=>{
+              if (hit._source.source.length===1) goodCall=hit;
+            });
+            expect(goodCall._source.source[0].name).to.be.equal("TU7");
             done();
           });
         }, 300);
