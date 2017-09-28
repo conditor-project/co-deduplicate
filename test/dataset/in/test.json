@@ -5,6 +5,14 @@
       "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
       "normalized" : "probmetabanrpackageforbayesianprobalisticannotationoflcmsbasedmetabolomics"
     },
+    "titrefr": {
+      "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+      "normalized" : "probmetabanrpackageforbayesianprobalisticannotationoflcmsbasedmetabolomics"
+    },
+    "titreen": {
+      "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+      "normalized" : "probmetabanrpackageforbayesianprobalisticannotationoflcmsbasedmetabolomics"
+    },
     "auteur": {
       "value" : "Guidetti-Gonzalez Simone",
       "normalized" : "guidettigonzalezsimone"
@@ -17,9 +25,37 @@
       "value": "10.1093/bioinformatics/btu019ut=WOS:000336095100034",
       "normalized": "101093bioinformaticsbtu019utwos000336095100034"
     },
+    "arxiv": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
+    "pubmed": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
+    "nnt": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
+    "patentNumber":{
+      "value":"12-345/678:9",
+      "normalized": "123456789"
+    },
+    "ut": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
     "issn":{
       "value":"1367-4803",
       "normalized": "13764803"
+    },
+    "eissn":{
+      "value":"1367-4803",
+      "normalized":"13674803"
+    },
+    "isbn":{
+      "value":"1367-4803",
+      "normalized":"13674803"
     },
     "numero":{
       "value":"n°5",
@@ -33,6 +69,38 @@
       "value":"page 1589",
       "normalized": "1589"
     },
+    "idhal":{
+      "value":"12-345/678:9",
+      "normalized":"123456789"
+    },
+    "halauthorid":{
+      "value":"894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246",
+      "normalized":"894287115979411598008942861126485726246894287115979411598008942461126485726246"
+    },
+    "orcid":{
+      "value":"12-345/678:9",
+      "normalized":"123456789"
+    },
+    "researcherid":{
+      "value":"123:456:789+",
+      "normalized":"123456789"
+    },
+    "viaf":{
+      "value":"123.456.789",
+      "normalized":"123456789"
+    },
+    "typeDocument":{
+      "value":"ART"
+    },
+    "titreSource":{
+      "value":"",
+      "normalized":""
+    },
+    "datePubli":{
+      "value":"",
+      "normalized":""
+    },
+    "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-1.xml",
     "source":"TU1"
   }
@@ -40,6 +108,14 @@
   {
     "_comment" : " === Notice 2, sensée matcher avec titre + doi (REGLE 1) ===",
     "titre": {
+      "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+      "normalized" : "probmetabanrpackageforbayesianprobalisticannotationoflcmsbasedmetabolomics"
+    },
+    "titrefr": {
+      "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+      "normalized" : "probmetabanrpackageforbayesianprobalisticannotationoflcmsbasedmetabolomics"
+    },
+    "titreen": {
       "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
       "normalized" : "probmetabanrpackageforbayesianprobalisticannotationoflcmsbasedmetabolomics"
     },
@@ -55,9 +131,37 @@
       "value": "10.1093/bioinformatics/btu019ut=WOS:000336095100034",
       "normalized": "101093bioinformaticsbtu019utwos000336095100034"
     },
+    "arxiv": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
+    "pubmed": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
+    "nnt": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
+    "patentNumber":{
+      "value":"12-345/678:9",
+      "normalized": "123456789"
+    },
+    "ut": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
     "issn":{
       "value":"1367-4804",
       "normalized": "13764804"
+    },
+    "eissn":{
+      "value":"1367-4803",
+      "normalized":"13674803"
+    },
+    "isbn":{
+      "value":"1367-4803",
+      "normalized":"13674803"
     },
     "numero":{
       "value":"n°6",
@@ -71,6 +175,38 @@
       "value":"page 1588",
       "normalized": "1588"
     },
+    "idhal":{
+      "value":"12-345/678:9",
+      "normalized":"123456789"
+    },
+    "halauthorid":{
+      "value":"894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246",
+      "normalized":"894287115979411598008942861126485726246894287115979411598008942461126485726246"
+    },
+    "orcid":{
+      "value":"12-345/678:9",
+      "normalized":"123456789"
+    },
+    "researcherid":{
+      "value":"123:456:789+",
+      "normalized":"123456789"
+    },
+    "viaf":{
+      "value":"123.456.789",
+      "normalized":"123456789"
+    },
+    "typeDocument":{
+      "value":"ART"
+    },
+    "titreSource":{
+      "value":"",
+      "normalized":""
+    },
+    "datePubli":{
+      "value":"",
+      "normalized":""
+    },
+    "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-2.xml",
     "source":"TU2"
   }
@@ -78,6 +214,14 @@
   {
     "_comment" : " === Notice 3, sensée matcher avec titre+volume+numero+issn (REGLE 2) ===",
     "titre": {
+      "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+      "normalized" : "probmetabanrpackageforbayesianprobalisticannotationoflcmsbasedmetabolomics"
+    },
+    "titrefr": {
+      "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+      "normalized" : "probmetabanrpackageforbayesianprobalisticannotationoflcmsbasedmetabolomics"
+    },
+    "titreen": {
       "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
       "normalized" : "probmetabanrpackageforbayesianprobalisticannotationoflcmsbasedmetabolomics"
     },
@@ -93,9 +237,37 @@
       "value": "10.1093/bioinformatics/btu019ut=WOS:000336095100034",
       "normalized": "101093bioinformaticsbtu019utwos000336095100035"
     },
+    "arxiv": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
+    "pubmed": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
+    "nnt": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
+    "patentNumber":{
+      "value":"12-345/678:9",
+      "normalized": "123456789"
+    },
+    "ut": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
     "issn":{
       "value":"1367-4803",
       "normalized": "13764803"
+    },
+    "eissn":{
+      "value":"1367-4803",
+      "normalized":"13674803"
+    },
+    "isbn":{
+      "value":"1367-4803",
+      "normalized":"13674803"
     },
     "numero":{
       "value":"n°5",
@@ -109,6 +281,38 @@
       "value":"page 1588",
       "normalized": "1588"
     },
+    "idhal":{
+      "value":"12-345/678:9",
+      "normalized":"123456789"
+    },
+    "halauthorid":{
+      "value":"894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246",
+      "normalized":"894287115979411598008942861126485726246894287115979411598008942461126485726246"
+    },
+    "orcid":{
+      "value":"12-345/678:9",
+      "normalized":"123456789"
+    },
+    "researcherid":{
+      "value":"123:456:789+",
+      "normalized":"123456789"
+    },
+    "viaf":{
+      "value":"123.456.789",
+      "normalized":"123456789"
+    },
+    "typeDocument":{
+      "value":"ART"
+    },
+    "titreSource":{
+      "value":"",
+      "normalized":""
+    },
+    "datePubli":{
+      "value":"",
+      "normalized":""
+    },
+    "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
     "source":"TU3"
   }
@@ -118,6 +322,14 @@
     "titre": {
       "value" : "ProbMetab: an R package for Bayan probabilistic annotation of LC-MS-based metabolomics",
       "normalized" : "probmetabanrpackageforbayanprobalisticannotationoflcmsbasedmetabolomics"
+    },
+    "titrefr": {
+      "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+      "normalized" : "probmetabanrpackageforbayesianprobalisticannotationoflcmsbasedmetabolomics"
+    },
+    "titreen": {
+      "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+      "normalized" : "probmetabanrpackageforbayesianprobalisticannotationoflcmsbasedmetabolomics"
     },
     "auteur": {
       "value" : "Gonzalez Speedy",
@@ -131,9 +343,37 @@
       "value": "10.1093/bioinformatics/btu019ut=WOS:000336095100034",
       "normalized": "101093bioinformaticsbtu019utwos000336095100034"
     },
+    "arxiv": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
+    "pubmed": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
+    "nnt": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
+    "patentNumber":{
+      "value":"12-345/678:9",
+      "normalized": "123456789"
+    },
+    "ut": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
     "issn":{
       "value":"1367-480",
       "normalized": "1376480"
+    },
+    "eissn":{
+      "value":"1367-4803",
+      "normalized":"13674803"
+    },
+    "isbn":{
+      "value":"1367-4803",
+      "normalized":"13674803"
     },
     "numero":{
       "value":"n°5",
@@ -147,6 +387,38 @@
       "value":"page 1588",
       "normalized": "1588"
     },
+    "idhal":{
+      "value":"12-345/678:9",
+      "normalized":"123456789"
+    },
+    "halauthorid":{
+      "value":"894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246",
+      "normalized":"894287115979411598008942861126485726246894287115979411598008942461126485726246"
+    },
+    "orcid":{
+      "value":"12-345/678:9",
+      "normalized":"123456789"
+    },
+    "researcherid":{
+      "value":"123:456:789+",
+      "normalized":"123456789"
+    },
+    "viaf":{
+      "value":"123.456.789",
+      "normalized":"123456789"
+    },
+    "typeDocument":{
+      "value":"ART"
+    },
+    "titreSource":{
+      "value":"",
+      "normalized":""
+    },
+    "datePubli":{
+      "value":"",
+      "normalized":""
+    },
+    "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
     "source":"TU4"
   }
@@ -154,6 +426,14 @@
   {
     "_comment" : " === Notice 5, sensée matcher avec titre+auteur+issn seul (REGLE 4) ===",
     "titre": {
+      "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+      "normalized" : "probmetabanrpackageforbayesianprobalisticannotationoflcmsbasedmetabolomics"
+    },
+    "titrefr": {
+      "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+      "normalized" : "probmetabanrpackageforbayesianprobalisticannotationoflcmsbasedmetabolomics"
+    },
+    "titreen": {
       "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
       "normalized" : "probmetabanrpackageforbayesianprobalisticannotationoflcmsbasedmetabolomics"
     },
@@ -169,9 +449,37 @@
       "value": "10.1093/bioinformatics/btu019ut=WOS:0003360951000344",
       "normalized": "101093bioinformaticsbtu019utwos0003360951000344"
     },
+    "arxiv": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
+    "pubmed": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
+    "nnt": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
+    "patentNumber":{
+      "value":"12-345/678:9",
+      "normalized": "123456789"
+    },
+    "ut": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
     "issn":{
       "value":"1367-4803",
       "normalized": "13764803"
+    },
+    "eissn":{
+      "value":"1367-4803",
+      "normalized":"13674803"
+    },
+    "isbn":{
+      "value":"1367-4803",
+      "normalized":"13674803"
     },
     "numero":{
       "value":"n°6",
@@ -185,6 +493,38 @@
       "value":"page 1588",
       "normalized": "1588"
     },
+    "idhal":{
+      "value":"12-345/678:9",
+      "normalized":"123456789"
+    },
+    "halauthorid":{
+      "value":"894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246",
+      "normalized":"894287115979411598008942861126485726246894287115979411598008942461126485726246"
+    },
+    "orcid":{
+      "value":"12-345/678:9",
+      "normalized":"123456789"
+    },
+    "researcherid":{
+      "value":"123:456:789+",
+      "normalized":"123456789"
+    },
+    "viaf":{
+      "value":"123.456.789",
+      "normalized":"123456789"
+    },
+    "typeDocument":{
+      "value":"ART"
+    },
+    "titreSource":{
+      "value":"",
+      "normalized":""
+    },
+    "datePubli":{
+      "value":"",
+      "normalized":""
+    },
+    "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
     "source":"TU5"
   }
@@ -192,6 +532,14 @@
   {
     "_comment" : " === Notice 6, sensée matcher avec titre+auteur_init+issn seul (REGLE 5) ===",
     "titre": {
+      "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+      "normalized" : "probmetabanrpackageforbayesianprobalisticannotationoflcmsbasedmetabolomics"
+    },
+    "titrefr": {
+      "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+      "normalized" : "probmetabanrpackageforbayesianprobalisticannotationoflcmsbasedmetabolomics"
+    },
+    "titreen": {
       "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
       "normalized" : "probmetabanrpackageforbayesianprobalisticannotationoflcmsbasedmetabolomics"
     },
@@ -207,9 +555,37 @@
       "value": "10.1093/bioinformatics/btu019ut=WOS:0003360951000344",
       "normalized": "101093bioinformaticsbtu019utwos0003360951000344"
     },
+    "arxiv": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
+    "pubmed": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
+    "nnt": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
+    "patentNumber":{
+      "value":"12-345/678:9",
+      "normalized": "123456789"
+    },
+    "ut": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
     "issn":{
       "value":"1367-4803",
       "normalized": "13764803"
+    },
+    "eissn":{
+      "value":"1367-4803",
+      "normalized":"13674803"
+    },
+    "isbn":{
+      "value":"1367-4803",
+      "normalized":"13674803"
     },
     "numero":{
       "value":"n°6",
@@ -223,6 +599,38 @@
       "value":"page 1588",
       "normalized": "1588"
     },
+    "idhal":{
+      "value":"12-345/678:9",
+      "normalized":"123456789"
+    },
+    "halauthorid":{
+      "value":"894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246",
+      "normalized":"894287115979411598008942861126485726246894287115979411598008942461126485726246"
+    },
+    "orcid":{
+      "value":"12-345/678:9",
+      "normalized":"123456789"
+    },
+    "researcherid":{
+      "value":"123:456:789+",
+      "normalized":"123456789"
+    },
+    "viaf":{
+      "value":"123.456.789",
+      "normalized":"123456789"
+    },
+    "typeDocument":{
+      "value":"ART"
+    },
+    "titreSource":{
+      "value":"",
+      "normalized":""
+    },
+    "datePubli":{
+      "value":"",
+      "normalized":""
+    },
+    "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
     "source":"TU6"
   }
@@ -232,6 +640,14 @@
     "titre": {
       "value" : "ProbMetab: an R package for mayan probabilistic annotation of LC-MS-based metabolomics",
       "normalized" : "probmetabanrpackageformayanprobalisticannotationoflcmsbasedmetabolomics"
+    },
+    "titrefr": {
+      "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+      "normalized" : "probmetabanrpackageforbayesianprobalisticannotationoflcmsbasedmetabolomics"
+    },
+    "titreen": {
+      "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+      "normalized" : "probmetabanrpackageforbayesianprobalisticannotationoflcmsbasedmetabolomics"
     },
     "auteur": {
       "value" : "Gonzales Simone",
@@ -245,9 +661,37 @@
       "value": "10.1093/bioinformatics/btu019ut=WOS:0003360951000342",
       "normalized": "101093bioinformaticsbtu019utwos0003360951000342"
     },
+    "arxiv": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
+    "pubmed": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
+    "nnt": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
+    "patentNumber":{
+      "value":"12-345/678:9",
+      "normalized": "123456789"
+    },
+    "ut": {
+      "value": "12-345/678:9",
+      "normalized": "123456789"
+    },
     "issn":{
       "value":"1367-4804",
       "normalized": "13764804"
+    },
+    "eissn":{
+      "value":"1367-4803",
+      "normalized":"13674803"
+    },
+    "isbn":{
+      "value":"1367-4803",
+      "normalized":"13674803"
     },
     "numero":{
       "value":"n°6",
@@ -261,6 +705,38 @@
       "value":"page 1588",
       "normalized": "1588"
     },
+    "idhal":{
+      "value":"12-345/678:9",
+      "normalized":"123456789"
+    },
+    "halauthorid":{
+      "value":"894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246",
+      "normalized":"894287115979411598008942861126485726246894287115979411598008942461126485726246"
+    },
+    "orcid":{
+      "value":"12-345/678:9",
+      "normalized":"123456789"
+    },
+    "researcherid":{
+      "value":"123:456:789+",
+      "normalized":"123456789"
+    },
+    "viaf":{
+      "value":"123.456.789",
+      "normalized":"123456789"
+    },
+    "typeDocument":{
+      "value":"ART"
+    },
+    "titreSource":{
+      "value":"",
+      "normalized":""
+    },
+    "datePubli":{
+      "value":"",
+      "normalized":""
+    },
+    "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-7.xml",
     "source":"TU7"
   }

@@ -38,7 +38,127 @@
               }
             }
           },
+          "idhal": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
+              }
+            }
+          },
+          "halauthorid": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
+              }
+            }
+          },
+          "orcid": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
+              }
+            }
+          },
+          "researcherid": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
+              }
+            }
+          },
+          "viaf": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
+              }
+            }
+          },
+          "arxiv": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
+              }
+            }
+          },
+          "pubmed": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
+              }
+            }
+          },
+          "nnt": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
+              }
+            }
+          },
+          "patentNumber": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
+              }
+            }
+          },
+          "ut": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
+              }
+            }
+          },
           "issn": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
+              }
+            }
+          },
+          "eissn": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
+              }
+            }
+          },
+          "isbn": {
             "properties": {
               "normalized": {
                 "type": "keyword"
@@ -81,7 +201,57 @@
               }
             }
           },
+          "titrefr": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
+              }
+            }
+          },
+          "titreen": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
+              }
+            }
+          },
           "volume": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
+              }
+            }
+          },
+          "typeDocument": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
+              }
+            }
+          },
+          "titreSource": {
+            "properties": {
+              "normalized": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
+              }
+            }
+          },
+          "datePubli": {
             "properties": {
               "normalized": {
                 "type": "keyword"

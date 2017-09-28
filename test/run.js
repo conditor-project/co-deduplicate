@@ -11,7 +11,7 @@ const
   es = require('elasticsearch');
 
 var esConf = require('../es.js');
-esConf.index = 'tests-undoubler';
+esConf.index = 'tests-deduplicate';
 
 const esClient = new es.Client({
   host: esConf.host,
@@ -182,7 +182,7 @@ describe(pkg.name + '/index.js', function () {
     });
 
 
-    it('La notice 7 devrait être reconnue comme un vrai doublon', function (done) {
+    it('La notice 7 devrait être reconnue comme une notice originale', function (done) {
       docObject = testData[6];
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;

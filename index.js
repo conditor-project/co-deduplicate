@@ -39,6 +39,17 @@ function insereNotice(jsonLine){
     'champs': {}
   };
 
+  _.each(['titre','titrefr','titreen','auteur','auteur_init','doi','arxiv','pubmed','nnt','patentNumber',
+          'ut','issn','isbn','eissn','numero','page','volume','idhal','halauthorid','orcid','researcherid',
+          'viaf','datePubli'],(champs)=>{
+
+            if (jsonLine[champs] && jsonLine[champs].value && jsonLine[champs].normalized && jsonLine[champs].normalized!=='') {
+                options.body[champs] = {'value':jsonLine[champs].value,'normalized':jsonLine[champs].normalized};
+                source.champs[champs] = {'value':jsonLine[champs].value,'normalized':jsonLine[champs].normalized};
+            }
+          });
+
+/**
   if (jsonLine.titre && jsonLine.titre.value && jsonLine.titre.normalized && jsonLine.titre.normalized!=='') {
     options.body.titre = {'value':jsonLine.titre.value,'normalized':jsonLine.titre.normalized};
     source.champs.titre = {'value':jsonLine.titre.value,'normalized':jsonLine.titre.normalized};
@@ -71,6 +82,7 @@ function insereNotice(jsonLine){
     options.body.page = {'value':jsonLine.page.value,'normalized':jsonLine.page.normalized};
     source.champs.page = {'value':jsonLine.page.value,'normalized':jsonLine.page.normalized};
   }
+  **/
   options.body.source.push(source);
 
   return esClient.index(options);
@@ -101,6 +113,14 @@ function aggregeNotice(jsonLine, data) {
                 'value': jsonLine.titre.value,
                 'normalized': jsonLine.titre.normalized
             },
+            'titrefr': {
+                'value': jsonLine.titrefr.value,
+                'normalized': jsonLine.titrefr.normalized
+            },
+            'titreen': {
+                'value': jsonLine.titreen.value,
+                'normalized': jsonLine.titreen.normalized
+            },
             'auteur': {
                 'value': jsonLine.auteur.value,
                 'normalized': jsonLine.auteur.normalized
@@ -113,9 +133,37 @@ function aggregeNotice(jsonLine, data) {
                 'value': jsonLine.doi.value,
                 'normalized': jsonLine.doi.normalized
             },
+            'arxiv': {
+                'value': jsonLine.arxiv.value,
+                'normalized': jsonLine.arxiv.normalized
+            },
+            'pubmed': {
+                'value': jsonLine.pubmed.value,
+                'normalized': jsonLine.pubmed.normalized
+            },
+            'nnt': {
+                'value': jsonLine.nnt.value,
+                'normalized': jsonLine.nnt.normalized
+            },
+            'patentNumber': {
+                'value': jsonLine.patentNumber.value,
+                'normalized': jsonLine.patentNumber.normalized
+            },
+            'ut': {
+                'value': jsonLine.ut.value,
+                'normalized': jsonLine.ut.normalized
+            },
             'issn': {
                 'value': jsonLine.issn.value,
                 'normalized': jsonLine.issn.normalized
+            },
+            'eissn': {
+                'value': jsonLine.eissn.value,
+                'normalized': jsonLine.eissn.normalized
+            },
+            'isbn': {
+                'value': jsonLine.isbn.value,
+                'normalized': jsonLine.isbn.normalized
             },
             'numero': {
                 'value': jsonLine.numero.value,
@@ -129,6 +177,41 @@ function aggregeNotice(jsonLine, data) {
                 'value': jsonLine.page.value,
                 'normalized': jsonLine.page.normalized
             },
+            'idhal': {
+                'value': jsonLine.idhal.value,
+                'normalized': jsonLine.idhal.normalized
+            },
+            'halauthorid': {
+                'value': jsonLine.halauthorid.value,
+                'normalized': jsonLine.halauthorid.normalized
+            },
+            'orcid': {
+                'value': jsonLine.orcid.value,
+                'normalized': jsonLine.orcid.normalized
+            },
+            'researcherid': {
+                'value': jsonLine.researcherid.value,
+                'normalized': jsonLine.researcherid.normalized
+            },
+            'viaf': {
+                'value': jsonLine.viaf.value,
+                'normalized': jsonLine.viaf.normalized
+            },
+            'typeDocument': {
+                'value': jsonLine.typeDocument.value,
+            },
+            'titreSource':{
+                'value':jsonLine.titreSource.value
+            },
+            'datePubli':{
+                'value':jsonLine.datePubli.value,
+                'normalized':jsonLine.datePubli.normalized
+            },
+            'typeConditor':{
+                'value':jsonLine.typeConditor.value
+            }
+
+            
         }
     });
 
