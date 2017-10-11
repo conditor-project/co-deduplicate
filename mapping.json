@@ -14,6 +14,31 @@
                     "type": "pattern_replace",
                     "pattern": "\\p{P}",
                     "replacement": ""
+                },
+                "spacenum":{
+                    "type": "pattern_replace",
+                    "pattern": "[^0-9]",
+                    "replacement":" "
+                },
+                "num":{
+                    "type": "pattern_replace",
+                    "pattern": "[^0-9]",
+                    "replacement":""
+                },
+                "annee":{
+                    "type": "pattern_replace",
+                    "pattern": "([0-9]{4})",
+                    "replacement":"$1"
+                },
+                "alphanum":{
+                    "type": "pattern_replace",
+                    "pattern": "[^0-9a-zA-Z]",
+                    "replacement":""
+                },
+                "firstnum":{
+                    "type": "pattern_replace",
+                    "pattern": "([0-9]+)",
+                    "replacement":"$1"
                 }
             },
             "filter":{
@@ -25,37 +50,37 @@
             "normalizer":{
                 "titre:normalizer":{
                     "type": "custom",
-                    "char_filter":["whitespace_remove"],
+                    "char_filter":["whitespace_remove","punctuation_remove"],
                     "filter":["lowercase"]
                 },
                 "auteur:normalizer":{
                     "type":"custom",
-                    "char_filter":["whitespace_remove"],
+                    "char_filter":["whitespace_remove","punctuation_remove"],
                     "filter":["lowercase"]
                 },
                 "id:normalizer":{
                     "type":"custom",
-                    "char_filter":["whitespace_remove","punctuation_remove"],
+                    "char_filter":["alphanum"],
                     "filter":["lowercase"]
                 },
                 "page:normalizer":{
                     "type":"custom",
-                    "char_filter":["whitespace_remove"],
+                    "char_filter":["spacenum","firstnum"],
                     "filter":["lowercase"]
                 },
                 "volume:normalizer":{
                     "type":"custom",
-                    "char_filter":["whitespace_remove"],
+                    "char_filter":["firstnum"],
                     "filter":["lowercase"]
                 },
                 "numero:normalizer":{
                     "type":"custom",
-                    "char_filter":["whitespace_remove"],
+                    "char_filter":["num"],
                     "filter":["lowercase"]
                 },
                 "datePubli:normalizer":{
                     "type":"custom",
-                    "char_filter":["whitespace_remove"],
+                    "char_filter":["annee"],
                     "filter":["lowercase"]
                 }
             }
