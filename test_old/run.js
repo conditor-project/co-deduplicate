@@ -3,7 +3,7 @@
 const
   fs = require('fs'),
   pkg = require('../package.json'),
-  business = require('../index_poc.js'),
+  business = require('../index.js'),
   testData = require('./dataset/in/test.json'),
   badData = require('./dataset/in/badDocs.json'),
   chai = require('chai'),
@@ -11,14 +11,14 @@ const
   _ = require('lodash'),
   es = require('elasticsearch');
 
-var esConf = require('../es_poc.js');
+var esConf = require('../es.js');
 esConf.index = 'tests-deduplicate';
 
 const esClient = new es.Client({
   host: esConf.host,
   log: {
     type: 'file',
-    level: ['trace','debug','info','error']
+    level: 'trace'
   }
 });
 

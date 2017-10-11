@@ -18,7 +18,7 @@ const esClient = new es.Client({
   host: esConf.host,
   log: {
     type: 'file',
-    level: 'trace'
+    level: ['trace','debug','info','error']
   }
 });
 

@@ -7,14 +7,14 @@ const es = require('elasticsearch'),
     fs = require('fs'),
     debug = require('debug')('co-deduplicate');
 
-const esConf = require('./es_poc.js');
-const esMapping = require('./mapping_poc.json');
+const esConf = require('./es.js');
+const esMapping = require('./mapping.json');
 
 const esClient = new es.Client({
     host: esConf.host,
     log: {
         type: 'file',
-        level: 'debug'
+        level: 'trace'
     }
 });
 
@@ -43,14 +43,46 @@ function insereNotice(jsonLine){
           'ut','issn','isbn','eissn','numero','page','volume','idhal','halauthorid','orcid','researcherid',
           'viaf','datePubli'],(champs)=>{
 
-            if (jsonLine[champs] && jsonLine[champs].value && jsonLine[champs].value!=='') {
-                options.body[champs] = {'value':jsonLine[champs].value,'normalized':jsonLine[champs].value};
-                source.champs[champs] = {'value':jsonLine[champs].value,'normalized':jsonLine[champs].value};
+            if (jsonLine[champs] && jsonLine[champs].value && jsonLine[champs].normalized && jsonLine[champs].normalized!=='') {
+                options.body[champs] = {'value':jsonLine[champs].value,'normalized':jsonLine[champs].normalized};
+                source.champs[champs] = {'value':jsonLine[champs].value,'normalized':jsonLine[champs].normalized};
             }
           });
 
-  options.body.conditor_ident = jsonLine.conditor_ident;
-  source.champs.conditor_ident = jsonLine.conditor_ident;
+/**
+  if (jsonLine.titre && jsonLine.titre.value && jsonLine.titre.normalized && jsonLine.titre.normalized!=='') {
+    options.body.titre = {'value':jsonLine.titre.value,'normalized':jsonLine.titre.normalized};
+    source.champs.titre = {'value':jsonLine.titre.value,'normalized':jsonLine.titre.normalized};
+  }
+  if (jsonLine.auteur && jsonLine.auteur.value && jsonLine.auteur.normalized && jsonLine.auteur.normalized!=='') {
+    options.body.auteur = {'value':jsonLine.auteur.value,'normalized':jsonLine.auteur.normalized};
+    source.champs.auteur = {'value':jsonLine.auteur.value,'normalized':jsonLine.auteur.normalized};
+  }
+  if (jsonLine.auteur_init && jsonLine.auteur_init.value && jsonLine.auteur_init.normalized && jsonLine.auteur_init.normalized!=='') {
+    options.body.auteur_init = {'value':jsonLine.auteur_init.value,'normalized':jsonLine.auteur_init.normalized};
+    source.champs.auteur_init = {'value':jsonLine.auteur_init.value,'normalized':jsonLine.auteur_init.normalized};
+  }
+  if (jsonLine.doi && jsonLine.doi.value && jsonLine.doi.normalized && jsonLine.doi.normalized!=='') {
+    options.body.doi = {'value':jsonLine.doi.value,'normalized':jsonLine.doi.normalized};
+    source.champs.doi = {'value':jsonLine.doi.value,'normalized':jsonLine.doi.normalized};
+  }
+  if (jsonLine.issn && jsonLine.issn.value && jsonLine.issn.normalized && jsonLine.issn.normalized!=='') {
+    options.body.issn = {'value':jsonLine.issn.value,'normalized':jsonLine.issn.normalized};
+    source.champs.issn = {'value':jsonLine.issn.value,'normalized':jsonLine.issn.normalized};
+  }
+  if (jsonLine.numero && jsonLine.numero.value && jsonLine.numero.normalized && jsonLine.numero.normalized!=='') {
+    options.body.numero = {'value':jsonLine.numero.value,'normalized':jsonLine.numero.normalized};
+    source.champs.numero = {'value':jsonLine.numero.value,'normalized':jsonLine.numero.normalized};
+  }
+  if (jsonLine.volume && jsonLine.volume.value && jsonLine.volume.normalized && jsonLine.volume.normalized!=='') {
+    options.body.volume = {'value':jsonLine.volume.value,'normalized':jsonLine.volume.normalized};
+    source.champs.volume = {'value':jsonLine.volume.value,'normalized':jsonLine.volume.normalized};
+  }
+  if (jsonLine.page && jsonLine.page.value && jsonLine.page.normalized && jsonLine.page.normalized!=='') {
+    options.body.page = {'value':jsonLine.page.value,'normalized':jsonLine.page.normalized};
+    source.champs.page = {'value':jsonLine.page.value,'normalized':jsonLine.page.normalized};
+  }
+  **/
   options.body.source.push(source);
 
   return esClient.index(options);
@@ -79,107 +111,104 @@ function aggregeNotice(jsonLine, data) {
         'champs': {
             'titre': {
                 'value': jsonLine.titre.value,
-                'normalized':jsonLine.titre.value
+                'normalized': jsonLine.titre.normalized
             },
             'titrefr': {
                 'value': jsonLine.titrefr.value,
-                'normalized':jsonLine.titrefr.value
+                'normalized': jsonLine.titrefr.normalized
             },
             'titreen': {
                 'value': jsonLine.titreen.value,
-                'normalized': jsonLine.titreen.value
+                'normalized': jsonLine.titreen.normalized
             },
             'auteur': {
                 'value': jsonLine.auteur.value,
-                'normalized':jsonLine.auteur.value
+                'normalized': jsonLine.auteur.normalized
             },
             'auteur_init': {
                 'value': jsonLine.auteur_init.value,
-                'normalized':jsonLine.auteur_init.value
+                'normalized': jsonLine.auteur_init.normalized
             },
             'doi': {
                 'value': jsonLine.doi.value,
-                'normalized':jsonLine.doi.value
+                'normalized': jsonLine.doi.normalized
             },
             'arxiv': {
                 'value': jsonLine.arxiv.value,
-                'normalized':jsonLine.arxiv.value
+                'normalized': jsonLine.arxiv.normalized
             },
             'pubmed': {
                 'value': jsonLine.pubmed.value,
-                'normalized' : jsonLine.pubmed.value
+                'normalized': jsonLine.pubmed.normalized
             },
             'nnt': {
                 'value': jsonLine.nnt.value,
-                'normalized': jsonLine.nnt.value
+                'normalized': jsonLine.nnt.normalized
             },
             'patentNumber': {
                 'value': jsonLine.patentNumber.value,
-                'normalized': jsonLine.patentNumber.value 
+                'normalized': jsonLine.patentNumber.normalized
             },
             'ut': {
                 'value': jsonLine.ut.value,
-                'normalized': jsonLine.ut.value
+                'normalized': jsonLine.ut.normalized
             },
             'issn': {
                 'value': jsonLine.issn.value,
-                'normalized': jsonLine.issn.value
+                'normalized': jsonLine.issn.normalized
             },
             'eissn': {
                 'value': jsonLine.eissn.value,
-                'normalized': jsonLine.eissn.value
+                'normalized': jsonLine.eissn.normalized
             },
             'isbn': {
                 'value': jsonLine.isbn.value,
-                'normalized': jsonLine.isbn.value
+                'normalized': jsonLine.isbn.normalized
             },
             'numero': {
                 'value': jsonLine.numero.value,
-                'normalized':jsonLine.numero.value
+                'normalized': jsonLine.numero.normalized
             },
             'volume': {
                 'value': jsonLine.volume.value,
-                'normalized':jsonLine.volume.value
+                'normalized': jsonLine.volume.normalized
             },
             'page': {
                 'value': jsonLine.page.value,
-                'normalized':jsonLine.page.value
+                'normalized': jsonLine.page.normalized
             },
             'idhal': {
                 'value': jsonLine.idhal.value,
-                'normalized':jsonLine.idhal.value
+                'normalized': jsonLine.idhal.normalized
             },
             'halauthorid': {
                 'value': jsonLine.halauthorid.value,
-                'normalized':jsonLine.halauthorid.value
+                'normalized': jsonLine.halauthorid.normalized
             },
             'orcid': {
                 'value': jsonLine.orcid.value,
-                'normalized':jsonLine.orcid.value
+                'normalized': jsonLine.orcid.normalized
             },
             'researcherid': {
                 'value': jsonLine.researcherid.value,
-                'normalized':jsonLine.researcherid.value
+                'normalized': jsonLine.researcherid.normalized
             },
             'viaf': {
                 'value': jsonLine.viaf.value,
-                'normalized':jsonLine.viaf.value
+                'normalized': jsonLine.viaf.normalized
             },
             'typeDocument': {
                 'value': jsonLine.typeDocument.value,
             },
             'titreSource':{
-                'value':jsonLine.titreSource.value,
-                'normalized':jsonLine.titreSource.value
+                'value':jsonLine.titreSource.value
             },
             'datePubli':{
-                'value':jsonLine.datePubli.value
+                'value':jsonLine.datePubli.value,
+                'normalized':jsonLine.datePubli.normalized
             },
             'typeConditor':{
                 'value':jsonLine.typeConditor.value
-            },
-            'conditor_ident':{
-                'value':jsonLine.conditor_ident
             }
 
             
@@ -229,8 +258,8 @@ function existNotice(jsonLine){
 		jsonLine.conditor_ident=1;
 		debug('test sur titre+doi');
 
-    const fieldsOK = jsonLine.titre && jsonLine.titre.value && jsonLine.titre.value !==''
-      && jsonLine.doi && jsonLine.doi.value && jsonLine.doi.value !=='';
+    const fieldsOK = jsonLine.titre && jsonLine.titre.normalized && jsonLine.titre.normalized !==''
+      && jsonLine.doi && jsonLine.doi.normalized && jsonLine.doi.normalized !=='';
     if (!fieldsOK) return dispatch(jsonLine);
 
 		return esClient.search({
@@ -242,16 +271,16 @@ function existNotice(jsonLine){
 							{
 								'bool': {
 									'must': [
-										{'match': {'titre.normalized': jsonLine.titre.value}},
-										{'match': {'doi.normalized': jsonLine.doi.value}}
+										{'match': {'titre.normalized': jsonLine.titre.normalized}},
+										{'match': {'doi.normalized': jsonLine.doi.normalized}}
 									]
 								}
 							},
 							{
 								'bool': {
 									'must': [
-										{'match': {'source.champs.titre.normalized': jsonLine.titre.value}},
-										{'match': {'source.champs.doi.normalized': jsonLine.doi.value}}
+										{'match': {'source.champs.titre.normalized': jsonLine.titre.normalized}},
+										{'match': {'source.champs.doi.normalized': jsonLine.doi.normalized}}
 									]
 								}
 							}
@@ -270,10 +299,10 @@ function existNotice(jsonLine){
 		jsonLine.conditor_ident=2;
 		debug('test sur titre+volume+numero+issn');
     
-    const fieldsOK = jsonLine.titre && jsonLine.titre.value && jsonLine.titre.value !==''
-      && jsonLine.volume && jsonLine.volume.value && jsonLine.volume.value !==''
-      && jsonLine.numero && jsonLine.numero.value && jsonLine.numero.value !==''
-      && jsonLine.issn && jsonLine.issn.value && jsonLine.issn.value !=='';
+    const fieldsOK = jsonLine.titre && jsonLine.titre.normalized && jsonLine.titre.normalized !==''
+      && jsonLine.volume && jsonLine.volume.normalized && jsonLine.volume.normalized !==''
+      && jsonLine.numero && jsonLine.numero.normalized && jsonLine.numero.normalized !==''
+      && jsonLine.issn && jsonLine.issn.normalized && jsonLine.issn.normalized !=='';
     if (!fieldsOK) return dispatch(jsonLine);
 
 		return esClient.search({
@@ -285,20 +314,20 @@ function existNotice(jsonLine){
 							{
 								'bool': {
 									'must': [
-										{'match': {'titre.normalized': jsonLine.titre.value}},
-										{'match': {'volume.normalized': jsonLine.volume.value}},
-										{'match': {'numero.normalized': jsonLine.numero.value}},
-										{'match': {'issn.normalized': jsonLine.issn.value}}
+										{'match': {'titre.normalized': jsonLine.titre.normalized}},
+										{'match': {'volume.normalized': jsonLine.volume.normalized}},
+										{'match': {'numero.normalized': jsonLine.numero.normalized}},
+										{'match': {'issn.normalized': jsonLine.issn.normalized}}
 									]
 								}
 							},
 							{
 								'bool': {
 									'must': [
-										{'match': {'source.champs.titre.normalized': jsonLine.titre.value}},
-										{'match': {'source.champs.volume.normalized': jsonLine.volume.value}},
-										{'match': {'source.champs.numero.normalized': jsonLine.numero.value}},
-										{'match': {'source.champs.issn.normalized': jsonLine.issn.value}}
+										{'match': {'source.champs.titre.normalized': jsonLine.titre.normalized}},
+										{'match': {'source.champs.volume.normalized': jsonLine.volume.normalized}},
+										{'match': {'source.champs.numero.normalized': jsonLine.numero.normalized}},
+										{'match': {'source.champs.issn.normalized': jsonLine.issn.normalized}}
 									]
 								}
 							}
@@ -316,7 +345,7 @@ function existNotice(jsonLine){
 		jsonLine.conditor_ident=3;
 		debug('test sur doi');
 
-    const fieldsOK = jsonLine.doi && jsonLine.doi.value && jsonLine.doi.value !=='';
+    const fieldsOK = jsonLine.doi && jsonLine.doi.normalized && jsonLine.doi.normalized !=='';
     if (!fieldsOK) return dispatch(jsonLine);
 
 		return esClient.search({
@@ -328,14 +357,14 @@ function existNotice(jsonLine){
 							{
 								'bool': {
 									'must': [
-										{'match': {'doi.normalized': jsonLine.doi.value}}
+										{'match': {'doi.normalized': jsonLine.doi.normalized}}
 									]
 								}
 							},
 							{
 								'bool': {
 									'must': [
-										{'match': {'source.champs.doi.value': jsonLine.doi.value}}
+										{'match': {'source.champs.doi.normalized': jsonLine.doi.normalized}}
 									]
 								}
 							}
@@ -353,9 +382,9 @@ function existNotice(jsonLine){
 		jsonLine.conditor_ident=4;
 		debug('test sur titre+auteur+issn');
 
-    const fieldsOK = jsonLine.titre && jsonLine.titre.value && jsonLine.titre.value !==''
-      && jsonLine.auteur && jsonLine.auteur.value && jsonLine.auteur.value !==''
-      && jsonLine.issn && jsonLine.issn.value && jsonLine.issn.value !=='';
+    const fieldsOK = jsonLine.titre && jsonLine.titre.normalized && jsonLine.titre.normalized !==''
+      && jsonLine.auteur && jsonLine.auteur.normalized && jsonLine.auteur.normalized !==''
+      && jsonLine.issn && jsonLine.issn.normalized && jsonLine.issn.normalized !=='';
     if (!fieldsOK) return dispatch(jsonLine);
 
 		return esClient.search({
@@ -367,18 +396,18 @@ function existNotice(jsonLine){
 							{
 								'bool': {
 									'must': [
-										{'match': {'titre.normalized': jsonLine.titre.value}},
-										{'match': {'auteur.normalized': jsonLine.auteur.value}},
-										{'match': {'issn.normalized': jsonLine.issn.value}}
+										{'match': {'titre.normalized': jsonLine.titre.normalized}},
+										{'match': {'auteur.normalized': jsonLine.auteur.normalized}},
+										{'match': {'issn.normalized': jsonLine.issn.normalized}}
 									]
 								}
 							},
 							{
 								'bool': {
 									'must': [
-										{'match': {'source.champs.titre.normalized': jsonLine.titre.value}},
-										{'match': {'source.champs.auteur.normalized': jsonLine.auteur.value}},
-										{'match': {'source.champs.issn.normalized': jsonLine.issn.value}}
+										{'match': {'source.champs.titre.normalized': jsonLine.titre.normalized}},
+										{'match': {'source.champs.auteur.normalized': jsonLine.auteur.normalized}},
+										{'match': {'source.champs.issn.normalized': jsonLine.issn.normalized}}
 									]
 								}
 							}
@@ -397,9 +426,9 @@ function existNotice(jsonLine){
 		jsonLine.conditor_ident=5;
 		debug('test sur titre+auteur_init+issn');
 
-    const fieldsOK = jsonLine.titre && jsonLine.titre.value && jsonLine.titre.value !==''
-      && jsonLine.auteur_init && jsonLine.auteur_init.value && jsonLine.auteur_init.value !==''
-      && jsonLine.issn && jsonLine.issn.value && jsonLine.issn.value !=='';
+    const fieldsOK = jsonLine.titre && jsonLine.titre.normalized && jsonLine.titre.normalized !==''
+      && jsonLine.auteur_init && jsonLine.auteur_init.normalized && jsonLine.auteur_init.normalized !==''
+      && jsonLine.issn && jsonLine.issn.normalized && jsonLine.issn.normalized !=='';
     if (!fieldsOK) return dispatch(jsonLine);
 
 		return esClient.search({
@@ -411,18 +440,18 @@ function existNotice(jsonLine){
 							{
 								'bool': {
 									'must': [
-										{'match': {'titre.normalized': jsonLine.titre.value}},
-										{'match': {'auteur_init.normalized': jsonLine.auteur_init.value}},
-										{'match': {'issn.normalized': jsonLine.issn.value}}
+										{'match': {'titre.normalized': jsonLine.titre.normalized}},
+										{'match': {'auteur_init.normalized': jsonLine.auteur_init.normalized}},
+										{'match': {'issn.normalized': jsonLine.issn.normalized}}
 									]
 								}
 							},
 							{
 								'bool': {
 									'must': [
-										{'match': {'source.champs.titre.normalized': jsonLine.titre.value}},
-										{'match': {'source.champs.auteur_init.normalized': jsonLine.auteur_init.value}},
-										{'match': {'source.champs.issn.normalized': jsonLine.issn.value}}
+										{'match': {'source.champs.titre.normalized': jsonLine.titre.normalized}},
+										{'match': {'source.champs.auteur_init.normalized': jsonLine.auteur_init.normalized}},
+										{'match': {'source.champs.issn.normalized': jsonLine.issn.normalized}}
 									]
 								}
 							}
@@ -441,10 +470,10 @@ function existNotice(jsonLine){
 		jsonLine.conditor_ident=6;
 		debug('test sur issn+volume+numero+page');
 		
-    const fieldsOK = jsonLine.page && jsonLine.page.value && jsonLine.page.value !==''
-      && jsonLine.volume && jsonLine.volume.value && jsonLine.volume.value !==''
-      && jsonLine.numero && jsonLine.numero.value && jsonLine.numero.value !==''
-      && jsonLine.issn && jsonLine.issn.value && jsonLine.issn.value !=='';
+    const fieldsOK = jsonLine.page && jsonLine.page.normalized && jsonLine.page.normalized !==''
+      && jsonLine.volume && jsonLine.volume.normalized && jsonLine.volume.normalized !==''
+      && jsonLine.numero && jsonLine.numero.normalized && jsonLine.numero.normalized !==''
+      && jsonLine.issn && jsonLine.issn.normalized && jsonLine.issn.normalized !=='';
     if (!fieldsOK) return dispatch(jsonLine);
 
     return esClient.search({
@@ -456,20 +485,20 @@ function existNotice(jsonLine){
 							{
 								'bool': {
 									'must': [
-										{'match': {'issn.normalized': jsonLine.issn.value}},
-										{'match': {'volume.normalized': jsonLine.volume.value}},
-										{'match': {'numero.normalized': jsonLine.numero.value}},
-										{'match': {'page.normalized': jsonLine.page.value}}
+										{'match': {'issn.normalized': jsonLine.issn.normalized}},
+										{'match': {'volume.normalized': jsonLine.volume.normalized}},
+										{'match': {'numero.normalized': jsonLine.numero.normalized}},
+										{'match': {'page.normalized': jsonLine.page.normalized}}
 									]
 								}
 							},
 							{
 								'bool': {
 									'must': [
-										{'match': {'source.champs.issn.normalized': jsonLine.issn.value}},
-										{'match': {'source.champs.volume.normalized': jsonLine.volume.value}},
-										{'match': {'source.champs.numero.normalized': jsonLine.numero.value}},
-										{'match': {'source.champs.page.normalized': jsonLine.page.value}}
+										{'match': {'source.champs.issn.normalized': jsonLine.issn.normalized}},
+										{'match': {'source.champs.volume.normalized': jsonLine.volume.normalized}},
+										{'match': {'source.champs.numero.normalized': jsonLine.numero.normalized}},
+										{'match': {'source.champs.page.normalized': jsonLine.page.normalized}}
 									]
 								}
 							}
@@ -584,11 +613,11 @@ function createIndex(conditorSession, options, indexCallback) {
 
         if (!mappingExists) {
 
-
+            
             esMapping.settings.index = {
                     'number_of_replicas': 0
             };
-
+            
             reqParams.body = esMapping;
 
             esClient.indices.create(reqParams, function(err, response, status) {
