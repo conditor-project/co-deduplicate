@@ -44,19 +44,19 @@
             "filter":{
                 "my_asciifolding":{
                     "type":"asciifolding",
-                    "preserve_original" : true
+                    "preserve_original" : false
                 }
             },
             "normalizer":{
                 "titre:normalizer":{
                     "type": "custom",
                     "char_filter":["whitespace_remove","punctuation_remove"],
-                    "filter":["lowercase"]
+                    "filter":["lowercase","my_asciifolding"]
                 },
                 "auteur:normalizer":{
                     "type":"custom",
                     "char_filter":["whitespace_remove","punctuation_remove"],
-                    "filter":["lowercase"]
+                    "filter":["lowercase","my_asciifolding"]
                 },
                 "id:normalizer":{
                     "type":"custom",
