@@ -1,0 +1,141 @@
+[
+    { 
+    "rule":"1",
+    "name":"Titre + DOI",
+    "non_empty":["jsonLine.titre.value","jsonLine.doi.value"],
+    "query":
+        {
+            "query": {
+                "bool": {
+                    "should": [
+                        {
+                            "bool": {
+                                "must": [
+                                    {"match": {"titre.normalized": "jsonLine.titre.value"}},
+                                    {"match": {"doi.normalized": "jsonLine.doi.value"}}
+                                ]
+                            }
+                        }
+                    ],
+                    "minimum_should_match": 1
+                }
+            }
+        }
+    },
+    { 
+    "rule":"2",
+    "name":"Titre+volume+numero+issn",
+    "non_empty":["jsonLine.titre.value","jsonLine.volume.value","jsonLine.numero.value","jsonLine.issn.value"],
+    "query":{
+        "query" :{
+            "bool":{
+                "should":[
+                    {
+                        "bool": {
+                            "must": [
+                                {"match": {"titre.normalized": "jsonLine.titre.value"}},
+                                {"match": {"volume.normalized": "jsonLine.volume.value"}},
+                                {"match": {"numero.normalized": "jsonLine.numero.value"}},
+                                {"match": {"issn.normalized": "jsonLine.issn.value"}}
+                            ]
+                        }
+                    }
+                ],
+                "minimum_should_match":1
+                }
+            }
+        }   
+    },
+    { 
+    "rule":"3",
+    "name":"DOI",
+    "non_empty":["jsonLine.doi.value"],
+    "query":{
+        "query": {
+            "bool": {
+                "should": [
+                    {
+                        "bool": {
+                            "must": [
+                                {"match": {"doi.normalized": "jsonLine.doi.value"}}
+                            ]
+                        }
+                    }
+                ],
+                "minimum_should_match": 1
+                }
+            }
+        }      
+    },
+    { 
+    "rule":"4",
+    "name":"Titre+auteur+issn",
+    "non_empty":["jsonLine.titre.value","jsonLine.auteur.value","jsonLine.issn.value"],
+    "query":{
+        "query": {
+            "bool": {
+                "should": [
+                    {
+                        "bool": {
+                            "must": [
+                                {"match": {"titre.normalized": "jsonLine.titre.value"}},
+                                {"match": {"auteur.normalized": "jsonLine.auteur.value"}},
+                                {"match": {"issn.normalized": "jsonLine.issn.value"}}
+                            ]
+                        }
+                    }
+                ],
+                "minimum_should_match": 1
+                }
+            }
+        }
+    },
+    { 
+    "rule":"5",
+    "name":"titre+auteur_init+issn",
+    "non_empty":["jsonLine.titre.value","jsonLine.auteur_init.value","jsonLine.issn.value"],
+    "query":{
+        "query": {
+            "bool": {
+                "should": [
+                    {
+                        "bool": {
+                            "must": [
+                                {"match": {"titre.normalized": "jsonLine.titre.value"}},
+                                {"match": {"auteur_init.normalized": "jsonLine.auteur_init.value"}},
+                                {"match": {"issn.normalized": "jsonLine.issn.value"}}
+                            ]
+                        }
+                    }
+                ],
+                "minimum_should_match": 1
+                }
+            }
+        }   
+    },
+    { 
+    "rule":"6",
+    "name":"issn+volume+numero+page",
+    "non_empty":["jsonLine.issn.value","jsonLine.volume.value","jsonLine.numero.value","jsonLine.page.value"],
+    "query":{
+        "query": {
+            "bool": {
+                "should": [
+                    {
+                        "bool": {
+                            "must": [
+                                {"match": {"issn.normalized": "jsonLine.issn.value"}},
+                                {"match": {"volume.normalized": "jsonLine.volume.value"}},
+                                {"match": {"numero.normalized": "jsonLine.numero.value"}},
+                                {"match": {"page.normalized": "jsonLine.page.value"}}
+                            ]
+                        }
+                    }
+                ],
+                "minimum_should_match": 1
+                }
+            }
+        }
+            
+    }
+]
