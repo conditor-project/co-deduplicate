@@ -338,6 +338,9 @@
                 "typeDocument": {
                     "type":"keyword"
                 },
+                "typeConditor":{
+                    "type":"object"
+                },
                 "conditor_ident":{
                     "type":"text"
                 },
