@@ -24,6 +24,7 @@
     "elasticsearch": "^13.0.1",
     "fs": "0.0.1-security",
     "lodash": "^4.17.4",
-    "mocha": "^3.3.0"
+    "mocha": "^3.3.0",
+    "node-eval": "^1.1.1"
   }
 }

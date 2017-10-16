@@ -9,12 +9,16 @@ const es = require('elasticsearch'),
 
 const esConf = require('./es.js');
 const esMapping = require('./mapping.json');
+const scenario = require('./scenario.json');
+const rules = require('./rules_certain.json');
+const baseRequest = require('./base_request.json');
+
 
 const esClient = new es.Client({
     host: esConf.host,
     log: {
         type: 'file',
-        level: 'debug'
+        level: 'trace'
     }
 });
 
@@ -30,14 +34,7 @@ function insereNotice(jsonLine){
 
 	options.body= {
 		'date_creation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
-    'source': []
 	};
-  let source = {
-    'name':jsonLine.source,
-    'path':jsonLine.path,
-    'date_integration':new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
-    'champs': {}
-  };
 
   _.each(['titre','titrefr','titreen','auteur','auteur_init','doi','arxiv','pubmed','nnt','patentNumber',
           'ut','issn','isbn','eissn','numero','page','volume','idhal','halauthorid','orcid','researcherid',
@@ -45,13 +42,10 @@ function insereNotice(jsonLine){
 
             if (jsonLine[champs] && jsonLine[champs].value && jsonLine[champs].value!=='') {
                 options.body[champs] = {'value':jsonLine[champs].value,'normalized':jsonLine[champs].value};
-                source.champs[champs] = {'value':jsonLine[champs].value,'normalized':jsonLine[champs].value};
             }
           });
 
-  options.body.conditor_ident = jsonLine.conditor_ident;
-  source.champs.conditor_ident = jsonLine.conditor_ident;
-  options.body.source.push(source);
+  options.body.duplicate = [];
 
   return esClient.index(options);
 
@@ -59,430 +53,102 @@ function insereNotice(jsonLine){
 
 function aggregeNotice(jsonLine, data) {
 
-    let source = data.hits.hits[0]._source;
-    let id_es = data.hits.hits[0]._id;
 
-    let options = { index: esConf.index, type: esConf.type, id: id_es, refresh: true };
+    let duplicate=[];
+    let idchain=[];
 
-    let sourceData = source.source;
-
-    let future_source = [];
-
-    _.each(sourceData, function(arraysource) {
-        if (arraysource.name !== jsonLine.source) future_source.push(arraysource);
+    _.each(data.hits.hits,(hit)=>{
+        duplicate.push({id:hit._id,rule:hit.matched_queries});
+        idchain.push(hit._id);
     });
 
-    future_source.push({
-        'name': jsonLine.source,
-        'path': jsonLine.path,
-        'date_integration': new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
-        'champs': {
-            'titre': {
-                'value': jsonLine.titre.value,
-                'normalized':jsonLine.titre.value
-            },
-            'titrefr': {
-                'value': jsonLine.titrefr.value,
-                'normalized':jsonLine.titrefr.value
-            },
-            'titreen': {
-                'value': jsonLine.titreen.value,
-                'normalized': jsonLine.titreen.value
-            },
-            'auteur': {
-                'value': jsonLine.auteur.value,
-                'normalized':jsonLine.auteur.value
-            },
-            'auteur_init': {
-                'value': jsonLine.auteur_init.value,
-                'normalized':jsonLine.auteur_init.value
-            },
-            'doi': {
-                'value': jsonLine.doi.value,
-                'normalized':jsonLine.doi.value
-            },
-            'arxiv': {
-                'value': jsonLine.arxiv.value,
-                'normalized':jsonLine.arxiv.value
-            },
-            'pubmed': {
-                'value': jsonLine.pubmed.value,
-                'normalized' : jsonLine.pubmed.value
-            },
-            'nnt': {
-                'value': jsonLine.nnt.value,
-                'normalized': jsonLine.nnt.value
-            },
-            'patentNumber': {
-                'value': jsonLine.patentNumber.value,
-                'normalized': jsonLine.patentNumber.value 
-            },
-            'ut': {
-                'value': jsonLine.ut.value,
-                'normalized': jsonLine.ut.value
-            },
-            'issn': {
-                'value': jsonLine.issn.value,
-                'normalized': jsonLine.issn.value
-            },
-            'eissn': {
-                'value': jsonLine.eissn.value,
-                'normalized': jsonLine.eissn.value
-            },
-            'isbn': {
-                'value': jsonLine.isbn.value,
-                'normalized': jsonLine.isbn.value
-            },
-            'numero': {
-                'value': jsonLine.numero.value,
-                'normalized':jsonLine.numero.value
-            },
-            'volume': {
-                'value': jsonLine.volume.value,
-                'normalized':jsonLine.volume.value
-            },
-            'page': {
-                'value': jsonLine.page.value,
-                'normalized':jsonLine.page.value
-            },
-            'idhal': {
-                'value': jsonLine.idhal.value,
-                'normalized':jsonLine.idhal.value
-            },
-            'halauthorid': {
-                'value': jsonLine.halauthorid.value,
-                'normalized':jsonLine.halauthorid.value
-            },
-            'orcid': {
-                'value': jsonLine.orcid.value,
-                'normalized':jsonLine.orcid.value
-            },
-            'researcherid': {
-                'value': jsonLine.researcherid.value,
-                'normalized':jsonLine.researcherid.value
-            },
-            'viaf': {
-                'value': jsonLine.viaf.value,
-                'normalized':jsonLine.viaf.value
-            },
-            'typeDocument': {
-                'value': jsonLine.typeDocument.value,
-            },
-            'titreSource':{
-                'value':jsonLine.titreSource.value,
-                'normalized':jsonLine.titreSource.value
-            },
-            'datePubli':{
-                'value':jsonLine.datePubli.value
-            },
-            'typeConditor':{
-                'value':jsonLine.typeConditor.value
-            },
-            'conditor_ident':{
-                'value':jsonLine.conditor_ident
-            }
 
-            
-        }
-    });
+    let options = {index : esConf.index,type : esConf.type,refresh:true};
+    
+    debug(esConf);
 
-    source.source = future_source;
+    options.body= {
+        'date_creation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
+    };
 
-    options.body = source;
+    _.each(['titre','titrefr','titreen','auteur','auteur_init','doi','arxiv','pubmed','nnt','patentNumber',
+            'ut','issn','isbn','eissn','numero','page','volume','idhal','halauthorid','orcid','researcherid',
+            'viaf','datePubli'],(champs)=>{
+
+                if (jsonLine[champs] && jsonLine[champs].value && jsonLine[champs].value!=='') {
+                    options.body[champs] = {'value':jsonLine[champs].value,'normalized':jsonLine[champs].value};
+                }
+            });
+
+    options.body.duplicate = duplicate;
 
     return esClient.index(options);
 }
 
 function dispatch(jsonLine,data) {
 
-  if (!data && jsonLine.conditor_ident<nbRegles) {
-    debug('on continue à chercher (le test précédent était inutile ou en erreur)');
-    return existNotice(jsonLine);
-  }
-  else if (jsonLine.conditor_ident===nbRegles && (!data || data.hits.hits.length===0)){
-    // si aucun hit alors on insère la donnée
-		jsonLine.conditor_ident=99;
-		debug('pas de doublon.');
-		return insereNotice(jsonLine);
-  }
-  else if (data.hits.hits.length===0 && jsonLine.conditor_ident<=nbRegles){
-  	debug('on continue à chercher');
-  	return existNotice(jsonLine);
-	}
-  else if (data.hits.hits.length===1){
-    //si un hit alors on aggrège la donnée
-	debug('on a un doublon.');
-  debug('nb occurence : ' + data.hits.hits.length);
-  return aggregeNotice(jsonLine,data);
-  }
-  else{
-    debug('on a plus d\'un doublon');
-    debug('nb occurence : ' + data.hits.hits.length);
-  }
+    if (data.hits.total===0){
+        console.log('on insere');
+        return insereNotice(jsonLine);
+    }
+    else {
+        console.log('on aggrege');
+        return aggregeNotice(jsonLine,data);
+    }
 }
 
-// on teste si l'entrée existe
-function existNotice(jsonLine){
-	
-	if (jsonLine.conditor_ident===0) {
-		
-		jsonLine.conditor_ident=1;
-		debug('test sur titre+doi');
+function testParameter(jsonLine,arrayParameter){
 
-    const fieldsOK = jsonLine.titre && jsonLine.titre.value && jsonLine.titre.value !==''
-      && jsonLine.doi && jsonLine.doi.value && jsonLine.doi.value !=='';
-    if (!fieldsOK) return dispatch(jsonLine);
+    let bool=true;
+    _.each(arrayParameter,function(parameter){
+        if (_.get(jsonLine,parameter)===undefined || _.get(jsonLine,parameter).trim()==='') bool = false ;
+    });
+    return bool;
+}
 
-		return esClient.search({
-			index: esConf.index,
-			body: {
-				'query': {
-					'bool': {
-						'should': [
-							{
-								'bool': {
-									'must': [
-										{'match': {'titre.normalized': jsonLine.titre.value}},
-										{'match': {'doi.normalized': jsonLine.doi.value}}
-									]
-								}
-							},
-							{
-								'bool': {
-									'must': [
-										{'match': {'source.champs.titre.normalized': jsonLine.titre.value}},
-										{'match': {'source.champs.doi.normalized': jsonLine.doi.value}}
-									]
-								}
-							}
-						],
-						'minimum_should_match': 1
-					}
-				}
-			}
-			
-		}).then(dispatch.bind(null, jsonLine), function (error) {
-			console.error(error);
-		});
-	}
-	else if (jsonLine.conditor_ident===1){
-		
-		jsonLine.conditor_ident=2;
-		debug('test sur titre+volume+numero+issn');
+function interprete(jsonLine,query){
+    const newQuery ={
+        bool: {
+            must:null,
+            _name:query.bool._name
+    }};
     
-    const fieldsOK = jsonLine.titre && jsonLine.titre.value && jsonLine.titre.value !==''
-      && jsonLine.volume && jsonLine.volume.value && jsonLine.volume.value !==''
-      && jsonLine.numero && jsonLine.numero.value && jsonLine.numero.value !==''
-      && jsonLine.issn && jsonLine.issn.value && jsonLine.issn.value !=='';
-    if (!fieldsOK) return dispatch(jsonLine);
+    newQuery.bool.must =  _.map(query.bool.must,(value)=>{
+        let match = {"match":null};
+        match.match = _.mapValues(value.match,(pattern)=>{
+            return _.get(jsonLine,pattern);
+        });
+        return match;
+    });
+   
+    return newQuery;
+  
+}
 
-		return esClient.search({
-			index: esConf.index,
-			body: {
-				'query' :{
-					'bool':{
-						'should':[
-							{
-								'bool': {
-									'must': [
-										{'match': {'titre.normalized': jsonLine.titre.value}},
-										{'match': {'volume.normalized': jsonLine.volume.value}},
-										{'match': {'numero.normalized': jsonLine.numero.value}},
-										{'match': {'issn.normalized': jsonLine.issn.value}}
-									]
-								}
-							},
-							{
-								'bool': {
-									'must': [
-										{'match': {'source.champs.titre.normalized': jsonLine.titre.value}},
-										{'match': {'source.champs.volume.normalized': jsonLine.volume.value}},
-										{'match': {'source.champs.numero.normalized': jsonLine.numero.value}},
-										{'match': {'source.champs.issn.normalized': jsonLine.issn.value}}
-									]
-								}
-							}
-						],
-						'minimum_should_match':1
-					}
-				}
-			}
-		}).then(dispatch.bind(null, jsonLine), function (error) {
-			console.error(error);
-		});
-	}
-	else if (jsonLine.conditor_ident===2){
-		
-		jsonLine.conditor_ident=3;
-		debug('test sur doi');
+// on crée la requete puis on teste si l'entrée existe
+function existNotice(jsonLine){
+    
+    let request = _.cloneDeep(baseRequest);
 
-    const fieldsOK = jsonLine.doi && jsonLine.doi.value && jsonLine.doi.value !=='';
-    if (!fieldsOK) return dispatch(jsonLine);
+    _.each(jsonLine.typeConditor, (type)=>{
+        if (scenario[type.type]){
+            _.each(scenario[type.type],(rule)=>{
+                if (rules[rule] && testParameter(jsonLine,rules[rule].non_empty)) {
+                        request.query.bool.should.push(interprete(jsonLine,rules[rule].query));
+                    }
+            });
+        }
+    });
 
-		return esClient.search({
-			index: esConf.index,
-			body: {
-				'query': {
-					'bool': {
-						'should': [
-							{
-								'bool': {
-									'must': [
-										{'match': {'doi.normalized': jsonLine.doi.value}}
-									]
-								}
-							},
-							{
-								'bool': {
-									'must': [
-										{'match': {'source.champs.doi.value': jsonLine.doi.value}}
-									]
-								}
-							}
-						],
-						'minimum_should_match': 1
-					}
-				}
-			}
-		}).then(dispatch.bind(null, jsonLine), function (error) {
-			console.error(error);
-		});
-	}
-	else if (jsonLine.conditor_ident===3){
-		
-		jsonLine.conditor_ident=4;
-		debug('test sur titre+auteur+issn');
-
-    const fieldsOK = jsonLine.titre && jsonLine.titre.value && jsonLine.titre.value !==''
-      && jsonLine.auteur && jsonLine.auteur.value && jsonLine.auteur.value !==''
-      && jsonLine.issn && jsonLine.issn.value && jsonLine.issn.value !=='';
-    if (!fieldsOK) return dispatch(jsonLine);
-
-		return esClient.search({
-			index: esConf.index,
-			body: {
-				'query': {
-					'bool': {
-						'should': [
-							{
-								'bool': {
-									'must': [
-										{'match': {'titre.normalized': jsonLine.titre.value}},
-										{'match': {'auteur.normalized': jsonLine.auteur.value}},
-										{'match': {'issn.normalized': jsonLine.issn.value}}
-									]
-								}
-							},
-							{
-								'bool': {
-									'must': [
-										{'match': {'source.champs.titre.normalized': jsonLine.titre.value}},
-										{'match': {'source.champs.auteur.normalized': jsonLine.auteur.value}},
-										{'match': {'source.champs.issn.normalized': jsonLine.issn.value}}
-									]
-								}
-							}
-						],
-						'minimum_should_match': 1
-					}
-				}
-			}
-	
-		}).then(dispatch.bind(null, jsonLine), function (error) {
-			console.error(error);
-		});
-	}
-	else if (jsonLine.conditor_ident===4){
-		
-		jsonLine.conditor_ident=5;
-		debug('test sur titre+auteur_init+issn');
-
-    const fieldsOK = jsonLine.titre && jsonLine.titre.value && jsonLine.titre.value !==''
-      && jsonLine.auteur_init && jsonLine.auteur_init.value && jsonLine.auteur_init.value !==''
-      && jsonLine.issn && jsonLine.issn.value && jsonLine.issn.value !=='';
-    if (!fieldsOK) return dispatch(jsonLine);
-
-		return esClient.search({
-			index: esConf.index,
-			body: {
-				'query': {
-					'bool': {
-						'should': [
-							{
-								'bool': {
-									'must': [
-										{'match': {'titre.normalized': jsonLine.titre.value}},
-										{'match': {'auteur_init.normalized': jsonLine.auteur_init.value}},
-										{'match': {'issn.normalized': jsonLine.issn.value}}
-									]
-								}
-							},
-							{
-								'bool': {
-									'must': [
-										{'match': {'source.champs.titre.normalized': jsonLine.titre.value}},
-										{'match': {'source.champs.auteur_init.normalized': jsonLine.auteur_init.value}},
-										{'match': {'source.champs.issn.normalized': jsonLine.issn.value}}
-									]
-								}
-							}
-						],
-						'minimum_should_match': 1
-					}
-				}
-			}
-		
-		}).then(dispatch.bind(null, jsonLine), function (error) {
-			console.error(error);
-		});
-	}
-	else if (jsonLine.conditor_ident===5){
-		
-		jsonLine.conditor_ident=6;
-		debug('test sur issn+volume+numero+page');
-		
-    const fieldsOK = jsonLine.page && jsonLine.page.value && jsonLine.page.value !==''
-      && jsonLine.volume && jsonLine.volume.value && jsonLine.volume.value !==''
-      && jsonLine.numero && jsonLine.numero.value && jsonLine.numero.value !==''
-      && jsonLine.issn && jsonLine.issn.value && jsonLine.issn.value !=='';
-    if (!fieldsOK) return dispatch(jsonLine);
+    //console.log(JSON.stringify(request));
 
     return esClient.search({
-			index: esConf.index,
-			body: {
-				'query': {
-					'bool': {
-						'should': [
-							{
-								'bool': {
-									'must': [
-										{'match': {'issn.normalized': jsonLine.issn.value}},
-										{'match': {'volume.normalized': jsonLine.volume.value}},
-										{'match': {'numero.normalized': jsonLine.numero.value}},
-										{'match': {'page.normalized': jsonLine.page.value}}
-									]
-								}
-							},
-							{
-								'bool': {
-									'must': [
-										{'match': {'source.champs.issn.normalized': jsonLine.issn.value}},
-										{'match': {'source.champs.volume.normalized': jsonLine.volume.value}},
-										{'match': {'source.champs.numero.normalized': jsonLine.numero.value}},
-										{'match': {'source.champs.page.normalized': jsonLine.page.value}}
-									]
-								}
-							}
-						],
-						'minimum_should_match': 1
-					}
-				}
-			}
-		
-		}).then(dispatch.bind(null, jsonLine), function (error) {
-			debug('Error :'+error);
-		});
-	}
+        index: esConf.index,
+        body : request
+    }).then(dispatch.bind(null,jsonLine),function(error){
+        console.error(error);
+    });
+
 }
 
 
@@ -523,7 +189,7 @@ function createAlias(aliasArgs, options, aliasCallback) {
 
     // Vérification de l'existance de l'alias, création si nécessaire, ajout de l'index nouvellement créé à l'alias
     esClient.indices.existsAlias(aliasArgs, function(err, response, status) {
-        if (status !== "200") {
+        if (status !== '200') {
             esClient.indices.putAlias(aliasArgs, function(err, response, status) {
 
                 if (!err) {

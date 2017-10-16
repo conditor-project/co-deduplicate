@@ -341,7 +341,10 @@
                 "typeConditor":{
                     "type":"object"
                 },
-                "conditor_ident":{
+                "duplicate":{
+                    "type":"object"
+                },
+                "idChain":{
                     "type":"text"
                 },
                 "titreSource": {
