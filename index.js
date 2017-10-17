@@ -4,7 +4,6 @@
 
 const es = require('elasticsearch'),
     _ = require('lodash'),
-    fs = require('fs'),
     debug = require('debug')('co-deduplicate');
 
 const esConf = require('./es.js');
@@ -23,7 +22,6 @@ const esClient = new es.Client({
 });
 
 const business = {};
-const nbRegles = 6;
 
 function insereNotice(jsonLine){
 
@@ -44,7 +42,8 @@ function insereNotice(jsonLine){
                 options.body[champs] = {'value':jsonLine[champs].value,'normalized':jsonLine[champs].value};
             }
           });
-
+  options.body.typeConditor = jsonLine.typeConditor;
+  options.body.idChain = '';
   options.body.duplicate = [];
 
   return esClient.index(options);
@@ -81,7 +80,8 @@ function aggregeNotice(jsonLine, data) {
             });
 
     options.body.duplicate = duplicate;
-
+    options.body.typeConditor = jsonLine.typeConditor;
+    options.body.idChain = '1';
     return esClient.index(options);
 }
 
@@ -165,8 +165,6 @@ business.doTheJob = function(jsonLine, cb) {
             debug(jsonLine);
             return cb();
 
-
-
         },
         function(err) {
             if (err) {
@@ -177,9 +175,7 @@ business.doTheJob = function(jsonLine, cb) {
                 return cb(error);
             }
         });
-
-
-}
+    }
 
 
 // Fonction d'ajout de l'alias si nécessaire

@@ -345,7 +345,8 @@
                     "type":"object"
                 },
                 "idChain":{
-                    "type":"text"
+                    "type":"keyword",
+                    "index":true
                 },
                 "titreSource": {
                     "properties":{
