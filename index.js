@@ -131,8 +131,15 @@ function existNotice(jsonLine){
     let request = _.cloneDeep(baseRequest);
 
     _.each(jsonLine.typeConditor, (type)=>{
-        if (scenario[type.type]){
+        if (type && type.type && scenario[type.type]){
             _.each(scenario[type.type],(rule)=>{
+                if (rules[rule] && testParameter(jsonLine,rules[rule].non_empty)) {
+                        request.query.bool.should.push(interprete(jsonLine,rules[rule].query));
+                    }
+            });
+        }
+        else {
+            _.each(scenario.Article,(rule)=>{
                 if (rules[rule] && testParameter(jsonLine,rules[rule].non_empty)) {
                         request.query.bool.should.push(interprete(jsonLine,rules[rule].query));
                     }
