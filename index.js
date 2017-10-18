@@ -123,7 +123,7 @@ function interprete(jsonLine,query,type){
         return match;
     });
    
-    //newQuery.bool.must.push({'match':{'typeConditor.type':type}});
+    newQuery.bool.must.push({'nested':{'path':'typeConditor','query':{'bool':{'must':[{'match':{'typeConditor.type':type}}]}}}});
     
     return newQuery;
   
