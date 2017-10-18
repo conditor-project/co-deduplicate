@@ -90,11 +90,11 @@ function aggregeNotice(jsonLine, data) {
 function dispatch(jsonLine,data) {
 
     if (data.hits.total===0){
-        console.log('on insere');
+        //console.log('on insere');
         return insereNotice(jsonLine);
     }
     else {
-        console.log('on aggrege');
+        //console.log('on aggrege');
         return aggregeNotice(jsonLine,data);
     }
 }

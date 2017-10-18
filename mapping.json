@@ -345,8 +345,7 @@
                     "type":"nested"
                 },
                 "idChain":{
-                    "type":"keyword",
-                    "index":true
+                    "type":"keyword"
                 },
                 "titreSource": {
                     "properties":{
