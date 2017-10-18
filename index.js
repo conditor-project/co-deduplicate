@@ -123,7 +123,7 @@ function interprete(jsonLine,query,type){
         return match;
     });
    
-    newQuery.bool.must.push({'match':{'typeConditor':type}});
+    //newQuery.bool.must.push({'match':{'typeConditor.type':type}});
     
     return newQuery;
   
@@ -135,10 +135,10 @@ function existNotice(jsonLine){
     let request = _.cloneDeep(baseRequest);
 
     _.each(jsonLine.typeConditor, (type)=>{
-        if (type && scenario[type]){
-            _.each(scenario[type],(rule)=>{
+        if (type && type.type && scenario[type.type]){
+            _.each(scenario[type.type],(rule)=>{
                 if (rules[rule] && testParameter(jsonLine,rules[rule].non_empty)) {
-                        request.query.bool.should.push(interprete(jsonLine,rules[rule].query,type));
+                        request.query.bool.should.push(interprete(jsonLine,rules[rule].query,type.type));
                     }
             });
         }

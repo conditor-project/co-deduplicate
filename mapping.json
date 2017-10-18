@@ -339,7 +339,13 @@
                     "type":"keyword"
                 },
                 "typeConditor":{
-                    "type":"text"
+                    "type":"nested",
+                    "properties":{
+                        "type":{
+                            "type":"text",
+                            "index":true
+                        }   
+                    }
                 },
                 "duplicate":{
                     "type":"nested"
