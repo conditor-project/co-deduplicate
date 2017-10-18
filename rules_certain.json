@@ -101,5 +101,35 @@
                 }
            
         }    
+    },
+    { 
+    "rule":"7",
+    "name":"idhal",
+    "non_empty":["idhal.value"],
+    "query":{
+        
+            "bool": {
+                    "must": [
+                        {"match": {"idhal.normalized": "idhal.value"}}
+                    ],
+                    "_name":"idhal"
+                }
+            
+        }    
+    },
+    { 
+    "rule":"8",
+    "name":"ut",
+    "non_empty":["ut.value"],
+    "query":{
+        
+            "bool": {
+                    "must": [
+                        {"match": {"ut.normalized": "ut.value"}}
+                    ],
+                    "_name":"ut"
+                }
+            
+        }    
     }
 ]

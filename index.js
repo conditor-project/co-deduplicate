@@ -45,6 +45,7 @@ function insereNotice(jsonLine){
   options.body.typeConditor = jsonLine.typeConditor;
   options.body.idChain = '';
   options.body.duplicate = [];
+  jsonLine.duplicate = [];
 
   return esClient.index(options);
 
@@ -61,6 +62,7 @@ function aggregeNotice(jsonLine, data) {
         idchain.push(hit._id);
     });
 
+    jsonLine.duplicate = duplicate;
 
     let options = {index : esConf.index,type : esConf.type,refresh:true};
     
@@ -106,7 +108,7 @@ function testParameter(jsonLine,arrayParameter){
     return bool;
 }
 
-function interprete(jsonLine,query){
+function interprete(jsonLine,query,type){
     const newQuery ={
         bool: {
             must:null,
@@ -114,13 +116,15 @@ function interprete(jsonLine,query){
     }};
     
     newQuery.bool.must =  _.map(query.bool.must,(value)=>{
-        let match = {"match":null};
+        let match = {'match':null};
         match.match = _.mapValues(value.match,(pattern)=>{
             return _.get(jsonLine,pattern);
         });
         return match;
     });
    
+    newQuery.bool.must.push({'match':{'typeConditor':type}});
+    
     return newQuery;
   
 }
@@ -131,17 +135,17 @@ function existNotice(jsonLine){
     let request = _.cloneDeep(baseRequest);
 
     _.each(jsonLine.typeConditor, (type)=>{
-        if (type && type.type && scenario[type.type]){
-            _.each(scenario[type.type],(rule)=>{
+        if (type && scenario[type]){
+            _.each(scenario[type],(rule)=>{
                 if (rules[rule] && testParameter(jsonLine,rules[rule].non_empty)) {
-                        request.query.bool.should.push(interprete(jsonLine,rules[rule].query));
+                        request.query.bool.should.push(interprete(jsonLine,rules[rule].query,type));
                     }
             });
         }
         else {
             _.each(scenario.Article,(rule)=>{
                 if (rules[rule] && testParameter(jsonLine,rules[rule].non_empty)) {
-                        request.query.bool.should.push(interprete(jsonLine,rules[rule].query));
+                        request.query.bool.should.push(interprete(jsonLine,rules[rule].query,'Article'));
                     }
             });
         }

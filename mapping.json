@@ -339,10 +339,10 @@
                     "type":"keyword"
                 },
                 "typeConditor":{
-                    "type":"object"
+                    "type":"text"
                 },
                 "duplicate":{
-                    "type":"object"
+                    "type":"nested"
                 },
                 "idChain":{
                     "type":"keyword",
