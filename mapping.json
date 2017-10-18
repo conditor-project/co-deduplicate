@@ -27,7 +27,7 @@
                 },
                 "annee":{
                     "type": "pattern_replace",
-                    "pattern": "([0-9]{4})",
+                    "pattern": ".*([0-9]{4}).*",
                     "replacement":"$1"
                 },
                 "alphanum":{

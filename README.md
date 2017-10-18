@@ -12,46 +12,56 @@ Le module **co-deduplicate** est un module qui va opérer le dédoublonnage de n
 
 `co-deduplicate` reçoit les notices préformatées au format JSON et interroge ElasticSearch selon une hierarchie de règles de correspondance prédéfinie. 
 
-Si l'une des règles de correspondance est appliquée :
-
-- l'objet documentaire est fusionné avec l'entrée existante :
-  - si le champ "source" de l'entrée existante est identique à l'objet documentaire, alors ce dernier remplace le précédant
-  - sinon, on conserve les infos issues des 2 notices
-- si aucune règle ne s'applique, une nouvelle entrée est créée au sein du moteur, reprenant l'ensemble des champs de l'objet documentaire JSON
+Lorsque pour un document, un ou plusieurs doublons sont trouvés, l'objet documentaire au format JSON est enrichi avec les identifiants des documents doublons. Pour chaque doublon, la liste des règles effectuant la correspondance est mémorisée.
 
 #### Structure d'entrée
 
-Identique à la structure des champs de sortie du module [co-normalizer](https://github.com/conditor-project/co-normalizer#user-content-structure-de-sortie), elle contient pour chaque champ du chapeau Conditor :
-
-- un sous-champ `value` contenant la valeur telle qu'elle est présente dans la notice d'origine
-- un sous-champ`normalized` contenant la version *normalisée* (homogénéisée) du champ `value`
+Identique à la structure des champs de sortie du module [co-formatter](https://github.com/conditor-project/co-formatter), elle contient pour chaque champ du chapeau Conditor un sous-champ `value` contenant la valeur telle qu'elle est présente dans la notice d'origine.
 
 #### Structure de sortie
 
 2 champs sont ajoutés au JSON d'entrée :
 
-* `conditor_ident` : nombre entier permettant de connaître la règle de correspondance (vaut `99` si aucune règle ne s'applique)
-* `id_elasticsearch` : identifiant de l'entrée du document dans le moteur Elasticsearch. 
+* `idChain` : la liste des doublons trouvés, sous la forme d'une suite d'identifiants séparés par un caractère délimiteur.
+* `duplicate` : la liste des noms de règles ayant amené au dédoublonnage
+
+#### Normalisation
+
+Les champs utilisés pour le dédoublonnage ne sont désormais plus normalisés en amont :  **le module [co-normalizer](https://github.com/conditor-project/co-normalizer) est à présent obsolète.**
+
+Ces champs sont maintenant normalisés **à l'indexation**, grâce aux fonctionnalités d'analyse de texte du moteur de recherche Elasticsearch. Sont notamment utilisés les [normalizers](https://www.elastic.co/guide/en/elasticsearch/reference/6.0/analysis-normalizers.html), les [token filters](https://www.elastic.co/guide/en/elasticsearch/reference/6.0/analysis-tokenfilters.html) et les [character filters](https://www.elastic.co/guide/en/elasticsearch/reference/6.0/analysis-charfilters.html). Pour plus de détails, consulter le [mapping](./mapping.json) utilisé par le présent module.
+
+Il résulte de ce mécanisme, que les **valeurs normalisées de tous ces champs ne sont pas stockées en clair,** mais seulement prises en compte lors de l'interrogation.
+
+Si vous souhaitez tester les différents filtres, il convient d'interroger Elasticsearch directement. 
+
+Prenons en  exemple la normalisation d'un titre, qui est spécifié ainsi dans le mapping  :
+
+```json
+"titre:normalizer":{
+  "type": "custom",
+  "char_filter":["whitespace_remove","punctuation_remove"],
+  "filter":["lowercase","my_asciifolding"]
+}
+```
+
+Pour le simuler la normalisation d'un titre, il faudra donc envoyer la requête à Elasticsearch la requête suivante :
+
+```json
+POST /notices/_analyze
+{
+  "tokenizer": "keyword",
+  "char_filter":["whitespace_remove","punctuation_remove"],
+  "filter":["lowercase","my_asciifolding"],
+  "text": "c'est un bien joli titre que voilà !"
+}
+```
 
 #### Règles de dédoublonnage
 
-Ces règles sont actuellement insérées directement dans le code de l'application (méthode `existNotice` du fichier [index.js](./index.js)). À l'avenir, elles pourraient être intégrées à un fichier de configuration.
+Ces règles sont numérotées, nommées et externalisées dans le fichier de configuration [rules_certain.json](./rules_certain.json). Ces règles sont ensuite exécuté selon des [scénarios prédéfinis](./scenario.json) en fonction du type de document.
 
-Toutes les règles utilisent les version *normalisées* des différents champs, et si une entrée contient les informations issues de plusieurs sources, la correspondance sera tentée sur les valeurs de chaque source.
-
-Les règles actuelles sont les suivantes :
-
-1. correspondance sur `titre` ET `doi`
-2. correspondance sur `titre`, `volume`, `numero` et `issn`
-3. correspondance sur `doi` uniquement
-4. correspondance sur `titre`, `auteur` et `issn`
-5. correspondance sur `titre`, `auteur_init` et `issn`
-6. correspondance sur `issn`, `volume`, `numero` et `page`
-
-
-99. pas de correspondance
-
-:warning: à l'avenir, ces règles seront pondérées, de manière à pouvoir identifier des doublons probables, mais qui demandent une validation manuelle.
+:warning: à l'avenir, ces règles seront probablement pondérées, de manière à pouvoir identifier des doublons probables, mais qui demandent une validation manuelle.
 
 ## Utilisation ##
 
