@@ -37,7 +37,7 @@
                 },
                 "firstnum":{
                     "type": "pattern_replace",
-                    "pattern": "([0-9]+)",
+                    "pattern": ".*([0-9]+).*",
                     "replacement":"$1"
                 }
             },
@@ -344,7 +344,10 @@
                         "type":{
                             "type":"text",
                             "index":true
-                        }   
+                        },
+                        "rawType":{
+                            "type":"keyword"
+                        }
                     }
                 },
                 "duplicate":{
