@@ -42,6 +42,7 @@ function insereNotice(jsonLine){
                 options.body[champs] = {'value':jsonLine[champs].value,'normalized':jsonLine[champs].value};
             }
           });
+  options.body.source = {'value':jsonLine.source};
   options.body.typeConditor = jsonLine.typeConditor;
   options.body.idChain = '';
   options.body.duplicate = [];
@@ -80,7 +81,7 @@ function aggregeNotice(jsonLine, data) {
                     options.body[champs] = {'value':jsonLine[champs].value,'normalized':jsonLine[champs].value};
                 }
             });
-
+    options.body.source = {'value':jsonLine.source};
     options.body.duplicate = duplicate;
     options.body.typeConditor = jsonLine.typeConditor;
     options.body.idChain = '1';
