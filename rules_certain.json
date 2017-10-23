@@ -1,135 +1,308 @@
 [
     { 
-    "rule":"1",
-    "name":"Titre + DOI",
-    "non_empty":["titre.value","doi.value"],
-    "query":
-        {
-           
+        "rule":"0",
+        "non_empty":["titre.value","doi.value"],
+        "query":
+            {
+            
                 "bool": {
                     "must": [
                         {"match": {"titre.normalized": "titre.value"}},
                         {"match": {"doi.normalized": "doi.value"}}
                     ],
-                    "_name":"titre+doi"
+                    "_name":"titre entier+doi"
                 }
         }
     },
     { 
-    "rule":"2",
-    "name":"Titre+volume+numero+issn",
-    "non_empty":["titre.value","volume.value","numero.value","issn.value"],
-    "query":{
-      
-            "bool":{
+        "rule":"1",
+        "non_empty":["titre.value","ut.value"],
+        "query":
+            {
                
-                    "must": [
-                        {"match": {"titre.normalized": "titre.value"}},
-                        {"match": {"volume.normalized": "volume.value"}},
-                        {"match": {"numero.normalized": "numero.value"}},
-                        {"match": {"issn.normalized": "issn.value"}}
-                    ],
-                    "_name":"titre+volume+numero+issn"
+                    "bool": {
+                        "must": [
+                            {"match": {"titre.normalized": "titre.value"}},
+                            {"match": {"ut.normalized": "ut.value"}}
+                        ],
+                        "_name":"titre entier+ut"
                 }
-          
-        }   
-    },
-    { 
-    "rule":"3",
-    "name":"DOI",
-    "non_empty":["doi.value"],
-    "query":{
-       
-            "bool": {
-               
-                    "must": [
-                        {"match": {"doi.normalized": "doi.value"}}
-                    ],
-                    "_name":"doi"
-                }    
-            }
-           
-    },
-    { 
-    "rule":"4",
-    "name":"Titre+auteur+issn",
-    "non_empty":["titre.value","auteur.value","issn.value"],
-    "query":{
-       
-            "bool": {
-                    "must": [
-                        {"match": {"titre.normalized": "titre.value"}},
-                        {"match": {"auteur.normalized": "auteur.value"}},
-                        {"match": {"issn.normalized": "issn.value"}}
-                    ],
-                    "_name":"titre+auteur+issn"
-                }
-            
         }
     },
     { 
-    "rule":"5",
-    "name":"titre+auteur_init+issn",
-    "non_empty":["titre.value","auteur_init.value","issn.value"],
-    "query":{
-       
-            "bool": {
-                    "must": [
-                        {"match": {"titre.normalized": "titre.value"}},
-                        {"match": {"auteur_init.normalized": "auteur_init.value"}},
-                        {"match": {"issn.normalized": "issn.value"}}
-                    ],
-                    "_name":"titre+auteur_init+issn"
+        "rule":"2",
+        "non_empty":["titre.value","pubmed.value"],
+        "query":
+            {
+               
+                    "bool": {
+                        "must": [
+                            {"match": {"titre.normalized": "titre.value"}},
+                            {"match": {"pubmed.normalized": "pubmed.value"}}
+                        ],
+                        "_name":"titre entier+pubmed"
                 }
-          
-        }   
+        }
     },
     { 
-    "rule":"6",
-    "name":"issn+volume+numero+page",
-    "non_empty":["issn.value","volume.value","numero.value","page.value"],
-    "query":{
-       
-            "bool": {
-                    "must": [
-                        {"match": {"issn.normalized": "issn.value"}},
-                        {"match": {"volume.normalized": "volume.value"}},
-                        {"match": {"numero.normalized": "numero.value"}},
-                        {"match": {"page.normalized": "page.value"}}
-                    ],
-                    "_name":"issn+volume+numero+page"
+        "rule":"3",
+        "non_empty":["titre.value","idhal.value"],
+        "query":
+            {
+               
+                    "bool": {
+                        "must": [
+                            {"match": {"titre.normalized": "titre.value"}},
+                            {"match": {"idhal.normalized": "idhal.value"}}
+                        ],
+                        "_name":"titre entier+idhal"
                 }
+        }
+    },
+    { 
+        "rule":"4",
+        "non_empty":["doi.value","ut.value"],
+        "query":
+            {
+               
+                    "bool": {
+                        "must": [
+                            {"match": {"doi.normalized": "doi.value"}},
+                            {"match": {"ut.normalized": "ut.value"}}
+                        ],
+                        "_name":"doi+ut"
+                }
+        }
+    },
+    { 
+        "rule":"5",
+        "non_empty":["doi.value","pubmed.value"],
+        "query":
+            {
+               
+                    "bool": {
+                        "must": [
+                            {"match": {"pubmed.normalized": "pubmed.value"}},
+                            {"match": {"doi.normalized": "doi.value"}}
+                        ],
+                        "_name":"doi+pubmed ID"
+                }
+        }
+    },
+    { 
+        "rule":"6",
+        "non_empty":["ut.value","pubmed.value"],
+        "query":
+            {
+               
+                    "bool": {
+                        "must": [
+                            {"match": {"ut.normalized": "ut.value"}},
+                            {"match": {"pubmed.normalized": "pubmed.value"}}
+                        ],
+                        "_name":"ut+pubmed ID"
+                }
+        }
+    },
+    { 
+        "rule":"7",
+        "non_empty":["titre.value","issn.value","volume.value","numero.value","page.value","datePubli.value"],
+        "query":{
            
+                "bool": {
+                        "must": [
+                            {"match": {"titre.normalized": "titre.value"}},
+                            {"match": {"issn.normalized": "issn.value"}},
+                            {"match": {"volume.normalized": "volume.value"}},
+                            {"match": {"numero.normalized": "numero.value"}},
+                            {"match": {"page.normalized": "page.value"}},
+                            {"match": {"datePubli.normalized": "datePubli.value"}}
+                        ],
+                        "_name":"titre+issn+volume+numero+page+annee"
+                }
         }    
     },
     { 
-    "rule":"7",
-    "name":"idhal",
-    "non_empty":["idhal.value"],
-    "query":{
-        
-            "bool": {
-                    "must": [
-                        {"match": {"idhal.normalized": "idhal.value"}}
-                    ],
-                    "_name":"idhal"
-                }
+        "rule":"8",
+         "non_empty":["titre.value","issn.value","numero.value","page.value","datePubli.value"],
+         "query":{
             
-        }    
-    },
-    { 
-    "rule":"8",
-    "name":"ut",
-    "non_empty":["ut.value"],
-    "query":{
-        
-            "bool": {
-                    "must": [
-                        {"match": {"ut.normalized": "ut.value"}}
-                    ],
-                    "_name":"ut"
-                }
+                 "bool": {
+                         "must": [
+                             {"match": {"titre.normalized": "titre.value"}},
+                             {"match": {"issn.normalized": "issn.value"}},
+                             {"match": {"numero.normalized": "numero.value"}},
+                             {"match": {"page.normalized": "page.value"}},
+                             {"match": {"datePubli.normalized": "datePubli.value"}}
+                         ],
+                         "_name":"titre+issn+numero+page+annee"
+                 }
+         }    
+     },
+     { 
+        "rule":"9",
+         "non_empty":["titre.value","issn.value","volume.value","page.value","datePubli.value"],
+         "query":{
             
+                 "bool": {
+                         "must": [
+                             {"match": {"titre.normalized": "titre.value"}},
+                             {"match": {"issn.normalized": "issn.value"}},
+                             {"match": {"volume.normalized": "volume.value"}},
+                             {"match": {"page.normalized": "page.value"}},
+                             {"match": {"datePubli.normalized": "datePubli.value"}}
+                         ],
+                         "_name":"titre+issn+volume+page+annee"
+                 }
+         }    
+     },
+     { 
+        "rule":"10",
+         "non_empty":["titre.value","issn.value","datePubli.value","auteur.value"],
+         "query":{
+            
+                 "bool": {
+                         "must": [
+                             {"match": {"titre.normalized": "titre.value"}},
+                             {"match": {"issn.normalized": "issn.value"}},
+                             {"match": {"datePubli.normalized": "datePubli.value"}},
+                             {"match": {"auteur.normalized": "auteur.value"}}
+                         ],
+                         "_name":"titre+issn+auteur+annee"
+                 }
+         }    
+     },
+     { 
+        "rule":"11",
+         "non_empty":["titre.value","titreSource.value","datePubli.value","auteur.value"],
+         "query":{
+            
+                 "bool": {
+                         "must": [
+                             {"match": {"titre.normalized": "titre.value"}},
+                             {"match": {"titreSource.normalized": "titreSource.value"}},
+                             {"match": {"datePubli.normalized": "datePubli.value"}},
+                             {"match": {"auteur.normalized": "auteur.value"}}
+                         ],
+                         "_name":"titre+titre Source+auteur+annee"
+                 }
+         }    
+     },
+     { 
+        "rule":"12",
+         "non_empty":["titre.value","issn.value","datePubli.value","auteur_init.value"],
+         "query":{
+            
+                "bool": {
+                        "must": [
+                            {"match": {"titre.normalized": "titre.value"}},
+                            {"match": {"issn.normalized": "issn.value"}},
+                            {"match": {"datePubli.normalized": "datePubli.value"}},
+                            {"match": {"auteur_init.normalized": "auteur_init.value"}}
+                        ],
+                        "_name":"titre+issn+ (prénom initiale)+annee"
+                }
+         }    
+     },
+     { 
+        "rule":"13",
+         "non_empty":["titre.value","titreSource.value","datePubli.value","auteur_init.value"],
+         "query":{
+            
+                "bool": {
+                        "must": [
+                            {"match": {"titre.normalized": "titre.value"}},
+                            {"match": {"titreSource.normalized": "titreSource.value"}},
+                            {"match": {"datePubli.normalized": "datePubli.value"}},
+                            {"match": {"auteur_init.normalized": "auteur_init.value"}}
+                        ],
+                        "_name":"titre+titre Source+auteur (prénom initiale)+annee"
+                }
+         }    
+     },
+     { 
+        "rule":"14",
+         "non_empty":["titre.value","eissn.value","datePubli.value","auteur_init.value"],
+         "query":{
+            
+                "bool": {
+                        "must": [
+                            {"match": {"titre.normalized": "titre.value"}},
+                            {"match": {"eissn.normalized": "eissn.value"}},
+                            {"match": {"datePubli.normalized": "datePubli.value"}},
+                            {"match": {"auteur_init.normalized": "auteur_init.value"}}
+                        ],
+                        "_name":"titre+eissn+ (prénom initiale)+annee"
+                }
+         }    
+     },
+     { 
+        "rule":"15",
+         "non_empty":["titre.value","eissn.value","datePubli.value","auteur.value"],
+         "query":{
+            
+                 "bool": {
+                         "must": [
+                             {"match": {"titre.normalized": "titre.value"}},
+                             {"match": {"eissn.normalized": "eissn.value"}},
+                             {"match": {"datePubli.normalized": "datePubli.value"}},
+                             {"match": {"auteur.normalized": "auteur.value"}}
+                         ],
+                         "_name":"titre+eissn+auteur+annee"
+                 }
+         }    
+     },
+     { 
+        "rule":"16",
+         "non_empty":["titre.value","eissn.value","volume.value","page.value","datePubli.value"],
+         "query":{
+            
+                 "bool": {
+                         "must": [
+                             {"match": {"titre.normalized": "titre.value"}},
+                             {"match": {"eissn.normalized": "eissn.value"}},
+                             {"match": {"volume.normalized": "volume.value"}},
+                             {"match": {"page.normalized": "page.value"}},
+                             {"match": {"datePubli.normalized": "datePubli.value"}}
+                         ],
+                         "_name":"titre+eissn+volume+page+annee"
+                 }
+         }    
+     },
+     { 
+        "rule":"17",
+         "non_empty":["titre.value","eissn.value","numero.value","page.value","datePubli.value"],
+         "query":{
+            
+                 "bool": {
+                         "must": [
+                             {"match": {"titre.normalized": "titre.value"}},
+                             {"match": {"eissn.normalized": "eissn.value"}},
+                             {"match": {"numero.normalized": "numero.value"}},
+                             {"match": {"page.normalized": "page.value"}},
+                             {"match": {"datePubli.normalized": "datePubli.value"}}
+                         ],
+                         "_name":"titre+eissn+numero+page+annee"
+                 }
+         }    
+     },
+     { 
+        "rule":"18",
+        "non_empty":["titre.value","eissn.value","volume.value","numero.value","page.value","datePubli.value"],
+        "query":{
+           
+                "bool": {
+                        "must": [
+                            {"match": {"titre.normalized": "titre.value"}},
+                            {"match": {"eissn.normalized": "eissn.value"}},
+                            {"match": {"volume.normalized": "volume.value"}},
+                            {"match": {"numero.normalized": "numero.value"}},
+                            {"match": {"page.normalized": "page.value"}},
+                            {"match": {"datePubli.normalized": "datePubli.value"}}
+                        ],
+                        "_name":"titre+eissn+volume+numero+page+annee"
+                }
         }    
     }
+   
 ]

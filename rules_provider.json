@@ -1,0 +1,38 @@
+[
+    {
+        "source":"hal",
+        "non_empty":["idhal.value"],
+        "query":{
+            "bool": {
+                    "must":[
+                        {"match": {"idhal.normalized": "idhal.value"}}
+                    ],
+                    "_name":"provider::idhal"
+            }
+         }    
+    },
+    {
+        "source":"wos",
+        "non_empty":["ut.value"],
+        "query":{
+            "bool": {
+                    "must":[
+                        {"match": {"ut.normalized": "ut.value"}}
+                    ],
+                    "_name":"provider::wos"
+            }
+         }  
+    },
+    {
+        "source":"prodinra",
+        "non_empty":["idprodinra.value"],
+        "query":{
+            "bool":{
+                "must":[
+                    {"match":{"idprodinra.normalized":"idprodinra.value"}}  
+                ] ,
+                "_name":"provider::prodinra"
+            }
+        }
+    }
+]

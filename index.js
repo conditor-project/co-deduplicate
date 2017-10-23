@@ -11,6 +11,7 @@ const esMapping = require('./mapping.json');
 const scenario = require('./scenario.json');
 const rules = require('./rules_certain.json');
 const baseRequest = require('./base_request.json');
+const provider_rules = require('./rules_provider.json');
 
 
 const esClient = new es.Client({
@@ -35,19 +36,20 @@ function insereNotice(jsonLine){
 	};
 
   _.each(['titre','titrefr','titreen','auteur','auteur_init','doi','arxiv','pubmed','nnt','patentNumber',
-          'ut','issn','isbn','eissn','numero','page','volume','idhal','halauthorid','orcid','researcherid',
+          'ut','issn','isbn','eissn','numero','page','volume','idhal','idprodinra','halauthorid','orcid','researcherid',
           'viaf','datePubli'],(champs)=>{
 
             if (jsonLine[champs] && jsonLine[champs].value && jsonLine[champs].value!=='') {
                 options.body[champs] = {'value':jsonLine[champs].value,'normalized':jsonLine[champs].value};
             }
           });
+  options.body.path = jsonLine.path;
   options.body.source = {'value':jsonLine.source};
   options.body.typeConditor = jsonLine.typeConditor;
   options.body.idChain = '';
   options.body.duplicate = [];
   jsonLine.duplicate = [];
-
+  //console.log(JSON.stringify(options));
   return esClient.index(options);
 
 }
@@ -74,17 +76,19 @@ function aggregeNotice(jsonLine, data) {
     };
 
     _.each(['titre','titrefr','titreen','auteur','auteur_init','doi','arxiv','pubmed','nnt','patentNumber',
-            'ut','issn','isbn','eissn','numero','page','volume','idhal','halauthorid','orcid','researcherid',
+            'ut','issn','isbn','eissn','numero','page','volume','idhal','idprodinra','halauthorid','orcid','researcherid',
             'viaf','datePubli'],(champs)=>{
 
                 if (jsonLine[champs] && jsonLine[champs].value && jsonLine[champs].value!=='') {
                     options.body[champs] = {'value':jsonLine[champs].value,'normalized':jsonLine[champs].value};
                 }
             });
+    options.body.path = jsonLine.path;
     options.body.source = {'value':jsonLine.source};
     options.body.duplicate = duplicate;
     options.body.typeConditor = jsonLine.typeConditor;
     options.body.idChain = '1';
+    //console.log(JSON.stringify(options));
     return esClient.index(options);
 }
 
@@ -110,10 +114,17 @@ function testParameter(jsonLine,arrayParameter){
 }
 
 function interprete(jsonLine,query,type){
+    
+    let rulename;
+    if (type.trim()!=='')
+        rulename = type+' : '+query.bool._name;
+    else 
+        rulename = query.bool._name;
+
     const newQuery ={
         bool: {
             must:null,
-            _name:query.bool._name
+            _name:rulename
     }};
     
     newQuery.bool.must =  _.map(query.bool.must,(value)=>{
@@ -124,7 +135,8 @@ function interprete(jsonLine,query,type){
         return match;
     });
    
-    newQuery.bool.must.push({'nested':{'path':'typeConditor','query':{'bool':{'must':[{'match':{'typeConditor.type':type}}]}}}});
+    if (type!=='')
+        newQuery.bool.must.push({'nested':{'path':'typeConditor','query':{'bool':{'must':[{'match':{'typeConditor.type':type}}]}}}});
     
     return newQuery;
   
@@ -134,8 +146,16 @@ function interprete(jsonLine,query,type){
 function existNotice(jsonLine){
     
     let request = _.cloneDeep(baseRequest);
+    // construction des règles uniquement sur l'identifiant de la source
+    _.each(provider_rules,(provider_rule)=>{
+        if (jsonLine.source.trim()===provider_rule.source.trim() && testParameter(jsonLine,provider_rule.non_empty)){
+            request.query.bool.should.push(interprete(jsonLine,provider_rule.query,''))
+        }
+    });
 
+    // construction des règles par scénarii
     _.each(jsonLine.typeConditor, (type)=>{
+
         if (type && type.type && scenario[type.type]){
             _.each(scenario[type.type],(rule)=>{
                 if (rules[rule] && testParameter(jsonLine,rules[rule].non_empty)) {

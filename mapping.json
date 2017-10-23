@@ -45,6 +45,14 @@
                 "my_asciifolding":{
                     "type":"asciifolding",
                     "preserve_original" : false
+                },
+                "truncate_50":{
+                    "type":"truncate",
+                    "length":"50"
+                },
+                "truncate_75":{
+                    "type":"truncate",
+                    "length":"75"
                 }
             },
             "normalizer":{
@@ -124,6 +132,17 @@
                     }
                 },
                 "idhal": {
+                    "properties":{
+                        "value":{
+                            "type":"text"
+                        },
+                        "normalized":{   
+                            "type":"keyword",
+                            "normalizer":"id:normalizer"
+                        }
+                    }
+                },
+                "idprodinra": {
                     "properties":{
                         "value":{
                             "type":"text"
