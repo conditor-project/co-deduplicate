@@ -40,11 +40,11 @@ function insereNotice(jsonLine){
           'viaf','datePubli'],(champs)=>{
 
             if (jsonLine[champs] && jsonLine[champs].value && jsonLine[champs].value!=='') {
-                options.body[champs] = {'value':jsonLine[champs].value,'normalized':jsonLine[champs].value};
+                options.body[champs] =jsonLine[champs].value;
             }
           });
   options.body.path = jsonLine.path;
-  options.body.source = {'value':jsonLine.source};
+  options.body.source = jsonLine.source;
   options.body.typeConditor = jsonLine.typeConditor;
   options.body.idChain = '';
   options.body.duplicate = [];
@@ -80,11 +80,11 @@ function aggregeNotice(jsonLine, data) {
             'viaf','datePubli'],(champs)=>{
 
                 if (jsonLine[champs] && jsonLine[champs].value && jsonLine[champs].value!=='') {
-                    options.body[champs] = {'value':jsonLine[champs].value,'normalized':jsonLine[champs].value};
+                    options.body[champs] = jsonLine[champs].value;
                 }
             });
     options.body.path = jsonLine.path;
-    options.body.source = {'value':jsonLine.source};
+    options.body.source = jsonLine.source;
     options.body.duplicate = duplicate;
     options.body.typeConditor = jsonLine.typeConditor;
     options.body.idChain = '1';

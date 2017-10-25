@@ -39,26 +39,38 @@
                     "type": "pattern_replace",
                     "pattern": ".*([0-9]+).*",
                     "replacement":"$1"
+                },
+                "trunc_50":{
+                    "type":"pattern_replace",
+                    "pattern":".*([0-9a-zA-Z]{50}).*",
+                    "replacement":"$1"
+                },
+                "trunc_75":{
+                    "type":"pattern_replace",
+                    "pattern":".*([0-9a-zA-Z]{75}).*",
+                    "replacement":"$1"
                 }
             },
             "filter":{
                 "my_asciifolding":{
                     "type":"asciifolding",
                     "preserve_original" : false
-                },
-                "truncate_50":{
-                    "type":"truncate",
-                    "length":"50"
-                },
-                "truncate_75":{
-                    "type":"truncate",
-                    "length":"75"
                 }
             },
             "normalizer":{
                 "titre:normalizer":{
                     "type": "custom",
                     "char_filter":["whitespace_remove","punctuation_remove"],
+                    "filter":["lowercase","my_asciifolding"]
+                },
+                "titre50:normalizer":{
+                    "type":"custom",
+                    "char_filter":["whitespace_remove","punctuation_remove","trunc_50"],
+                    "filter":["lowercase","my_asciifolding"]
+                },
+                "titre75:normalizer":{
+                    "type":"custom",
+                    "char_filter":["whitespace_remove","punctuation_remove","trunc_50"],
                     "filter":["lowercase","my_asciifolding"]
                 },
                 "auteur:normalizer":{
@@ -318,6 +330,14 @@
                         "normalized":{   
                             "type":"keyword",
                             "normalizer":"titre:normalizer"
+                        },
+                        "normalized50":{
+                            "type":"keyword",
+                            "normalizer":"titre50:normalizer"
+                        },
+                        "normalized75":{
+                            "type":"keyword",
+                            "normalizer":"titre75:normalizer"
                         }
                     }
                 },
@@ -329,6 +349,14 @@
                         "normalized":{   
                             "type":"keyword",
                             "normalizer":"titre:normalizer"
+                        },
+                        "normalized50":{
+                            "type":"keyword",
+                            "normalizer":"titre50:normalizer"
+                        },
+                        "normalized75":{
+                            "type":"keyword",
+                            "normalizer":"titre75:normalizer"
                         }
                     }
                 },
@@ -340,6 +368,14 @@
                         "normalized":{   
                             "type":"keyword",
                             "normalizer":"titre:normalizer"
+                        },
+                        "normalized50":{
+                            "type":"keyword",
+                            "normalizer":"titre50:normalizer"
+                        },
+                        "normalized75":{
+                            "type":"keyword",
+                            "normalizer":"titre75:normalizer"
                         }
                     }
                 },
@@ -389,7 +425,7 @@
                 "datePubli": {
                     "properties":{
                         "value":{
-                            "type":"text"
+                            "type":"date"
                         },
                         "normalized":{   
                             "type":"keyword",
