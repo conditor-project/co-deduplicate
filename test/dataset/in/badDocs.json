@@ -18,6 +18,7 @@
         "value": "",
         "normalized": ""
       },
+    "typeConditor":[{"type":"Article"}],
       "path":"/on/s/en/fiche.xml",
       "source":"TU3-1"
     },
@@ -39,6 +40,7 @@
         "value": "",
         "normalized": ""
       },
+      "typeConditor":[{"type":"Article"}],
       "path":"/on/s/en/fiche-encore-plus.xml",
       "source":"TU3-2"
     }

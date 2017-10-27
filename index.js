@@ -36,16 +36,20 @@ function insereNotice(jsonLine){
 	};
 
   _.each(['titre','titrefr','titreen','auteur','auteur_init','doi','arxiv','pubmed','nnt','patentNumber',
-          'ut','issn','isbn','eissn','numero','page','volume','idhal','idprodinra','halauthorid','orcid','researcherid',
+          'ut','issn','isbn','eissn','numero','page','volume','idhal','idprodinra','orcid','researcherid',
           'viaf','datePubli'],(champs)=>{
 
             if (jsonLine[champs] && jsonLine[champs].value && jsonLine[champs].value!=='') {
-                options.body[champs] =jsonLine[champs].value;
+                options.body[champs] ={'value':jsonLine[champs].value,'normalized':jsonLine[champs].value};
             }
           });
   options.body.path = jsonLine.path;
+  options.body.halautorid = jsonLine.halautorid;
   options.body.source = jsonLine.source;
-  options.body.typeConditor = jsonLine.typeConditor;
+  options.body.typeConditor = []
+  _.each(jsonLine.typeConditor,(typeCond)=>{
+    options.body.typeConditor.push({'type':typeCond.type,'raw':typeCond.type});
+  });
   options.body.idChain = '';
   options.body.duplicate = [];
   jsonLine.duplicate = [];
@@ -76,17 +80,21 @@ function aggregeNotice(jsonLine, data) {
     };
 
     _.each(['titre','titrefr','titreen','auteur','auteur_init','doi','arxiv','pubmed','nnt','patentNumber',
-            'ut','issn','isbn','eissn','numero','page','volume','idhal','idprodinra','halauthorid','orcid','researcherid',
+            'ut','issn','isbn','eissn','numero','page','volume','idhal','idprodinra','orcid','researcherid',
             'viaf','datePubli'],(champs)=>{
 
                 if (jsonLine[champs] && jsonLine[champs].value && jsonLine[champs].value!=='') {
-                    options.body[champs] = jsonLine[champs].value;
+                    options.body[champs] ={'value':jsonLine[champs].value,'normalized':jsonLine[champs].value};
                 }
             });
     options.body.path = jsonLine.path;
+    options.body.halautorid = jsonLine.halautorid;
     options.body.source = jsonLine.source;
     options.body.duplicate = duplicate;
-    options.body.typeConditor = jsonLine.typeConditor;
+    options.body.typeConditor = []
+    _.each(jsonLine.typeConditor,(typeCond)=>{
+        options.body.typeConditor.push({'type':typeCond.type,'raw':typeCond.type});
+    });
     options.body.idChain = '1';
     //console.log(JSON.stringify(options));
     return esClient.index(options);
@@ -200,6 +208,7 @@ business.doTheJob = function(jsonLine, cb) {
         },
         function(err) {
             if (err) {
+                console.log(err);
                 error = {
                     errCode: 1811,
                     errMessage: 'erreur de dédoublonnage : ' + err

@@ -85,8 +85,7 @@
                 },
                 "page:normalizer":{
                     "type":"custom",
-                    "char_filter":["spacenum","firstnum"],
-                    "filter":["lowercase"]
+                    "char_filter":["spacenum","firstnum"]
                 },
                 "volume:normalizer":{
                     "type":"custom",
@@ -95,13 +94,11 @@
                 },
                 "numero:normalizer":{
                     "type":"custom",
-                    "char_filter":["num"],
-                    "filter":["lowercase"]
+                    "char_filter":["num"]
                 },
                 "datePubli:normalizer":{
                     "type":"custom",
-                    "char_filter":["annee"],
-                    "filter":["lowercase"]
+                    "char_filter":["annee"]
                 }
             }
         }
@@ -166,15 +163,7 @@
                     }
                 },
                 "halauthorid": {
-                    "properties":{
-                        "value":{
-                            "type":"text"
-                        },
-                        "normalized":{   
-                            "type":"keyword",
-                            "normalizer":"id:normalizer"
-                        }
-                    }
+                    "type":"nested"
                 },
                 "orcid": {
                     "properties":{
@@ -320,7 +309,7 @@
                     }
                 },
                 "source": {
-                    "type": "object"
+                    "type": "keyword"
                 },
                 "titre": {
                     "properties":{
