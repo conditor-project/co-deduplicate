@@ -414,7 +414,7 @@
                 "datePubli": {
                     "properties":{
                         "value":{
-                            "type":"date"
+                            "type":"text"
                         },
                         "normalized":{   
                             "type":"keyword",
