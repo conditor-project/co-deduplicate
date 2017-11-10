@@ -154,12 +154,6 @@ function interprete(jsonLine,query,type){
 function existNotice(jsonLine){
     
     let request = _.cloneDeep(baseRequest);
-    // construction des règles uniquement sur l'identifiant de la source
-    _.each(provider_rules,(provider_rule)=>{
-        if (jsonLine.source.trim()===provider_rule.source.trim() && testParameter(jsonLine,provider_rule.non_empty)){
-            request.query.bool.should.push(interprete(jsonLine,provider_rule.query,''))
-        }
-    });
 
     // construction des règles par scénarii
     _.each(jsonLine.typeConditor, (type)=>{
@@ -180,14 +174,27 @@ function existNotice(jsonLine){
         }
     });
 
+    // construction des règles uniquement sur l'identifiant de la source
+    _.each(provider_rules,(provider_rule)=>{
+        if (jsonLine.source.trim()===provider_rule.source.trim() && testParameter(jsonLine,provider_rule.non_empty)){
+            request.query.bool.should.push(interprete(jsonLine,provider_rule.query,''))
+        }
+    });
+
+
+    if (request.query.bool.should.length===0){
+        throw new Error('Métadatas insuffisantes pour traiter la notice.');
+    }
+    else{
     //console.log(JSON.stringify(request));
 
-    return esClient.search({
-        index: esConf.index,
-        body : request
-    }).then(dispatch.bind(null,jsonLine),function(error){
-        console.error(error);
-    });
+        return esClient.search({
+            index: esConf.index,
+            body : request
+        }).then(dispatch.bind(null,jsonLine),function(error){
+            console.error(error);
+        });
+    }
 
 }
 
@@ -210,9 +217,10 @@ business.doTheJob = function(jsonLine, cb) {
             if (err) {
                 console.log(err);
                 error = {
-                    errCode: 1811,
+                    errCode: 3,
                     errMessage: 'erreur de dédoublonnage : ' + err
                 };
+                jsonLine.error = error;
                 return cb(error);
             }
         });
