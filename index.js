@@ -6,12 +6,17 @@ const es = require('elasticsearch'),
     _ = require('lodash'),
     debug = require('debug')('co-deduplicate');
 
+const nanoid = require('nanoid');
 const esConf = require('./es.js');
 const esMapping = require('./mapping.json');
 const scenario = require('./scenario.json');
 const rules = require('./rules_certain.json');
 const baseRequest = require('./base_request.json');
 const provider_rules = require('./rules_provider.json');
+//en attendant un co-conf 
+const listeChamps =['titre','titrefr','titreen','auteur','auteur_init','doi','arxiv','pubmed','nnt','patentNumber',
+'ut','issn','isbn','eissn','numero','page','volume','idhal','idprodinra','orcid','researcherid',
+'viaf','datePubli'];
 
 
 const esClient = new es.Client({
@@ -35,9 +40,7 @@ function insereNotice(jsonLine){
 		'date_creation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
 	};
 
-  _.each(['titre','titrefr','titreen','auteur','auteur_init','doi','arxiv','pubmed','nnt','patentNumber',
-          'ut','issn','isbn','eissn','numero','page','volume','idhal','idprodinra','orcid','researcherid',
-          'viaf','datePubli'],(champs)=>{
+  _.each(listeChamps,(champs)=>{
 
             if (jsonLine[champs] && jsonLine[champs].value && jsonLine[champs].value!=='') {
                 options.body[champs] ={'value':jsonLine[champs].value,'normalized':jsonLine[champs].value};
@@ -46,11 +49,12 @@ function insereNotice(jsonLine){
   options.body.path = jsonLine.path;
   options.body.halautorid = jsonLine.halautorid;
   options.body.source = jsonLine.source;
-  options.body.typeConditor = []
+  options.body.typeConditor = [];
+  options.body.idConditor = jsonLine.idConditor;
   _.each(jsonLine.typeConditor,(typeCond)=>{
     options.body.typeConditor.push({'type':typeCond.type,'raw':typeCond.type});
   });
-  options.body.idChain = '';
+  options.body.idChain = jsonLine.source+':'+jsonLine.idConditor;
   options.body.duplicate = [];
   jsonLine.duplicate = [];
   //console.log(JSON.stringify(options));
@@ -64,11 +68,13 @@ function aggregeNotice(jsonLine, data) {
     let duplicate=[];
     let idchain=[];
 
+    idchain.push(jsonLine.source+':'+jsonLine.idConditor);
     _.each(data.hits.hits,(hit)=>{
-        duplicate.push({id:hit._id,rule:hit.matched_queries});
-        idchain.push(hit._id);
+        duplicate.push({id:hit._source.idConditor,rule:hit.matched_queries});
+        idchain=_.union(idchain,hit._source.idChain.split('!'));
     });
 
+    idchain.sort();
     jsonLine.duplicate = duplicate;
 
     let options = {index : esConf.index,type : esConf.type,refresh:true};
@@ -79,9 +85,7 @@ function aggregeNotice(jsonLine, data) {
         'date_creation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
     };
 
-    _.each(['titre','titrefr','titreen','auteur','auteur_init','doi','arxiv','pubmed','nnt','patentNumber',
-            'ut','issn','isbn','eissn','numero','page','volume','idhal','idprodinra','orcid','researcherid',
-            'viaf','datePubli'],(champs)=>{
+    _.each(listeChamps,(champs)=>{
 
                 if (jsonLine[champs] && jsonLine[champs].value && jsonLine[champs].value!=='') {
                     options.body[champs] ={'value':jsonLine[champs].value,'normalized':jsonLine[champs].value};
@@ -91,24 +95,64 @@ function aggregeNotice(jsonLine, data) {
     options.body.halautorid = jsonLine.halautorid;
     options.body.source = jsonLine.source;
     options.body.duplicate = duplicate;
-    options.body.typeConditor = []
+    options.body.typeConditor = [];
+    options.body.idConditor = jsonLine.idConditor;
     _.each(jsonLine.typeConditor,(typeCond)=>{
         options.body.typeConditor.push({'type':typeCond.type,'raw':typeCond.type});
     });
-    options.body.idChain = '1';
+    options.body.idChain = _.join(idchain,'!');
+    jsonLine.idChain = options.body.idChain;
     //console.log(JSON.stringify(options));
     return esClient.index(options);
 }
 
+function propagate(jsonLine,data,result){
+
+
+    let options;
+    let update;
+    let body=[];
+    let option;
+    let arrayDuplicate;
+
+    _.each(data.hits.hits,(hit)=>{
+       
+        options={update:{_index:esConf.index,_type:esConf.type,_id:hit._id}};
+        //constitution du duplicate
+
+        _.each(jsonLine.duplicate,(duplicate)=>{
+            if (duplicate.id===hit._source.idConditor){
+                arrayDuplicate=hit._source.duplicate;
+                arrayDuplicate.push({id:result._id,rule:duplicate.rule});
+            }
+        });
+
+        update={doc:{idChain:jsonLine.idChain,duplicate:arrayDuplicate}};
+        body.push(options);
+        body.push(update);
+        
+
+
+    });
+    option={body:body};
+    return esClient.bulk(option);
+}
+
 function dispatch(jsonLine,data) {
 
+    // creation de l'id
+    jsonLine.idConditor = nanoid();
+    
     if (data.hits.total===0){
         //console.log('on insere');
         return insereNotice(jsonLine);
     }
     else {
         //console.log('on aggrege');
-        return aggregeNotice(jsonLine,data);
+        return aggregeNotice(jsonLine,data)
+                .then(propagate.bind(null,jsonLine,data),(error)=>{
+                    console.error(error);
+        });
     }
 }
 
@@ -165,33 +209,25 @@ function existNotice(jsonLine){
                     }
             });
         }
-        else {
-            _.each(scenario.Article,(rule)=>{
-                if (rules[rule] && testParameter(jsonLine,rules[rule].non_empty)) {
-                        request.query.bool.should.push(interprete(jsonLine,rules[rule].query,'Article'));
-                    }
-            });
-        }
     });
-
-    // construction des règles uniquement sur l'identifiant de la source
-    _.each(provider_rules,(provider_rule)=>{
-        if (jsonLine.source.trim()===provider_rule.source.trim() && testParameter(jsonLine,provider_rule.non_empty)){
-            request.query.bool.should.push(interprete(jsonLine,provider_rule.query,''))
-        }
-    });
-
 
     if (request.query.bool.should.length===0){
         throw new Error('Métadatas insuffisantes pour traiter la notice.');
     }
     else{
-    //console.log(JSON.stringify(request));
+    
+        // construction des règles uniquement sur l'identifiant de la source
+        _.each(provider_rules,(provider_rule)=>{
+            if (jsonLine.source.trim()===provider_rule.source.trim() && testParameter(jsonLine,provider_rule.non_empty)){
+                request.query.bool.should.push(interprete(jsonLine,provider_rule.query,''))
+            }
+        });
+        //console.log(JSON.stringify(request));
 
         return esClient.search({
             index: esConf.index,
             body : request
-        }).then(dispatch.bind(null,jsonLine),function(error){
+        }).then(dispatch.bind(null,jsonLine),(error)=>{
             console.error(error);
         });
     }
@@ -208,8 +244,7 @@ business.doTheJob = function(jsonLine, cb) {
     return existNotice(jsonLine).then(function(result) {
 
             //debug(result);
-            jsonLine.id_elasticsearch = result._id;
-            debug(jsonLine);
+            //debug(jsonLine);
             return cb();
 
         },

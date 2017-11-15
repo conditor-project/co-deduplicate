@@ -107,6 +107,9 @@
         "notice": {
             "dynamic": "false",
             "properties": {
+                "idConditor":{
+                    "type":"keyword"
+                },
                 "auteur": {
                     "properties":{
                         "value":{
