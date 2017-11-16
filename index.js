@@ -242,7 +242,7 @@ business.doTheJob = function(jsonLine, cb) {
     let error;
     jsonLine.conditor_ident = 0;
 
-    return existNotice(jsonLine).catch(function(e){
+    existNotice(jsonLine).catch(function(e){
         error = {
             errCode: 3,
             errMessage: 'erreur de dédoublonnage : ' + e
