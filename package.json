@@ -19,6 +19,7 @@
   "author": "Genicot JB",
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
+    "bluebird": "^3.5.1",
     "chai": "^3.5.0",
     "debug": "^2.6.8",
     "elasticsearch": "^13.0.1",

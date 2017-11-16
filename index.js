@@ -6,6 +6,7 @@ const es = require('elasticsearch'),
     _ = require('lodash'),
     debug = require('debug')('co-deduplicate');
 
+const Promise = require('bluebird');
 const nanoid = require('nanoid');
 const esConf = require('./es.js');
 const esMapping = require('./mapping.json');
@@ -23,7 +24,7 @@ const esClient = new es.Client({
     host: esConf.host,
     log: {
         type: 'file',
-        level: 'trace'
+        level: 'debug'
     }
 });
 
@@ -197,40 +198,40 @@ function interprete(jsonLine,query,type){
 // on crée la requete puis on teste si l'entrée existe
 function existNotice(jsonLine){
     
-    let request = _.cloneDeep(baseRequest);
+    return Promise.try(function(){
+        let request = _.cloneDeep(baseRequest);
 
-    // construction des règles par scénarii
-    _.each(jsonLine.typeConditor, (type)=>{
+        // construction des règles par scénarii
+        _.each(jsonLine.typeConditor, (type)=>{
 
-        if (type && type.type && scenario[type.type]){
-            _.each(scenario[type.type],(rule)=>{
-                if (rules[rule] && testParameter(jsonLine,rules[rule].non_empty)) {
-                        request.query.bool.should.push(interprete(jsonLine,rules[rule].query,type.type));
-                    }
-            });
-        }
-    });
-
-    if (request.query.bool.should.length===0){
-        throw new Error('Métadatas insuffisantes pour traiter la notice.');
-    }
-    else{
-    
-        // construction des règles uniquement sur l'identifiant de la source
-        _.each(provider_rules,(provider_rule)=>{
-            if (jsonLine.source.trim()===provider_rule.source.trim() && testParameter(jsonLine,provider_rule.non_empty)){
-                request.query.bool.should.push(interprete(jsonLine,provider_rule.query,''))
+            if (type && type.type && scenario[type.type]){
+                _.each(scenario[type.type],(rule)=>{
+                    if (rules[rule] && testParameter(jsonLine,rules[rule].non_empty)) {
+                            request.query.bool.should.push(interprete(jsonLine,rules[rule].query,type.type));
+                        }
+                });
             }
         });
-        //console.log(JSON.stringify(request));
 
-        return esClient.search({
-            index: esConf.index,
-            body : request
-        }).then(dispatch.bind(null,jsonLine),(error)=>{
-            console.error(error);
-        });
-    }
+        if (request.query.bool.should.length===0){
+            throw new Error('Métadatas insuffisantes pour traiter la notice.');
+        }
+        else{
+        
+            // construction des règles uniquement sur l'identifiant de la source
+            _.each(provider_rules,(provider_rule)=>{
+                if (jsonLine.source.trim()===provider_rule.source.trim() && testParameter(jsonLine,provider_rule.non_empty)){
+                    request.query.bool.should.push(interprete(jsonLine,provider_rule.query,''))
+                }
+            });
+            //console.log(JSON.stringify(request));
+
+            return esClient.search({
+                index: esConf.index,
+                body : request
+            }).then(dispatch.bind(null,jsonLine));
+        }
+    });
 
 }
 
@@ -241,25 +242,21 @@ business.doTheJob = function(jsonLine, cb) {
     let error;
     jsonLine.conditor_ident = 0;
 
-    return existNotice(jsonLine).then(function(result) {
+    return existNotice(jsonLine).catch(function(e){
+        error = {
+            errCode: 3,
+            errMessage: 'erreur de dédoublonnage : ' + e
+        };
+        jsonLine.error = error;
+        cb(error);
+    }).then(function(result) {
 
             //debug(result);
             //debug(jsonLine);
             return cb();
 
-        },
-        function(err) {
-            if (err) {
-                console.log(err);
-                error = {
-                    errCode: 3,
-                    errMessage: 'erreur de dédoublonnage : ' + err
-                };
-                jsonLine.error = error;
-                return cb(error);
-            }
-        });
-    }
+    });
+};
 
 
 // Fonction d'ajout de l'alias si nécessaire
