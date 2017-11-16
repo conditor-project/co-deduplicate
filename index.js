@@ -242,19 +242,19 @@ business.doTheJob = function(jsonLine, cb) {
     let error;
     jsonLine.conditor_ident = 0;
 
-    existNotice(jsonLine).catch(function(e){
+    existNotice(jsonLine).then(function(result) {
+
+            //debug(result);
+            //debug(jsonLine);
+            return cb();
+
+    }).catch(function(e){
         error = {
             errCode: 3,
             errMessage: 'erreur de dédoublonnage : ' + e
         };
         jsonLine.error = error;
         cb(error);
-    }).then(function(result) {
-
-            //debug(result);
-            //debug(jsonLine);
-            return cb();
-
     });
 };
 
