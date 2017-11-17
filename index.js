@@ -17,7 +17,7 @@ const provider_rules = require('./rules_provider.json');
 //en attendant un co-conf 
 const listeChamps =['titre','titrefr','titreen','auteur','auteur_init','doi','arxiv','pubmed','nnt','patentNumber',
 'ut','issn','isbn','eissn','numero','page','volume','idhal','idprodinra','orcid','researcherid',
-'viaf','datePubli'];
+'viaf','datePubli','titreSource'];
 
 
 const esClient = new es.Client({

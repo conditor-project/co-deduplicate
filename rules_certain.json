@@ -2818,7 +2818,7 @@
                        {"match":{"auteur.normalized":"auteur.value"}},
                        {"match":{"datePubli.normalized":"datePubli.value"}}  
                    ],
-                   "_name":"titre50+auteur+datePubli"
+                   "_name":"titreen50+auteur+datePubli"
            } 
         }
     },
