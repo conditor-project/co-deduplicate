@@ -54,7 +54,7 @@ function insereNotice(jsonLine){
   options.body.typeConditor = [];
   options.body.idConditor = jsonLine.idConditor;
   _.each(jsonLine.typeConditor,(typeCond)=>{
-    options.body.typeConditor.push({'type':typeCond.type,'raw':typeCond.type});
+    options.body.typeConditor.push({'value':typeCond.type,'raw':typeCond.type});
   });
   options.body.idChain = jsonLine.source+':'+jsonLine.idConditor;
   options.body.duplicate = [];
@@ -101,7 +101,7 @@ function aggregeNotice(jsonLine, data) {
     options.body.typeDocument = jsonLine.typeDocument;
     options.body.idConditor = jsonLine.idConditor;
     _.each(jsonLine.typeConditor,(typeCond)=>{
-        options.body.typeConditor.push({'type':typeCond.type,'raw':typeCond.type});
+        options.body.typeConditor.push({'value':typeCond.type,'raw':typeCond.type});
     });
     options.body.idChain = _.join(idchain,'!');
     jsonLine.idChain = options.body.idChain;
@@ -191,7 +191,7 @@ function interprete(jsonLine,query,type){
     });
    
     if (type!=='')
-        newQuery.bool.must.push({'nested':{'path':'typeConditor','query':{'bool':{'must':[{'match':{'typeConditor.type':type}}]}}}});
+        newQuery.bool.must.push({'nested':{'path':'typeConditor','query':{'bool':{'must':[{'match':{'typeConditor.value':type}}]}}}});
     
     return newQuery;
   

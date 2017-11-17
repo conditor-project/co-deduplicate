@@ -388,11 +388,11 @@
                 "typeConditor":{
                     "type":"nested",
                     "properties":{
-                        "type":{
+                        "value":{
                             "type":"text",
                             "index":true
                         },
-                        "rawType":{
+                        "raw":{
                             "type":"keyword"
                         }
                     }
