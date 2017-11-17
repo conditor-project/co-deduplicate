@@ -383,7 +383,7 @@
                     }
                 },
                 "typeDocument": {
-                    "type":"keyword"
+                    "type":"nested"
                 },
                 "typeConditor":{
                     "type":"nested",

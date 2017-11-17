@@ -49,6 +49,7 @@ function insereNotice(jsonLine){
           });
   options.body.path = jsonLine.path;
   options.body.halautorid = jsonLine.halautorid;
+  options.body.typeDocument = jsonLine.typeDocument;
   options.body.source = jsonLine.source;
   options.body.typeConditor = [];
   options.body.idConditor = jsonLine.idConditor;
@@ -97,6 +98,7 @@ function aggregeNotice(jsonLine, data) {
     options.body.source = jsonLine.source;
     options.body.duplicate = duplicate;
     options.body.typeConditor = [];
+    options.body.typeDocument = jsonLine.typeDocument;
     options.body.idConditor = jsonLine.idConditor;
     _.each(jsonLine.typeConditor,(typeCond)=>{
         options.body.typeConditor.push({'type':typeCond.type,'raw':typeCond.type});
