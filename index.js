@@ -118,6 +118,8 @@ function propagate(jsonLine,data,result){
     let option;
     let arrayDuplicate;
 
+    jsonLine.id_elasticsearch = result._id;
+
     _.each(data.hits.hits,(hit)=>{
        
         options={update:{_index:esConf.index,_type:esConf.type,_id:hit._id}};
@@ -242,12 +244,13 @@ function existNotice(jsonLine){
 business.doTheJob = function(jsonLine, cb) {
 
     let error;
-    jsonLine.conditor_ident = 0;
 
     existNotice(jsonLine).then(function(result) {
 
             //debug(result);
             //debug(jsonLine);
+            if (result && result._id && !jsonLine.id_elasticsearch)
+                jsonLine.id_elasticsearch = result._id;
             return cb();
 
     }).catch(function(e){
