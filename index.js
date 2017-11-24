@@ -9,11 +9,11 @@ const es = require('elasticsearch'),
 const Promise = require('bluebird');
 const nanoid = require('nanoid');
 const esConf = require('./es.js');
-const esMapping = require('./mapping.json');
-const scenario = require('./scenario.json');
-const rules = require('./rules_certain.json');
-const baseRequest = require('./base_request.json');
-const provider_rules = require('./rules_provider.json');
+const esMapping = require('co-config/mapping.json');
+const scenario = require('co-config/scenario.json');
+const rules = require('co-config/rules_certain.json');
+const baseRequest = require('co-config/base_request.json');
+const provider_rules = require('co-config/rules_provider.json');
 //en attendant un co-conf 
 const listeChamps =['titre','titrefr','titreen','auteur','auteur_init','doi','arxiv','pubmed','nnt','patentNumber',
 'ut','issn','isbn','eissn','numero','page','volume','idhal','idprodinra','orcid','researcherid',
