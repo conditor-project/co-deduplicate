@@ -21,7 +21,7 @@
   "dependencies": {
     "bluebird": "^3.5.1",
     "chai": "^3.5.0",
-    "co-config": "git+https://genicot@git.istex.fr/conditor/co-config.git",
+    "co-config": "git+ssh://vs-istex-git.intra.inist.fr:22222/conditor/co-config.git",
     "debug": "^2.6.8",
     "elasticsearch": "^13.0.1",
     "fs": "0.0.1-security",
