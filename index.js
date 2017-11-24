@@ -8,7 +8,7 @@ const es = require('elasticsearch'),
 
 const Promise = require('bluebird');
 const nanoid = require('nanoid');
-const esConf = require('./es.js');
+const esConf = require('co-config/es.js');
 const esMapping = require('co-config/mapping.json');
 const scenario = require('co-config/scenario.json');
 const rules = require('co-config/rules_certain.json');
