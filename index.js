@@ -1,5 +1,3 @@
-/*jslint node: true */
-/*jslint indent: 2 */
 'use strict';
 
 const es = require('elasticsearch'),
@@ -17,7 +15,7 @@ const provider_rules = require('co-config/rules_provider.json');
 //en attendant un co-conf 
 const listeChamps =['titre','titrefr','titreen','auteur','auteur_init','doi','arxiv','pubmed','nnt','patentNumber',
 'ut','issn','isbn','eissn','numero','page','volume','idhal','idprodinra','orcid','researcherid',
-'viaf','datePubli','titreSource'];
+'viaf','datePubli','titreSourceM','titreSourceJ'];
 
 
 const esClient = new es.Client({
