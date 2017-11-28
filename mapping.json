@@ -383,7 +383,12 @@
                     }
                 },
                 "typeDocument": {
-                    "type":"nested"
+                    "properties":{
+                        "value":{
+                          "type":"text",
+                          "index":true  
+                        } 
+                    }
                 },
                 "typeConditor":{
                     "properties":{
