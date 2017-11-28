@@ -191,7 +191,7 @@ function interprete(jsonLine,query,type){
     });
    
     if (type!=='')
-        newQuery.bool.must.push({'query':{'bool':{'must':[{'match':{'typeConditor.value':type}}]}}});
+        newQuery.bool.must.push({'match':{'typeConditor.value':type}});
     
     return newQuery;
   
