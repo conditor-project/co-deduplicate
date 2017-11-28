@@ -387,9 +387,12 @@
                 },
                 "typeConditor":{
                     "properties":{
-                        "type":{
+                        "value":{
                             "type":"text",
                             "index":true
+                        },
+                        "raw":{
+                            "type":"keyword"
                         }
                     }
                 },
