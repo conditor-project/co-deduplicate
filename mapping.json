@@ -386,14 +386,10 @@
                     "type":"nested"
                 },
                 "typeConditor":{
-                    "type":"nested",
                     "properties":{
-                        "value":{
+                        "type":{
                             "type":"text",
                             "index":true
-                        },
-                        "raw":{
-                            "type":"keyword"
                         }
                     }
                 },
