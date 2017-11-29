@@ -41,10 +41,14 @@ function insereNotice(jsonLine){
 
   _.each(listeChamps,(champs)=>{
 
-            if (jsonLine[champs] && jsonLine[champs].value && jsonLine[champs].value!=='') {
-                options.body[champs] ={'value':jsonLine[champs].value,'normalized':jsonLine[champs].value};
-            }
-          });
+    if (jsonLine[champs] && jsonLine[champs].value && jsonLine[champs].value!=='') {
+        options.body[champs] ={'value':jsonLine[champs].value,'normalized':jsonLine[champs].value};
+        if (champs ==='titre' || champs ==='titrefr' || champs ==='titreen'){
+            options.body[champs].normalized50 = jsonLine[champs].value;
+            options.body[champs].normalized75 = jsonLine[champs].value;
+         }
+    }
+});
   options.body.path = jsonLine.path;
   options.body.halautorid = jsonLine.halautorid;
   options.body.typeDocument = jsonLine.typeDocument;
@@ -87,10 +91,14 @@ function aggregeNotice(jsonLine, data) {
 
     _.each(listeChamps,(champs)=>{
 
-                if (jsonLine[champs] && jsonLine[champs].value && jsonLine[champs].value!=='') {
-                    options.body[champs] ={'value':jsonLine[champs].value,'normalized':jsonLine[champs].value};
-                }
-            });
+        if (jsonLine[champs] && jsonLine[champs].value && jsonLine[champs].value!=='') {
+            options.body[champs] ={'value':jsonLine[champs].value,'normalized':jsonLine[champs].value};
+            if (champs ==='titre' || champs ==='titrefr' || champs ==='titreen'){
+                options.body[champs].normalized50 = jsonLine[champs].value;
+                options.body[champs].normalized75 = jsonLine[champs].value;
+             }
+        }
+    });
     options.body.path = jsonLine.path;
     options.body.halautorid = jsonLine.halautorid;
     options.body.source = jsonLine.source;
@@ -126,7 +134,7 @@ function propagate(jsonLine,data,result){
         _.each(jsonLine.duplicate,(duplicate)=>{
             if (duplicate.idConditor===hit._source.idConditor){
                 arrayDuplicate=hit._source.duplicate;
-                arrayDuplicate.push({id:result._id,rule:duplicate.rule});
+                arrayDuplicate.push({idConditor:jsonLine.idConditor,rule:duplicate.rule});
             }
         });
 
@@ -134,8 +142,6 @@ function propagate(jsonLine,data,result){
         body.push(options);
         body.push(update);
         
-
-
     });
     option={body:body};
     return esClient.bulk(option);
@@ -159,12 +165,17 @@ function dispatch(jsonLine,data) {
     }
 }
 
-function testParameter(jsonLine,arrayParameter){
+function testParameter(jsonLine,rules){
 
+    let arrayParameter = rules.non_empty;
+    let arrayNonParameter = (rules.is_empty!==undefined) ? rules.is_empty : [];
     let bool=true;
     _.each(arrayParameter,function(parameter){
         if (_.get(jsonLine,parameter)===undefined || _.get(jsonLine,parameter).trim()==='') bool = false ;
     });
+    _.each(arrayNonParameter,function(nonparamater){
+        if (_.get(jsonLine,nonparameter)!==undefined || _.get(jsonLine,nonparameter).trim()!=='') bool = false;
+    })
     return bool;
 }
 
@@ -208,7 +219,7 @@ function existNotice(jsonLine){
 
             if (type && type.type && scenario[type.type]){
                 _.each(scenario[type.type],(rule)=>{
-                    if (rules[rule] && testParameter(jsonLine,rules[rule].non_empty)) {
+                    if (rules[rule] && testParameter(jsonLine,rules[rule])) {
                             request.query.bool.should.push(interprete(jsonLine,rules[rule].query,type.type));
                         }
                 });

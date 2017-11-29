@@ -445,6 +445,7 @@
     { 
         "rule":"28",
          "non_empty":["titrefr.value","issn.value","numero.value","page.value","datePubli.value"],
+         "is_empty":["volume.value"],
          "query":{
             
                  "bool": {
@@ -462,6 +463,7 @@
      { 
         "rule":"29",
          "non_empty":["titrefr.value","issn.value","volume.value","page.value","datePubli.value"],
+         "is_empty": ["numero.value"],
          "query":{
             
                  "bool": {
