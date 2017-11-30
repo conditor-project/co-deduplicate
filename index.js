@@ -43,7 +43,7 @@ function insereNotice(jsonLine){
 
     if (jsonLine[champs] && jsonLine[champs].value && jsonLine[champs].value!=='') {
         options.body[champs] ={'value':jsonLine[champs].value,'normalized':jsonLine[champs].value};
-        if (champs ==='titre' || champs ==='titrefr' || champs ==='titreen'){
+        if (champs ==='titre' || champs ==='titrefr' || champs ==='titreen' ){
             options.body[champs].normalized50 = jsonLine[champs].value;
             options.body[champs].normalized75 = jsonLine[champs].value;
          }

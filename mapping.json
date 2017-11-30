@@ -407,7 +407,18 @@
                 "idChain":{
                     "type":"keyword"
                 },
-                "titreSource": {
+                "titreSourceJ": {
+                    "properties":{
+                        "value":{
+                            "type":"text"
+                        },
+                        "normalized":{   
+                            "type":"keyword",
+                            "normalizer":"titre:normalizer"
+                        }
+                    }
+                },
+                "titreSourceM": {
                     "properties":{
                         "value":{
                             "type":"text"
