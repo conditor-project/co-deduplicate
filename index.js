@@ -22,7 +22,7 @@ const esClient = new es.Client({
     host: esConf.host,
     log: {
         type: 'file',
-        level: 'error'
+        level: 'debug'
     }
 });
 
@@ -174,7 +174,7 @@ function testParameter(jsonLine,rules){
         if (_.get(jsonLine,parameter)===undefined || _.get(jsonLine,parameter).trim()==='') bool = false ;
     });
     _.each(arrayNonParameter,function(nonparameter){
-        if (_.get(jsonLine,nonparameter)!==undefined || _.get(jsonLine,nonparameter).trim()!=='') bool = false;
+        if (_.get(jsonLine,nonparameter)!==undefined && _.get(jsonLine,nonparameter).trim()!=='') bool = false;
     })
     return bool;
 }
