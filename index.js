@@ -173,7 +173,7 @@ function testParameter(jsonLine,rules){
     _.each(arrayParameter,function(parameter){
         if (_.get(jsonLine,parameter)===undefined || _.get(jsonLine,parameter).trim()==='') bool = false ;
     });
-    _.each(arrayNonParameter,function(nonparamater){
+    _.each(arrayNonParameter,function(nonparameter){
         if (_.get(jsonLine,nonparameter)!==undefined || _.get(jsonLine,nonparameter).trim()!=='') bool = false;
     })
     return bool;
