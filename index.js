@@ -53,6 +53,7 @@ function insereNotice(jsonLine){
   options.body.halautorid = jsonLine.halautorid;
   options.body.typeDocument = jsonLine.typeDocument;
   options.body.source = jsonLine.source;
+  options.body.idIngest = jsonLine.idIngest;
   options.body.typeConditor = [];
   options.body.idConditor = jsonLine.idConditor;
   _.each(jsonLine.typeConditor,(typeCond)=>{
@@ -106,6 +107,7 @@ function aggregeNotice(jsonLine, data) {
     options.body.typeConditor = [];
     options.body.typeDocument = jsonLine.typeDocument;
     options.body.idConditor = jsonLine.idConditor;
+    options.body.idIngest = jsonLine.idIngest;
     _.each(jsonLine.typeConditor,(typeCond)=>{
         options.body.typeConditor.push({'value':typeCond.type,'raw':typeCond.type});
     });
@@ -134,7 +136,7 @@ function propagate(jsonLine,data,result){
         _.each(jsonLine.duplicate,(duplicate)=>{
             if (duplicate.idConditor===hit._source.idConditor){
                 arrayDuplicate=hit._source.duplicate;
-                arrayDuplicate.push({idConditor:jsonLine.idConditor,rule:duplicate.rule});
+                arrayDuplicate.push({idConditor:jsonLine.idConditor,rule:duplicate.rule,idIngest:jsonLine.idIngest});
             }
         });
 
@@ -208,6 +210,22 @@ function interprete(jsonLine,query,type){
   
 }
 
+function buildQuery(jsonLine,request){
+    
+    _.each(jsonLine.typeConditor, (type)=>{
+        
+        if (type && type.type && scenario[type.type]){
+            _.each(scenario[type.type],(rule)=>{
+                if (rules[rule] && testParameter(jsonLine,rules[rule])) {
+                        request.query.bool.should.push(interprete(jsonLine,rules[rule].query,type.type));
+                    }
+            });
+        }
+    });
+
+    return request;
+}
+
 // on crée la requete puis on teste si l'entrée existe
 function existNotice(jsonLine){
     
@@ -237,22 +255,6 @@ function existNotice(jsonLine){
         }
     });
 
-}
-
-function buildQuery(jsonLine,request){
-
-    _.each(jsonLine.typeConditor, (type)=>{
-        
-        if (type && type.type && scenario[type.type]){
-            _.each(scenario[type.type],(rule)=>{
-                if (rules[rule] && testParameter(jsonLine,rules[rule])) {
-                        request.query.bool.should.push(interprete(jsonLine,rules[rule].query,type.type));
-                    }
-            });
-        }
-    });
-
-    return request;
 }
 
 business.doTheJob = function(jsonLine, cb) {
