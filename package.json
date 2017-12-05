@@ -28,7 +28,8 @@
     "lodash": "^4.17.4",
     "mocha": "^3.3.0",
     "nanoid": "^1.0.1",
-    "node-eval": "^1.1.1"
+    "node-eval": "^1.1.1",
+    "rewire": "^3.0.2"
   },
   "devDependencies": {
     "jshint": "^2.9.5"

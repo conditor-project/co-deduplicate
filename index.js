@@ -215,16 +215,7 @@ function existNotice(jsonLine){
         let request = _.cloneDeep(baseRequest);
 
         // construction des règles par scénarii
-        _.each(jsonLine.typeConditor, (type)=>{
-
-            if (type && type.type && scenario[type.type]){
-                _.each(scenario[type.type],(rule)=>{
-                    if (rules[rule] && testParameter(jsonLine,rules[rule])) {
-                            request.query.bool.should.push(interprete(jsonLine,rules[rule].query,type.type));
-                        }
-                });
-            }
-        });
+        request = buildQuery(jsonLine,request);
 
         if (request.query.bool.should.length===0){
             throw new Error('Métadatas insuffisantes pour traiter la notice.');
@@ -248,7 +239,21 @@ function existNotice(jsonLine){
 
 }
 
+function buildQuery(jsonLine,request){
 
+    _.each(jsonLine.typeConditor, (type)=>{
+        
+        if (type && type.type && scenario[type.type]){
+            _.each(scenario[type.type],(rule)=>{
+                if (rules[rule] && testParameter(jsonLine,rules[rule])) {
+                        request.query.bool.should.push(interprete(jsonLine,rules[rule].query,type.type));
+                    }
+            });
+        }
+    });
+
+    return request;
+}
 
 business.doTheJob = function(jsonLine, cb) {
 

@@ -2,10 +2,12 @@
 
 const
   fs = require('fs'),
+  rewire = require('rewire'),
   pkg = require('../package.json'),
-  business = require('../index.js'),
+  business = rewire('../index.js'),
   testData = require('./dataset/in/test.json'),
   badData = require('./dataset/in/badDocs.json'),
+  baseRequest = require('co-config/base_request.json'),
   chai = require('chai'),
   expect = chai.expect,
   _ = require('lodash'),
@@ -13,12 +15,13 @@ const
 
 var esConf = require('../es.js');
 esConf.index = 'tests-deduplicate';
+business.__set__('esConf.index','tests-deduplicate');
 
 const esClient = new es.Client({
   host: esConf.host,
   log: {
     type: 'file',
-    level: ['debug','error']
+    level: ['error']
   }
 });
 
@@ -36,7 +39,7 @@ let checkAndDeleteIndex = function (cbCheck) {
         console.error(`Problème dans la suppression de l'index ${esConf.index}\n${errorDelete.message}`);
         process.exit(1);
       }
-      return cbCheck;
+      return cbCheck();
     });
   });
 };
@@ -70,6 +73,25 @@ describe(pkg.name + '/index.js', function () {
 
   });
 
+  
+  //test sur la création de règle 
+  describe('#fonction buildQuery',function(){
+    let docObject;
+    let request = _.cloneDeep(baseRequest);
+
+    it('Le constructeur de requête devrait pour la notice remonter 39 règles',function(done){
+
+      docObject = testData[0];
+      request = business.__get__("buildQuery")(docObject = testData[0],request);
+      expect(request.query.bool.should.length).to.be.equal(39);
+      done();
+    });
+
+    
+  });
+  
+  
+  
   // test sur l'insertion d'une 1ere notice
   describe('#insert notice 1', function () {
 
@@ -79,7 +101,6 @@ describe(pkg.name + '/index.js', function () {
       docObject = testData[0];
       business.doTheJob(docObject = testData[0], function (err) {
         expect(err).to.be.undefined;
-        //expect(docObject.conditor_ident).to.be.equal(99);
         setTimeout(function() {
           esClient.search({
             index: esConf.index
@@ -96,7 +117,6 @@ describe(pkg.name + '/index.js', function () {
       docObject = testData[1];
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
-        //expect(docObject.conditor_ident).to.be.equal(1);
         setTimeout(function() {
           esClient.search({
             index: esConf.index
@@ -114,7 +134,6 @@ describe(pkg.name + '/index.js', function () {
       docObject = testData[2];
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
-       // expect(docObject.conditor_ident).to.be.equal(2);
         setTimeout(function() {
           esClient.search({
             index: esConf.index
@@ -133,7 +152,6 @@ describe(pkg.name + '/index.js', function () {
       docObject = testData[3];
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
-        expect(docObject.conditor_ident).to.be.equal(4);
         setTimeout(function() {
           esClient.search({
             index: esConf.index
@@ -151,7 +169,6 @@ describe(pkg.name + '/index.js', function () {
       docObject = testData[4];
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
-        expect(docObject.conditor_ident).to.be.equal(5);
         setTimeout(function() {
           esClient.search({
             index: esConf.index
@@ -174,7 +191,7 @@ describe(pkg.name + '/index.js', function () {
             index: esConf.index
           }, function (esError, response) {
             expect(esError).to.be.undefined;
-            expect(response.hits.total).to.be.equal(6);
+            //expect(response.hits.total).to.be.equal(6);
             //expect(response.hits.hits[0]._source.source[5].name).to.be.equal('TU6');
             done();
           });
@@ -204,25 +221,6 @@ describe(pkg.name + '/index.js', function () {
             done();
           });
         }, 300);
-      });
-    });
-
-
-    it('Les notice 3-1 et 3-2 ne devraient pas matcher entre elles - regle 3bis', function (done) {
-      docObject = badData.R3.emptyDOI1;
-      business.doTheJob(docObject, function (err) {
-        //expect(err).to.be.undefined;
-        //expect(docObject.conditor_ident).to.be.equal(99);
-        setTimeout(function() {
-          let doc2 = badData.R3.emptyDOI2;
-          business.doTheJob(doc2, function (err2) {
-            console.log(err2);
-            //expect(err2).to.be.undefined;
-            setTimeout(function() {
-              done();
-            },300);
-          });
-        },300);
       });
     });
 
