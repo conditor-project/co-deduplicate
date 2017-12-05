@@ -97,7 +97,7 @@ describe(pkg.name + '/index.js', function () {
 
     let docObject;
 
-    it('La notice 1 devrait être intégrée et seule dans l\'index ES - regle 99', function (done) {
+    it('La notice 1 est intégrée et seule dans l\'index ES', function (done) {
       docObject = testData[0];
       business.doTheJob(docObject = testData[0], function (err) {
         expect(err).to.be.undefined;
@@ -113,7 +113,7 @@ describe(pkg.name + '/index.js', function () {
       });
     });
 
-    it('La notice 2 devrait matcher sur titre+DOI - regle 1', function (done) {
+    it('La notice 2 matche bien', function (done) {
       docObject = testData[1];
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
@@ -130,7 +130,7 @@ describe(pkg.name + '/index.js', function () {
       });
     });
 
-    it('La notice 3 devrait matcher sur titre+volume+numero+issn - regle 2', function (done) {
+    it('La notice 3 matche bien', function (done) {
       docObject = testData[2];
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
@@ -148,7 +148,7 @@ describe(pkg.name + '/index.js', function () {
     });
 
 
-    it('La notice 4 devrait matcher sur DOI seul - regle 3', function (done) {
+    it('La notice 4 matche bien', function (done) {
       docObject = testData[3];
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
@@ -165,7 +165,7 @@ describe(pkg.name + '/index.js', function () {
       });
     });
 
-    it('La notice 5 devrait matcher sur titre+auteur+issn - regle 4', function (done) {
+    it('La notice 5 matche bien', function (done) {
       docObject = testData[4];
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
@@ -181,7 +181,7 @@ describe(pkg.name + '/index.js', function () {
         }, 300);
       });
     });
-    it('La notice 6 devrait match sur titre+auteur_init+issn - regle 5', function (done) {
+    it('La notice 6 matche bien', function (done) {
       docObject = testData[5];
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
@@ -200,7 +200,7 @@ describe(pkg.name + '/index.js', function () {
     });
 
 
-    it('La notice 7 devrait être reconnue comme une notice originale', function (done) {
+    it('La notice 7 matche bien', function (done) {
       docObject = testData[6];
       let goodCall;
       business.doTheJob(docObject, function (err) {
