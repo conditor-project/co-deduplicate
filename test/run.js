@@ -157,7 +157,7 @@ describe(pkg.name + '/index.js', function () {
             index: esConf.index
           }, function (esError, response) {
             expect(esError).to.be.undefined;
-            //expect(response.hits.total).to.be.equal(1);
+            expect(response.hits.total).to.be.equal(4);
             //expect(response.hits.hits[0]._source.source[3].name).to.be.equal('TU4');
             done();
           });
@@ -174,7 +174,7 @@ describe(pkg.name + '/index.js', function () {
             index: esConf.index
           }, function (esError, response) {
             expect(esError).to.be.undefined;
-            //expect(response.hits.total).to.be.equal(1);
+            expect(response.hits.total).to.be.equal(5);
             //expect(response.hits.hits[0]._source.source[4].name).to.be.equal('TU5');
             done();
           });
@@ -191,7 +191,7 @@ describe(pkg.name + '/index.js', function () {
             index: esConf.index
           }, function (esError, response) {
             expect(esError).to.be.undefined;
-            //expect(response.hits.total).to.be.equal(6);
+            expect(response.hits.total).to.be.equal(6);
             //expect(response.hits.hits[0]._source.source[5].name).to.be.equal('TU6');
             done();
           });
