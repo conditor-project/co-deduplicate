@@ -10,7 +10,7 @@
         "value" : "Ate Tom",
         "normalized" : "atetom"
       } ,
-      "auteur_init":{
+      "auteurInit":{
         "value": "T Ate",
         "normalized": "tate"
       },
@@ -32,7 +32,7 @@
         "value" : "Ate Pat",
         "normalized" : "atepat"
       } ,
-      "auteur_init":{
+      "auteurInit":{
         "value": "P Ate",
         "normalized": "pate"
       },

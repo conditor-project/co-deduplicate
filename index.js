@@ -13,8 +13,8 @@ const rules = require('co-config/rules_certain.json');
 const baseRequest = require('co-config/base_request.json');
 const provider_rules = require('co-config/rules_provider.json');
 //en attendant un co-conf 
-const listeChamps =['titre','titrefr','titreen','auteur','auteur_init','doi','arxiv','pubmed','nnt','patentNumber',
-'ut','issn','isbn','eissn','numero','page','volume','idhal','idprodinra','orcid','researcherid',
+const listeChamps =['titre','titrefr','titreen','auteur','auteurInit','doi','arxiv','pubmedId','nnt','patentNumber',
+'ut','issn','isbn','eissn','numero','page','volume','idHal','idProdinra','orcId','researcherId',
 'viaf','datePubli','titreSourceM','titreSourceJ'];
 
 
@@ -36,7 +36,7 @@ function insereNotice(jsonLine){
 	debug(esConf);
 
 	options.body= {
-		'date_creation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
+		'dateCreation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
 	};
 
   _.each(listeChamps,(champs)=>{
@@ -50,7 +50,7 @@ function insereNotice(jsonLine){
     }
 });
   options.body.path = jsonLine.path;
-  options.body.halautorid = jsonLine.halautorid;
+  options.body.halAutorId = jsonLine.halAutorId;
   options.body.typeDocument = jsonLine.typeDocument;
   options.body.source = jsonLine.source;
   options.body.idIngest = jsonLine.idIngest;
@@ -87,7 +87,7 @@ function aggregeNotice(jsonLine, data) {
     debug(esConf);
 
     options.body= {
-        'date_creation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
+        'dateCreation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
     };
 
     _.each(listeChamps,(champs)=>{
@@ -101,7 +101,7 @@ function aggregeNotice(jsonLine, data) {
         }
     });
     options.body.path = jsonLine.path;
-    options.body.halautorid = jsonLine.halautorid;
+    options.body.halAutorId = jsonLine.halAutorId;
     options.body.source = jsonLine.source;
     options.body.duplicate = duplicate;
     options.body.typeConditor = [];

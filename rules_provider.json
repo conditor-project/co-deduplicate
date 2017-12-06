@@ -1,13 +1,13 @@
 [
     {
         "source":"hal",
-        "non_empty":["idhal.value"],
+        "non_empty":["idHal.value"],
         "query":{
             "bool": {
                     "must":[
-                        {"match": {"idhal.normalized": "idhal.value"}}
+                        {"match": {"idHal.normalized": "idHal.value"}}
                     ],
-                    "_name":"provider::idhal"
+                    "_name":"provider::idHal"
             }
          }    
     },
@@ -25,11 +25,11 @@
     },
     {
         "source":"prodinra",
-        "non_empty":["idprodinra.value"],
+        "non_empty":["idProdinra.value"],
         "query":{
             "bool":{
                 "must":[
-                    {"match":{"idprodinra.normalized":"idprodinra.value"}}  
+                    {"match":{"idProdinra.normalized":"idProdinra.value"}}  
                 ] ,
                 "_name":"provider::prodinra"
             }

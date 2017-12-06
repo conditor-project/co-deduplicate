@@ -13,7 +13,7 @@
     "auteur": {
       "value" : "Guidetti-Gonzalez Simone"
     } ,
-    "auteur_init":{
+    "auteurInit":{
       "value": "Guidetti-Gonzalez S"
     },
     "doi":{
@@ -22,7 +22,7 @@
     "arxiv": {
       "value": "12-345/678:9"
     },
-    "pubmed": {
+    "pubmedId": {
       "value": "12-345/678:9"
     },
     "nnt": {
@@ -52,16 +52,16 @@
     "page":{
       "value":"page 1589"
     },
-    "idhal":{
+    "idHal":{
       "value":"12-345/678:9"
     },
     "halauthorid":{
       "value":"894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246"
     },
-    "orcid":{
+    "orcId":{
       "value":"12-345/678:9"
     },
-    "researcherid":{
+    "researcherId":{
       "value":"123:456:789+"
     },
     "viaf":{
@@ -95,7 +95,7 @@
     "auteur": {
       "value" : "Gonzalez Speedy"
     } ,
-    "auteur_init":{
+    "auteurInit":{
       "value": "Gonzalez S"
     },
     "doi":{
@@ -104,7 +104,7 @@
     "arxiv": {
       "value": "12-345/678:9"
     },
-    "pubmed": {
+    "pubmedId": {
       "value": "12-345/678:9"
     },
     "nnt": {
@@ -134,16 +134,16 @@
     "page":{
       "value":"page 1588"
     },
-    "idhal":{
+    "idHal":{
       "value":"12-345/678:9"
     },
     "halauthorid":{
       "value":"894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246"
     },
-    "orcid":{
+    "orcId":{
       "value":"12-345/678:9"
     },
-    "researcherid":{
+    "researcherId":{
       "value":"123:456:789+"
     },
     "viaf":{
@@ -177,7 +177,7 @@
     "auteur": {
       "value" : "Gonzalez Speedy"
     } ,
-    "auteur_init":{
+    "auteurInit":{
       "value": "Gonzalez S"
     },
     "doi":{
@@ -186,7 +186,7 @@
     "arxiv": {
       "value": "12-345/678:9"
     },
-    "pubmed": {
+    "pubmedId": {
       "value": "12-345/678:9"
     },
     "nnt": {
@@ -216,16 +216,16 @@
     "page":{
       "value":"page 1588"
     },
-    "idhal":{
+    "idHal":{
       "value":"12-345/678:9"
     },
     "halauthorid":{
       "value":"894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246"
     },
-    "orcid":{
+    "orcId":{
       "value":"12-345/678:9"
     },
-    "researcherid":{
+    "researcherId":{
       "value":"123:456:789+"
     },
     "viaf":{
@@ -261,7 +261,7 @@
     "auteur": {
       "value" : "Gonzalez Speedy"
     } ,
-    "auteur_init":{
+    "auteurInit":{
       "value": "Gonzalez S"
     },
     "doi":{
@@ -270,7 +270,7 @@
     "arxiv": {
       "value": "12-345/678:9"
     },
-    "pubmed": {
+    "pubmedId": {
       "value": "12-345/678:9"
     },
     "nnt": {
@@ -300,16 +300,16 @@
     "page":{
       "value":"page 1588"
     },
-    "idhal":{
+    "idHal":{
       "value":"12-345/678:9"
     },
     "halauthorid":{
       "value":"894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246"
     },
-    "orcid":{
+    "orcId":{
       "value":"12-345/678:9"
     },
-    "researcherid":{
+    "researcherId":{
       "value":"123:456:789+"
     },
     "viaf":{
@@ -345,7 +345,7 @@
     "auteur": {
       "value" : "Guidetti-Gonzalez Simone"
     } ,
-    "auteur_init":{
+    "auteurInit":{
       "value": "Gonzalez S"
     },
     "doi":{
@@ -354,7 +354,7 @@
     "arxiv": {
       "value": "12-345/678:9"
     },
-    "pubmed": {
+    "pubmedId": {
       "value": "12-345/678:9"
     },
     "nnt": {
@@ -384,16 +384,16 @@
     "page":{
       "value":"page 1588"
     },
-    "idhal":{
+    "idHal":{
       "value":"12-345/678:9"
     },
     "halauthorid":{
       "value":"894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246"
     },
-    "orcid":{
+    "orcId":{
       "value":"12-345/678:9"
     },
-    "researcherid":{
+    "researcherId":{
       "value":"123:456:789+"
     },
     "viaf":{
@@ -416,7 +416,7 @@
   }
 ,
   {
-    "_comment" : " === Notice 6, sensée matcher avec titre+auteur_init+issn seul (REGLE 5) ===",
+    "_comment" : " === Notice 6, sensée matcher avec titre+auteurInit+issn seul (REGLE 5) ===",
     "titre": {
       "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
     },
@@ -429,7 +429,7 @@
     "auteur": {
       "value" : "Guidetti-Gonzales Simone"
     } ,
-    "auteur_init":{
+    "auteurInit":{
       "value": "Guidetti-Gonzalez S"
     },
     "doi":{
@@ -438,7 +438,7 @@
     "arxiv": {
       "value": "12-345/678:9"
     },
-    "pubmed": {
+    "pubmedId": {
       "value": "12-345/678:9"
     },
     "nnt": {
@@ -468,16 +468,16 @@
     "page":{
       "value":"page 1588"
     },
-    "idhal":{
+    "idHal":{
       "value":"12-345/678:9"
     },
     "halauthorid":{
       "value":"894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246"
     },
-    "orcid":{
+    "orcId":{
       "value":"12-345/678:9"
     },
-    "researcherid":{
+    "researcherId":{
       "value":"123:456:789+"
     },
     "viaf":{
@@ -511,7 +511,7 @@
     "auteur": {
       "value" : "Gonzales Simone"
     } ,
-    "auteur_init":{
+    "auteurInit":{
       "value": "Gonzalez S"
     },
     "doi":{
@@ -520,7 +520,7 @@
     "arxiv": {
       "value": "12-345/678:9"
     },
-    "pubmed": {
+    "pubmedId": {
       "value": "12-345/678:9"
     },
     "nnt": {
@@ -550,16 +550,16 @@
     "page":{
       "value":"page 1588"
     },
-    "idhal":{
+    "idHal":{
       "value":"12-345/678:9"
     },
     "halauthorid":{
       "value":"894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246"
     },
-    "orcid":{
+    "orcId":{
       "value":"12-345/678:9"
     },
-    "researcherid":{
+    "researcherId":{
       "value":"123:456:789+"
     },
     "viaf":{
