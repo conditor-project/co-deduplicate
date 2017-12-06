@@ -75,7 +75,7 @@ function aggregeNotice(jsonLine, data) {
 
     idchain.push(jsonLine.source+':'+jsonLine.idConditor);
     _.each(data.hits.hits,(hit)=>{
-        duplicate.push({idConditor:hit._source.idConditor,rule:hit.matched_queries});
+        duplicate.push({idConditor:hit._source.idConditor,rules:hit.matched_queries,rules_keyword:hit.matched_queries,idIngest:hit._source.idIngest});
         idchain=_.union(idchain,hit._source.idChain.split('!'));
     });
 
@@ -136,7 +136,7 @@ function propagate(jsonLine,data,result){
         _.each(jsonLine.duplicate,(duplicate)=>{
             if (duplicate.idConditor===hit._source.idConditor){
                 arrayDuplicate=hit._source.duplicate;
-                arrayDuplicate.push({idConditor:jsonLine.idConditor,rule:duplicate.rule,idIngest:jsonLine.idIngest});
+                arrayDuplicate.push({idConditor:jsonLine.idConditor,rules:duplicate.rules,rules_keyword:duplicate.rules,idIngest:jsonLine.idIngest});
             }
         });
 
