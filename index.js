@@ -126,7 +126,7 @@ function propagate(jsonLine,data,result){
     let option;
     let arrayDuplicate;
 
-    jsonLine.id_elasticsearch = result._id;
+    jsonLine.idElasticsearch = result._id;
 
     _.each(data.hits.hits,(hit)=>{
        
@@ -265,8 +265,8 @@ business.doTheJob = function(jsonLine, cb) {
 
             //debug(result);
             //debug(jsonLine);
-            if (result && result._id && !jsonLine.id_elasticsearch)
-                jsonLine.id_elasticsearch = result._id;
+            if (result && result._id && !jsonLine.idElasticsearch)
+                jsonLine.idElasticsearch = result._id;
             return cb();
 
     }).catch(function(e){
