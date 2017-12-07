@@ -53,9 +53,10 @@ function insereNotice(jsonLine){
   options.body.halAutorId = jsonLine.halAutorId;
   options.body.typeDocument = jsonLine.typeDocument;
   options.body.source = jsonLine.source;
-  options.body.idIngest = jsonLine.idIngest;
   options.body.typeConditor = [];
   options.body.idConditor = jsonLine.idConditor;
+  options.body.ingestId = jsonLine.ingestId;
+  options.body.ingestBaseName = jsonLine.ingestBaseName; 
   _.each(jsonLine.typeConditor,(typeCond)=>{
     options.body.typeConditor.push({'value':typeCond.type,'raw':typeCond.type});
   });
@@ -107,7 +108,8 @@ function aggregeNotice(jsonLine, data) {
     options.body.typeConditor = [];
     options.body.typeDocument = jsonLine.typeDocument;
     options.body.idConditor = jsonLine.idConditor;
-    options.body.idIngest = jsonLine.idIngest;
+    options.body.ingestId = jsonLine.ingestId;
+    options.body.ingestBaseName = jsonLine.ingestBaseName;
     _.each(jsonLine.typeConditor,(typeCond)=>{
         options.body.typeConditor.push({'value':typeCond.type,'raw':typeCond.type});
     });
