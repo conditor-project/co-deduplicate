@@ -49,11 +49,6 @@ function insereNotice(jsonLine){
     }
   });
 
-  options.body.datePubli = {
-    'value':jsonLine.datePubli.value,
-    'normalized':jsonLine.datePubli.value,
-    'time':jsonLine.datePubli.value
-  };
   options.body.path = jsonLine.path;
   options.body.halAutorId = jsonLine.halAutorId;
   options.body.typeDocument = jsonLine.typeDocument;
