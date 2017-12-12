@@ -12,11 +12,10 @@ const scenario = require('co-config/scenario.json');
 const rules = require('co-config/rules_certain.json');
 const baseRequest = require('co-config/base_request.json');
 const provider_rules = require('co-config/rules_provider.json');
-//en attendant un co-conf 
+//en attendant un co-conf
 const listeChamps =['titre','titrefr','titreen','auteur','auteurInit','doi','arxiv','pubmedId','nnt','patentNumber',
 'ut','issn','isbn','eissn','numero','page','volume','idHal','idProdinra','orcId','researcherId',
 'viaf','datePubli','titreSourceM','titreSourceJ'];
-
 
 const esClient = new es.Client({
     host: esConf.host,
@@ -48,7 +47,8 @@ function insereNotice(jsonLine){
             options.body[champs].normalized75 = jsonLine[champs].value;
          }
     }
-});
+  });
+
   options.body.path = jsonLine.path;
   options.body.halAutorId = jsonLine.halAutorId;
   options.body.typeDocument = jsonLine.typeDocument;
