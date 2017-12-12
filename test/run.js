@@ -226,6 +226,165 @@ describe(pkg.name + '/index.js', function () {
 
   });
 
+  describe('#tests des normalizer', function () {
+    it('Titre normalizer retourne la bonne valeur',function(done){
+      
+      esClient.indices.analyze({
+        index:esConf.index,
+        body:{
+          "field":"titre.normalized",
+          "text":"Voici un test de titre caparaçonner aïoli ! "
+        }
+      },function(esError,response){
+          expect(esError).to.be.undefined;
+          expect(response).to.not.be.undefined;
+          expect(response.tokens[0].token).to.be.equal('voiciuntestdetitrecaparaconneraioli');
+          done();
+        });
+
+    });
+
+
+    it('Titre 75 normalizer retourne la bonne valeur',function(done){
+      
+      esClient.indices.analyze({
+        index:esConf.index,
+        format:"text",
+        body:{
+          "field":"titre.normalized75",
+          "text":"Alors voyons si on a systematiquement le bon résultat dans la boucle, après tout ça devrait être bon"
+        }
+      },function(esError,response){
+          expect(esError).to.be.undefined;
+          expect(response).to.not.be.undefined;
+          expect(response.tokens[0].token).to.be.equal('alorsvoyonssionasystematiquementlebonresultatdanslaboucleaprestoutcadevrait');
+          done();
+        });
+
+    });
+
+
+    it('Titre 50 normalizer retourne la bonne valeur',function(done){
+      
+      esClient.indices.analyze({
+        index:esConf.index,
+        body:{
+          "field":"titre.normalized50",
+          "text":"Alors voyons si on a systematiquement le bon résultat dans la boucle, après tout ça devrait être bon"
+        }
+      },function(esError,response){
+          expect(esError).to.be.undefined;
+          expect(response).to.not.be.undefined;
+          expect(response.tokens[0].token).to.be.equal('alorsvoyonssionasystematiquementlebonresultatdansl');
+          done();
+        });
+
+    });
+
+
+    it('Auteur normalizer retourne la bonne valeur',function(done){
+      
+      esClient.indices.analyze({
+        index:esConf.index,
+        body:{
+          "field":"auteur.normalized",
+          "text":"Gérard Philippe, André Gide"
+        }
+      },function(esError,response){
+          expect(esError).to.be.undefined;
+          expect(response).to.not.be.undefined;
+          expect(response.tokens[0].token).to.be.equal('gerardphilippeandregide');
+          done();
+        });
+
+    });
+
+    it('ID normalizer retourne la bonne valeur',function(done){
+      
+      esClient.indices.analyze({
+        index:esConf.index,
+        body:{
+          "field":"doi.normalized",
+          "text":"1586-544984Efrea"
+        }
+      },function(esError,response){
+          expect(esError).to.be.undefined;
+          expect(response).to.not.be.undefined;
+          expect(response.tokens[0].token).to.be.equal('1586544984efrea');
+          done();
+        });
+
+    });
+
+    it('Page normalizer retourne la bonne valeur',function(done){
+      
+      esClient.indices.analyze({
+        index:esConf.index,
+        body:{
+          "field":"page.normalized",
+          "text":"158-165"
+        }
+      },function(esError,response){
+          expect(esError).to.be.undefined;
+          expect(response).to.not.be.undefined;
+          expect(response.tokens[0].token).to.be.equal('158');
+          done();
+        });
+
+    });
+
+    it('Volume normalizer retourne la bonne valeur',function(done){
+      
+      esClient.indices.analyze({
+        index:esConf.index,
+        body:{
+          "field":"volume.normalized",
+          "text":"v52"
+        }
+      },function(esError,response){
+          expect(esError).to.be.undefined;
+          expect(response).to.not.be.undefined;
+          expect(response.tokens[0].token).to.be.equal('52');
+          done();
+        });
+
+    });
+    it('Numero normalizer retourne la bonne valeur',function(done){
+      
+      esClient.indices.analyze({
+        index:esConf.index,
+        body:{
+          "field":"numero.normalized",
+          "text":"V14"
+        }
+      },function(esError,response){
+          expect(esError).to.be.undefined;
+          expect(response).to.not.be.undefined;
+          expect(response.tokens[0].token).to.be.equal('14');
+          done();
+        });
+
+    });
+    it('datePubli normalizer retourne la bonne valeur',function(done){
+      
+      esClient.indices.analyze({
+        index:esConf.index,
+        body:{
+          "field":"datePubli.normalized",
+          "text":"18-11-2012"
+        }
+      },function(esError,response){
+          expect(esError).to.be.undefined;
+          expect(response).to.not.be.undefined;
+          expect(response.tokens[0].token).to.be.equal('2012');
+          done();
+        });
+
+    });
+
+
+  });
+
 // Méthde finale sensée faire du nettoyage après les tests
   after(function (done) {
     esClient.indices.delete({index: esConf.index}).then(
