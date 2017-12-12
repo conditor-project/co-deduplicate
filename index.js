@@ -13,9 +13,7 @@ const rules = require('co-config/rules_certain.json');
 const baseRequest = require('co-config/base_request.json');
 const provider_rules = require('co-config/rules_provider.json');
 //en attendant un co-conf
-const listeChamps =['titre','titrefr','titreen','auteur','auteurInit','doi','arxiv','pubmedId','nnt','patentNumber',
-'ut','issn','isbn','eissn','numero','page','volume','idHal','idProdinra','orcId','researcherId',
-'viaf','datePubli','titreSourceM','titreSourceJ'];
+const listeChamps =require('co-config/metadata-xpaths.json');
 
 const esClient = new es.Client({
     host: esConf.host,
@@ -40,18 +38,19 @@ function insereNotice(jsonLine){
 
   _.each(listeChamps,(champs)=>{
 
-    if (jsonLine[champs] && jsonLine[champs].value && jsonLine[champs].value!=='') {
-        options.body[champs] ={'value':jsonLine[champs].value,'normalized':jsonLine[champs].value};
-        if (champs ==='titre' || champs ==='titrefr' || champs ==='titreen' ){
-            options.body[champs].normalized50 = jsonLine[champs].value;
-            options.body[champs].normalized75 = jsonLine[champs].value;
+    if (jsonLine[champs.name] && Array.isArray(jsonLine[champs.name])){
+        options.body[champs.name]=jsonLine[champs.name];
+    }
+    else if (jsonLine[champs.name] && jsonLine[champs.name].value && jsonLine[champs.name].value!=='') {
+        options.body[champs.name] ={'value':jsonLine[champs.name].value,'normalized':jsonLine[champs.name].value};
+        if (champs.name ==='titre' || champs.name ==='titrefr' || champs.name ==='titreen' ){
+            options.body[champs.name].normalized50 = jsonLine[champs.name].value;
+            options.body[champs.name].normalized75 = jsonLine[champs.name].value;
          }
     }
   });
 
   options.body.path = jsonLine.path;
-  options.body.halAutorId = jsonLine.halAutorId;
-  options.body.typeDocument = jsonLine.typeDocument;
   options.body.source = jsonLine.source;
   options.body.typeConditor = [];
   options.body.idConditor = jsonLine.idConditor;
@@ -92,21 +91,21 @@ function aggregeNotice(jsonLine, data) {
     };
 
     _.each(listeChamps,(champs)=>{
-
-        if (jsonLine[champs] && jsonLine[champs].value && jsonLine[champs].value!=='') {
-            options.body[champs] ={'value':jsonLine[champs].value,'normalized':jsonLine[champs].value};
-            if (champs ==='titre' || champs ==='titrefr' || champs ==='titreen'){
-                options.body[champs].normalized50 = jsonLine[champs].value;
-                options.body[champs].normalized75 = jsonLine[champs].value;
+        if (jsonLine[champs.name] && Array.isArray(jsonLine[champs.name])){
+            options.body[champs.name]=jsonLine[champs.name];
+        }
+        else if (jsonLine[champs.name] && jsonLine[champs.name].value && jsonLine[champs.name].value!=='') {
+            options.body[champs.name] ={'value':jsonLine[champs.name].value,'normalized':jsonLine[champs.name].value};
+            if (champs.name ==='titre' || champs.name ==='titrefr' || champs.name ==='titreen'){
+                options.body[champs.name].normalized50 = jsonLine[champs.name].value;
+                options.body[champs.name].normalized75 = jsonLine[champs.name].value;
              }
         }
     });
     options.body.path = jsonLine.path;
-    options.body.halAutorId = jsonLine.halAutorId;
     options.body.source = jsonLine.source;
     options.body.duplicate = duplicate;
     options.body.typeConditor = [];
-    options.body.typeDocument = jsonLine.typeDocument;
     options.body.idConditor = jsonLine.idConditor;
     options.body.ingestId = jsonLine.ingestId;
     options.body.ingestBaseName = jsonLine.ingestBaseName;
