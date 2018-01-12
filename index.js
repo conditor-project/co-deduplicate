@@ -72,16 +72,19 @@ function aggregeNotice(jsonLine, data) {
 
 
     let duplicate=[];
+    let allMergedRules=[];
     let idchain=[];
 
     idchain.push(jsonLine.source+':'+jsonLine.idConditor);
     _.each(data.hits.hits,(hit)=>{
         duplicate.push({idConditor:hit._source.idConditor,rules:hit.matched_queries,rules_keyword:hit.matched_queries,idIngest:hit._source.idIngest});
         idchain=_.union(idchain,hit._source.idChain.split('!'));
+        allMergedRules = _.union(hit._source.duplicateRules, allMergedRules);
     });
 
     idchain.sort();
     jsonLine.duplicate = duplicate;
+    jsonLine.duplicateRules = _.sortBy(allMergedRules);
 
     let options = {index : esConf.index,type : esConf.type,refresh:true};
     
@@ -108,6 +111,7 @@ function aggregeNotice(jsonLine, data) {
     options.body.path = jsonLine.path;
     options.body.source = jsonLine.source;
     options.body.duplicate = duplicate;
+    options.body.duplicateRules = allMergedRules;
     options.body.typeConditor = [];
     options.body.idConditor = jsonLine.idConditor;
     options.body.ingestId = jsonLine.ingestId;
@@ -129,6 +133,7 @@ function propagate(jsonLine,data,result){
     let body=[];
     let option;
     let arrayDuplicate;
+    let allMatchedRules;
 
     jsonLine.idElasticsearch = result._id;
 
@@ -144,7 +149,12 @@ function propagate(jsonLine,data,result){
             }
         });
 
-        update={doc:{idChain:jsonLine.idChain,duplicate:arrayDuplicate}};
+        allMatchedRules = hit._source.duplicateRules;
+        _.each(hit._source.duplicate,(duplicate)=>{
+          allMatchedRules = _.union(allMatchedRules,duplicate.rules_keyword);
+        });
+
+        update={doc:{idChain:jsonLine.idChain,duplicate:arrayDuplicate,duplicateRules:_.sortBy(allMatchedRules)}};
         body.push(options);
         body.push(update);
         
