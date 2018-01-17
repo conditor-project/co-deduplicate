@@ -2,3 +2,4 @@ node_modules
 .idea
 .vscode
 elasticsearch.log
+index.bak.js

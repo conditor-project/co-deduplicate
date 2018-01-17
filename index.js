@@ -303,6 +303,7 @@ function propagateDelete(jsonLine,data,result){
         let arrayDuplicate=[];
         let idChainModify;
         let regexp;
+        let allMatchedRules;
         if (result.hits.total>0){
             _.each(result.hits.hits,(hit)=>{
             
@@ -318,10 +319,15 @@ function propagateDelete(jsonLine,data,result){
                     });
                 });
 
+                allMatchedRules = hit._source.duplicateRules;
+                _.each(hit._source.duplicate,(duplicate)=>{
+                    allMatchedRules = _.union(allMatchedRules,duplicate.rules_keyword);
+                });
+
                 regexp = new RegExp('/'+hit._source.source+':'+hit._source.idConditor+'[!]*/','g');
                 idChainModify = hit._source.idChain.replace(regexp,'');
 
-                update={doc:{idChain:idChainModify,duplicate:arrayDuplicate}};
+                update={doc:{idChain:idChainModify,duplicate:arrayDuplicate,duplicateRules:_.sortBy(allMatchedRules),isDuplicate: (allMatchedRules.length > 0)}};
                 body.push(options);
                 body.push(update);
                 
