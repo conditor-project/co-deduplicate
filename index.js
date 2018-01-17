@@ -198,10 +198,12 @@ function testParameter(jsonLine,rules){
 function interprete(jsonLine,query,type){
     
     let rulename;
-    if (type.trim()!=='')
+    if (type.trim()!==''){
         rulename = type+' : '+query.bool._name;
-    else 
+    }
+    else {
         rulename = query.bool._name;
+    }
 
     const newQuery ={
         bool: {
@@ -217,9 +219,9 @@ function interprete(jsonLine,query,type){
         return match;
     });
    
-    if (type!=='')
+    if (type!==''){
         newQuery.bool.must.push({'match':{'typeConditor.value':type}});
-    
+    }
     return newQuery;
   
 }
@@ -271,17 +273,112 @@ function existNotice(jsonLine){
 
 }
 
+function deleteNotice(jsonLine,data){
+    return esClient.delete({
+        index:esConf.index,
+        type :esConf.type,
+        id:data.hits.hits[0]._id
+    });
+
+}
+
+function getDuplicate(jsonLine,data){
+    let request = _.cloneDeep(baseRequest);
+    request.query.bool.should.push({"bool":{"must":[{"match":{"idChain":data.hits.hits[0]._source.idChain}}]}});
+    return esClient.search({
+        index:esConf.index,
+        body:request
+    });
+}
+
+function propagateDelete(jsonLine,data,result){
+
+    return Promise.try(function(){
+        let options;
+        let update;
+        let body=[];
+        let option;
+        let arrayDuplicate=[];
+        let idChainModify;
+        let regexp;
+        if (result.hits.total>0){
+            _.each(result.hits.hits,(hit)=>{
+            
+                options={update:{_index:esConf.index,_type:esConf.type,_id:hit._id}};
+                //constitution du duplicate
+
+                _.each(hit.duplicate,(duplicate)=>{
+                    
+                    _.each(hit._source.duplicate,(duplicateSource)=>{
+                        if (duplicate.idConditor!==duplicateSource.idConditor){
+                            arrayDuplicate.push({idConditor:jsonLine.idConditor,rules:duplicate.rules,rules_keyword:duplicate.rules,idIngest:jsonLine.idIngest});
+                        }
+                    });
+                });
+
+                regexp = new RegExp('/'+hit._source.source+':'+hit._source.idConditor+'[!]*/','g');
+                idChainModify = hit._source.idChain.replace(regexp,'');
+
+                update={doc:{idChain:idChainModify,duplicate:arrayDuplicate}};
+                body.push(options);
+                body.push(update);
+                
+            });
+
+            option={body:body};
+            return esClient.bulk(option);
+        }
+    });
+}
+
+
+function erase(jsonLine,data){
+    return Promise.try(function(){
+        if (data.hits.total>0){
+            return deleteNotice(jsonLine,data)
+                    .then(getDuplicate.bind(null,jsonLine,data))
+                    .then(propagateDelete.bind(null,jsonLine,data))
+                    .catch(function(e){
+                        throw new Error('Erreur de mise à jour de notice : '+e);
+                    });
+        }
+    });
+}
+
+
+function cleanByIdSource(jsonLine){
+
+    return Promise.try(function(){
+
+        let request = _.cloneDeep(baseRequest);
+
+        _.each(provider_rules,(provider_rule)=>{
+            if (jsonLine.source.trim()===provider_rule.source.trim() && testParameter(jsonLine,provider_rule.non_empty)){
+                request.query.bool.should.push(interprete(jsonLine,provider_rule.query,''))
+            }
+        });
+
+
+        return esClient.search({
+            index: esConf.index,
+            body : request
+        }).then(erase.bind(null,jsonLine))
+
+    });
+
+}
+
 business.doTheJob = function(jsonLine, cb) {
 
     let error;
 
-    existNotice(jsonLine).then(function(result) {
+    cleanByIdSource(jsonLine).then(existNotice.bind(null,jsonLine)).then(function(result) {
 
-            //debug(result);
-            //debug(jsonLine);
-            if (result && result._id && !jsonLine.idElasticsearch)
-                jsonLine.idElasticsearch = result._id;
-            return cb();
+        //debug(result);
+        //debug(jsonLine);
+        if (result && result._id && !jsonLine.idElasticsearch)
+            jsonLine.idElasticsearch = result._id;
+        return cb();
 
     }).catch(function(e){
         error = {
