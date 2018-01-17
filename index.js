@@ -85,6 +85,7 @@ function aggregeNotice(jsonLine, data) {
     idchain.sort();
     jsonLine.duplicate = duplicate;
     jsonLine.duplicateRules = _.sortBy(allMergedRules);
+    jsonLine.isDuplicate = (allMergedRules.length > 0);
 
     let options = {index : esConf.index,type : esConf.type,refresh:true};
     
@@ -112,6 +113,7 @@ function aggregeNotice(jsonLine, data) {
     options.body.source = jsonLine.source;
     options.body.duplicate = duplicate;
     options.body.duplicateRules = allMergedRules;
+    options.body.isDuplicate = (allMergedRules.length > 0);
     options.body.typeConditor = [];
     options.body.idConditor = jsonLine.idConditor;
     options.body.ingestId = jsonLine.ingestId;
@@ -154,7 +156,7 @@ function propagate(jsonLine,data,result){
           allMatchedRules = _.union(allMatchedRules,duplicate.rules_keyword);
         });
 
-        update={doc:{idChain:jsonLine.idChain,duplicate:arrayDuplicate,duplicateRules:_.sortBy(allMatchedRules)}};
+        update={doc:{idChain:jsonLine.idChain,duplicate:arrayDuplicate,duplicateRules:_.sortBy(allMatchedRules),isDuplicate: (allMatchedRules.length > 0)}};
         body.push(options);
         body.push(update);
         
