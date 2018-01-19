@@ -109,6 +109,8 @@ function aggregeNotice(jsonLine, data) {
             }
         }
     });
+
+
     options.body.path = jsonLine.path;
     options.body.source = jsonLine.source;
     options.body.duplicate = duplicate;
@@ -366,7 +368,10 @@ function cleanByIdSource(jsonLine){
             }
         });
 
-
+        if (request.query.bool.should.length===0) {
+            return ;
+        }
+        
         return esClient.search({
             index: esConf.index,
             body : request
