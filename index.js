@@ -38,15 +38,14 @@ function insereNotice(jsonLine){
 
   _.each(listeChamps,(champs)=>{
     if (champs.indexed===undefined || champs.indexed===true){
-        if (jsonLine[champs.name] && Array.isArray(jsonLine[champs.name])){
-            options.body[champs.name]=jsonLine[champs.name];
-        }
-        else if (jsonLine[champs.name] && jsonLine[champs.name].value && jsonLine[champs.name].value!=='') {
+        if (jsonLine[champs.name] && jsonLine[champs.name].value && jsonLine[champs.name].value!=='') {
             options.body[champs.name] ={'value':jsonLine[champs.name].value,'normalized':jsonLine[champs.name].value};
             if (champs.name ==='titre' || champs.name ==='titrefr' || champs.name ==='titreen' ){
                 options.body[champs.name].normalized50 = jsonLine[champs.name].value;
                 options.body[champs.name].normalized75 = jsonLine[champs.name].value;
             }
+        } else {
+          options.body[champs.name]=jsonLine[champs.name];
         }
     }
   });
@@ -62,7 +61,9 @@ function insereNotice(jsonLine){
   });
   options.body.idChain = jsonLine.source+':'+jsonLine.idConditor;
   options.body.duplicate = [];
+  options.body.isDuplicate = false;
   jsonLine.duplicate = [];
+  jsonLine.isDuplicate = false;
   //console.log(JSON.stringify(options));
   return esClient.index(options);
 
@@ -97,15 +98,14 @@ function aggregeNotice(jsonLine, data) {
 
     _.each(listeChamps,(champs)=>{
         if (champs.indexed===undefined || champs.indexed===true){
-            if (jsonLine[champs.name] && Array.isArray(jsonLine[champs.name])){
-                options.body[champs.name]=jsonLine[champs.name];
-            }
-            else if (jsonLine[champs.name] && jsonLine[champs.name].value && jsonLine[champs.name].value!=='') {
+            if (jsonLine[champs.name] && jsonLine[champs.name].value && jsonLine[champs.name].value!=='') {
                 options.body[champs.name] ={'value':jsonLine[champs.name].value,'normalized':jsonLine[champs.name].value};
                 if (champs.name ==='titre' || champs.name ==='titrefr' || champs.name ==='titreen'){
                     options.body[champs.name].normalized50 = jsonLine[champs.name].value;
                     options.body[champs.name].normalized75 = jsonLine[champs.name].value;
                 }
+            } else {
+              options.body[champs.name]=jsonLine[champs.name];
             }
         }
     });
