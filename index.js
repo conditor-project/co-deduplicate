@@ -344,7 +344,8 @@ function propagateDelete(jsonLine,data,result){
 
 function erase(jsonLine,data){
     return Promise.try(function(){
-        if (data.hits.total>0){
+        if (data.hits.total===0) {return;}
+        else {
             return deleteNotice(jsonLine,data)
                     .then(getDuplicate.bind(null,jsonLine,data))
                     .then(propagateDelete.bind(null,jsonLine,data))
@@ -361,10 +362,19 @@ function cleanByIdSource(jsonLine){
     return Promise.try(function(){
 
         let request = _.cloneDeep(baseRequest);
+        let request_source;
 
         _.each(provider_rules,(provider_rule)=>{
             if (jsonLine.source.trim()===provider_rule.source.trim() && testParameter(jsonLine,provider_rule.non_empty)){
-                request.query.bool.should.push(interprete(jsonLine,provider_rule.query,''))
+                request.query.bool.should.push(interprete(jsonLine,provider_rule.query,''));
+                request_source = {"bool": {
+                                    "must":[
+                                        {"match": {"source": jsonLine.source.trim()}}
+                                    ],
+                                    "_name":"provider"}};
+            
+                request.query.bool.should.push(request_source);
+                request.query.bool.minimum_should_match = 2;
             }
         });
 
