@@ -211,6 +211,32 @@ describe(pkg.name + '/index.js', function () {
             index: esConf.index
           }, function (esError, response) {
             expect(esError).to.be.undefined;
+            
+            expect(response.hits.total).to.be.equal(7);
+            /**
+            _.each(response.hits.hits,(hit)=>{
+              if (hit._source.source.length===1) goodCall=hit;
+            });
+            expect(goodCall._source.source[0].name).to.be.equal('TU7');
+            */
+            done();
+          });
+        }, 300);
+      });
+    });
+
+    it('La notice 8 matche bien', function (done) {
+      docObject = testData[7];
+      let goodCall;
+      business.doTheJob(docObject, function (err) {
+        expect(err).to.be.undefined;
+        //expect(docObject.conditor_ident).to.be.equal(99);
+        setTimeout(function() {
+          esClient.search({
+            index: esConf.index
+          }, function (esError, response) {
+            expect(esError).to.be.undefined;
+            
             expect(response.hits.total).to.be.equal(7);
             /**
             _.each(response.hits.hits,(hit)=>{

@@ -599,6 +599,93 @@
     },
     "typeConditor":[{"type":"Article"}],
     "path":"/applis/istex/li/corpus-resources-conditor/notice-7.xml",
-    "source":"TU7"
+    "source":"hal"
+  }
+  ,
+  {
+    "_comment" : " === Notice 8, sensée matcher avec notice 7 et même la remplacer => UN DOUBLON ===",
+    "titre": {
+      "value" : "ProbMetab: an R package for mayan probabilistic annotation of LC-MS-based metabolomics"
+    },
+    "titrefr": {
+      "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
+    },
+    "titreen": {
+      "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
+    },
+    "auteur": {
+      "value" : "Gonzales Simone"
+    } ,
+    "auteurInit":{
+      "value": "Gonzalez S"
+    },
+    "doi":{
+      "value": "10.1093/bioinformatics/btu019ut=WOS:0003360951000342"
+    },
+    "arxiv": {
+      "value": "12-345/678:9"
+    },
+    "pubmedId": {
+      "value": "12-345/678:9"
+    },
+    "nnt": {
+      "value": "12-345/678:9"
+    },
+    "patentNumber":{
+      "value":"12-345/678:9"
+    },
+    "ut": {
+      "value": "12-345/678:9"
+    },
+    "issn":{
+      "value":"1367-4804"
+    },
+    "eissn":{
+      "value":"1367-4803"
+    },
+    "isbn":{
+      "value":"1367-4803"
+    },
+    "numero":{
+      "value":"n°6"
+    },
+    "volume":{
+      "value":"v12"
+    },
+    "page":{
+      "value":"page 1588"
+    },
+    "idHal":{
+      "value":"12-345/678:9"
+    },
+    "halauthorid":{
+      "value":"894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246"
+    },
+    "orcId":{
+      "value":"12-345/678:9"
+    },
+    "researcherId":{
+      "value":"123:456:789+"
+    },
+    "viaf":{
+      "value":"123.456.789"
+    },
+    "typeDocument":{
+      "value":"ART"
+    },
+    "typeDocumentFlat": [
+      "ART"
+    ],
+    "titreSource":{
+      "value":"",
+      "normalized":""
+    },
+    "datePubli":{
+      "value":"",
+      "normalized":""
+    },
+    "typeConditor":[{"type":"Article"}],
+    "path":"/applis/istex/li/corpus-resources-conditor/notice-7.xml",
+    "source":"hal"
   }
 ]
