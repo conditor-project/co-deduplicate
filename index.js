@@ -12,8 +12,7 @@ const scenario = require('co-config/scenario.json');
 const rules = require('co-config/rules_certain.json');
 const baseRequest = require('co-config/base_request.json');
 const provider_rules = require('co-config/rules_provider.json');
-//en attendant un co-conf
-const listeChamps =require('co-config/metadata-xpaths.json');
+const metadata =require('co-config/metadata-xpaths.json');
 
 const esClient = new es.Client({
     host: esConf.host,
@@ -36,16 +35,16 @@ function insereNotice(jsonLine){
 		'dateCreation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
 	};
 
-  _.each(listeChamps,(champs)=>{
-    if (champs.indexed===undefined || champs.indexed===true){
-        if (jsonLine[champs.name] && jsonLine[champs.name].value && jsonLine[champs.name].value!=='') {
-            options.body[champs.name] ={'value':jsonLine[champs.name].value,'normalized':jsonLine[champs.name].value};
-            if (champs.name ==='titre' || champs.name ==='titrefr' || champs.name ==='titreen' ){
-                options.body[champs.name].normalized50 = jsonLine[champs.name].value;
-                options.body[champs.name].normalized75 = jsonLine[champs.name].value;
+  _.each(metadata,(metadatum)=>{
+    if (metadatum.indexed===undefined || metadatum.indexed===true){
+        if (jsonLine[metadatum.name] && jsonLine[metadatum.name].value && jsonLine[metadatum.name].value!=='') {
+            options.body[metadatum.name] ={'value':jsonLine[metadatum.name].value,'normalized':jsonLine[metadatum.name].value};
+            if (metadatum.name ==='titre' || metadatum.name ==='titrefr' || metadatum.name ==='titreen' ){
+                options.body[metadatum.name].normalized50 = jsonLine[metadatum.name].value;
+                options.body[metadatum.name].normalized75 = jsonLine[metadatum.name].value;
             }
         } else {
-          options.body[champs.name]=jsonLine[champs.name];
+          options.body[metadatum.name]=jsonLine[metadatum.name];
         }
     }
   });
@@ -64,7 +63,6 @@ function insereNotice(jsonLine){
   options.body.isDuplicate = false;
   jsonLine.duplicate = [];
   jsonLine.isDuplicate = false;
-  //console.log(JSON.stringify(options));
   return esClient.index(options);
 
 }
@@ -96,16 +94,16 @@ function aggregeNotice(jsonLine, data) {
         'dateCreation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
     };
 
-    _.each(listeChamps,(champs)=>{
-        if (champs.indexed===undefined || champs.indexed===true){
-            if (jsonLine[champs.name] && jsonLine[champs.name].value && jsonLine[champs.name].value!=='') {
-                options.body[champs.name] ={'value':jsonLine[champs.name].value,'normalized':jsonLine[champs.name].value};
-                if (champs.name ==='titre' || champs.name ==='titrefr' || champs.name ==='titreen'){
-                    options.body[champs.name].normalized50 = jsonLine[champs.name].value;
-                    options.body[champs.name].normalized75 = jsonLine[champs.name].value;
+    _.each(metadata,(metadatum)=>{
+        if (metadatum.indexed===undefined || metadatum.indexed===true){
+            if (jsonLine[metadatum.name] && jsonLine[metadatum.name].value && jsonLine[metadatum.name].value!=='') {
+                options.body[metadatum.name] ={'value':jsonLine[metadatum.name].value,'normalized':jsonLine[metadatum.name].value};
+                if (metadatum.name ==='titre' || metadatum.name ==='titrefr' || metadatum.name ==='titreen'){
+                    options.body[metadatum.name].normalized50 = jsonLine[metadatum.name].value;
+                    options.body[metadatum.name].normalized75 = jsonLine[metadatum.name].value;
                 }
             } else {
-              options.body[champs.name]=jsonLine[champs.name];
+              options.body[metadatum.name]=jsonLine[metadatum.name];
             }
         }
     });
@@ -125,7 +123,6 @@ function aggregeNotice(jsonLine, data) {
     });
     options.body.idChain = _.join(idchain,'!');
     jsonLine.idChain = options.body.idChain;
-    //console.log(JSON.stringify(options));
     return esClient.index(options);
 }
 
@@ -137,13 +134,13 @@ function propagate(jsonLine,data,result){
     let body=[];
     let option;
     let arrayDuplicate;
-    let allMatchedRules;
+    let allMatchedRules=[];
 
     jsonLine.idElasticsearch = result._id;
 
     _.each(data.hits.hits,(hit)=>{
        
-        options={update:{_index:esConf.index,_type:esConf.type,_id:hit._id}};
+        options={update:{_index:esConf.index,_type:esConf.type,_id:hit._id,retry_on_conflict:3}};
         //constitution du duplicate
 
         _.each(jsonLine.duplicate,(duplicate)=>{
@@ -153,12 +150,12 @@ function propagate(jsonLine,data,result){
             }
         });
 
-        allMatchedRules = hit._source.duplicateRules;
+        if (Array.isArray(hit._source.duplicateRules)) { allMatchedRules = hit._source.duplicateRules; }
         _.each(hit._source.duplicate,(duplicate)=>{
           allMatchedRules = _.union(allMatchedRules,duplicate.rules_keyword);
         });
 
-        update={doc:{idChain:jsonLine.idChain,duplicate:arrayDuplicate,duplicateRules:_.sortBy(allMatchedRules),isDuplicate: (allMatchedRules.length > 0)}};
+        update={doc:{idChain:jsonLine.idChain,duplicate:arrayDuplicate,duplicateRules:_.sortBy(allMatchedRules),isDuplicate: (allMatchedRules.length > 0)},refresh:true};
         body.push(options);
         body.push(update);
         
@@ -191,10 +188,10 @@ function testParameter(jsonLine,rules){
     let arrayNonParameter = (rules.is_empty!==undefined) ? rules.is_empty : [];
     let bool=true;
     _.each(arrayParameter,function(parameter){
-        if (_.get(jsonLine,parameter)===undefined || _.get(jsonLine,parameter).trim()==='') bool = false ;
+        if (_.get(jsonLine,parameter)===undefined || _.get(jsonLine,parameter).trim()===''){ bool = false ;}
     });
     _.each(arrayNonParameter,function(nonparameter){
-        if (_.get(jsonLine,nonparameter)!==undefined && _.get(jsonLine,nonparameter).trim()!=='') bool = false;
+        if (_.get(jsonLine,nonparameter)!==undefined && _.get(jsonLine,nonparameter).trim()!==''){ bool = false;}
     })
     return bool;
 }
@@ -266,7 +263,7 @@ function existNotice(jsonLine){
                     request.query.bool.should.push(interprete(jsonLine,provider_rule.query,''))
                 }
             });
-            //console.log(JSON.stringify(request));
+            
 
             return esClient.search({
                 index: esConf.index,
@@ -305,11 +302,11 @@ function propagateDelete(jsonLine,data,result){
         let arrayDuplicate=[];
         let idChainModify;
         let regexp;
-        let allMatchedRules;
+        let allMatchedRules=[];
         if (result.hits.total>0){
             _.each(result.hits.hits,(hit)=>{
             
-                options={update:{_index:esConf.index,_type:esConf.type,_id:hit._id}};
+                options={update:{_index:esConf.index,_type:esConf.type,_id:hit._id,retry_on_conflict:3}};
                 //constitution du duplicate
 
                 _.each(hit.duplicate,(duplicate)=>{
@@ -320,8 +317,8 @@ function propagateDelete(jsonLine,data,result){
                         }
                     });
                 });
-
-                allMatchedRules = hit._source.duplicateRules;
+                
+                if (Array.isArray(hit._source.duplicateRules)) { allMatchedRules = hit._source.duplicateRules;}
                 _.each(hit._source.duplicate,(duplicate)=>{
                     allMatchedRules = _.union(allMatchedRules,duplicate.rules_keyword);
                 });
@@ -329,7 +326,7 @@ function propagateDelete(jsonLine,data,result){
                 regexp = new RegExp('/'+hit._source.source+':'+hit._source.idConditor+'[!]*/','g');
                 idChainModify = hit._source.idChain.replace(regexp,'');
 
-                update={doc:{idChain:idChainModify,duplicate:arrayDuplicate,duplicateRules:_.sortBy(allMatchedRules),isDuplicate: (allMatchedRules.length > 0)}};
+                update={doc:{idChain:idChainModify,duplicate:arrayDuplicate,duplicateRules:_.sortBy(allMatchedRules),isDuplicate: (allMatchedRules.length > 0)},refresh:true};
                 body.push(options);
                 body.push(update);
                 
