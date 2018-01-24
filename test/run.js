@@ -100,6 +100,7 @@ describe(pkg.name + '/index.js', function () {
     it('La notice 1 est intégrée et seule dans l\'index ES', function (done) {
       docObject = testData[0];
       business.doTheJob(docObject = testData[0], function (err) {
+        console.log("message erreur :"+err.errMessage);
         expect(err).to.be.undefined;
         setTimeout(function() {
           esClient.search({
