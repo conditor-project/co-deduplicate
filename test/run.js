@@ -89,9 +89,6 @@ describe(pkg.name + '/index.js', function () {
 
     
   });
-  
-  
-  
   // test sur l'insertion d'une 1ere notice
   describe('#insert notice 1', function () {
 
@@ -100,7 +97,6 @@ describe(pkg.name + '/index.js', function () {
     it('La notice 1 est intégrée et seule dans l\'index ES', function (done) {
       docObject = testData[0];
       business.doTheJob(docObject = testData[0], function (err) {
-        console.log(err);
         expect(err).to.be.undefined;
         setTimeout(function() {
           esClient.search({
@@ -212,7 +208,7 @@ describe(pkg.name + '/index.js', function () {
             index: esConf.index
           }, function (esError, response) {
             expect(esError).to.be.undefined;
-            
+
             expect(response.hits.total).to.be.equal(7);
             /**
             _.each(response.hits.hits,(hit)=>{

@@ -19,6 +19,7 @@
     "doi":{
       "value": "10.1093/bioinformatics/btu019ut=WOS:000336095100034"
     },
+    "hasDoi":true,
     "arxiv": {
       "value": "12-345/678:9"
     },
@@ -104,6 +105,7 @@
     "doi":{
       "value": "10.1093bioinformatics/btu019ut=WOS:000336095100034"
     },
+    "hasDoi":true,
     "arxiv": {
       "value": "12-345/678:9"
     },
@@ -189,6 +191,7 @@
     "doi":{
       "value": "10.1093/bioinformatics/btu019ut=WOS:000336095100035"
     },
+    "hasDoi":true,
     "arxiv": {
       "value": "12-345/678:9"
     },
@@ -276,6 +279,7 @@
     "doi":{
       "value": "10.1093/bioinformatics/btu019ut=WOS:000336095100034"
     },
+    "hasDoi":true,
     "arxiv": {
       "value": "12-345/678:9"
     },
@@ -363,6 +367,7 @@
     "doi":{
       "value": "10.1093/bioinformatics/btu019ut=WOS:0003360951000344"
     },
+    "hasDoi":true,
     "arxiv": {
       "value": "12-345/678:9"
     },
@@ -450,6 +455,7 @@
     "doi":{
       "value": "10.1093/bioinformatics/btu019ut=WOS:0003360951000344"
     },
+    "hasDoi":true,
     "arxiv": {
       "value": "12-345/678:9"
     },
@@ -535,6 +541,7 @@
     "doi":{
       "value": "10.1093/bioinformatics/btu019ut=WOS:0003360951000342"
     },
+    "hasDoi":true,
     "arxiv": {
       "value": "12-345/678:9"
     },
