@@ -97,6 +97,7 @@ describe(pkg.name + '/index.js', function () {
     it('La notice 1 est intégrée et seule dans l\'index ES', function (done) {
       docObject = testData[0];
       business.doTheJob(docObject = testData[0], function (err) {
+        if (err !== undefined) console.log(err.errMessage);
         expect(err).to.be.undefined;
         setTimeout(function() {
           esClient.search({
@@ -113,6 +114,7 @@ describe(pkg.name + '/index.js', function () {
     it('La notice 2 matche bien', function (done) {
       docObject = testData[1];
       business.doTheJob(docObject, function (err) {
+        if (err !== undefined) console.log(err.errMessage);
         expect(err).to.be.undefined;
         setTimeout(function() {
           esClient.search({
