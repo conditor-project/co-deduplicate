@@ -5,11 +5,13 @@ const es = require('elasticsearch'),
     debug = require('debug')('co-deduplicate');
 
 const Promise = require('bluebird');
-const nanoid = require('nanoid');
+const generate = require('nanoid/generate');
 const esConf = require('co-config/es.js');
 const esMapping = require('co-config/mapping.json');
-const scenario = require('co-config/scenario.json');
-const rules = require('co-config/rules_certain.json');
+//const scenario = require('co-config/scenario.json');
+const scenario = require('./scenario_newname_suppression.json');
+//const rules = require('co-config/rules_certain.json');
+const rules = require('./rules_perline_newname_suppression_indent.json');
 const baseRequest = require('co-config/base_request.json');
 const provider_rules = require('co-config/rules_provider.json');
 const metadata =require('co-config/metadata-xpaths.json');
@@ -167,7 +169,7 @@ function propagate(jsonLine,data,result){
 function dispatch(jsonLine,data) {
 
     // creation de l'id
-    jsonLine.idConditor = nanoid();
+    jsonLine.idConditor = generate('1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_',25);
     
     if (data.hits.total===0){
         //console.log('on insere');
@@ -396,8 +398,7 @@ business.doTheJob = function(jsonLine, cb) {
 
         //debug(result);
         //debug(jsonLine);
-        if (result && result._id && !jsonLine.idElasticsearch)
-            jsonLine.idElasticsearch = result._id;
+        if (result && result._id && !jsonLine.idElasticsearch) { jsonLine.idElasticsearch = result._id;}
         return cb();
 
     }).catch(function(e){
