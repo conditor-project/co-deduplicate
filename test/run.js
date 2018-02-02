@@ -83,7 +83,7 @@ describe(pkg.name + '/index.js', function () {
 
       docObject = testData[0];
       request = business.__get__("buildQuery")(docObject = testData[0],request);
-      expect(request.query.bool.should.length).to.be.equal(39);
+      expect(request.query.bool.should.length).to.be.equal(23);
       done();
     });
 
