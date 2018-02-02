@@ -15,6 +15,8 @@ const rules = require('co-config/rules_certain.json');
 const baseRequest = require('co-config/base_request.json');
 const provider_rules = require('co-config/rules_provider.json');
 const metadata =require('co-config/metadata-xpaths.json');
+const truncateList = ['titre','titrefr','titreen'];
+const idAlphabet = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_';
 
 const esClient = new es.Client({
     host: esConf.host,
@@ -25,6 +27,24 @@ const esClient = new es.Client({
 });
 
 const business = {};
+
+
+function insertMetadata(jsonLine, options) {
+    _.each(metadata, (metadatum) => {
+        if (metadatum.indexed === undefined || metadatum.indexed === true) {
+            if (jsonLine[metadatum.name] && jsonLine[metadatum.name].value && jsonLine[metadatum.name].value !== '') {
+                options.body[metadatum.name] = { 'value': jsonLine[metadatum.name].value, 'normalized': jsonLine[metadatum.name].value };
+                if (_.indexOf(truncateList,metadatum.name)!==-1) {
+                    options.body[metadatum.name].normalized50 = jsonLine[metadatum.name].value;
+                    options.body[metadatum.name].normalized75 = jsonLine[metadatum.name].value;
+                }
+            }
+            else {
+                options.body[metadatum.name] = jsonLine[metadatum.name];
+            }
+        }
+    });
+}
 
 function insereNotice(jsonLine){
 
@@ -37,19 +57,7 @@ function insereNotice(jsonLine){
 		'dateCreation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
 	};
 
-  _.each(metadata,(metadatum)=>{
-    if (metadatum.indexed===undefined || metadatum.indexed===true){
-        if (jsonLine[metadatum.name] && jsonLine[metadatum.name].value && jsonLine[metadatum.name].value!=='') {
-            options.body[metadatum.name] ={'value':jsonLine[metadatum.name].value,'normalized':jsonLine[metadatum.name].value};
-            if (metadatum.name ==='titre' || metadatum.name ==='titrefr' || metadatum.name ==='titreen' ){
-                options.body[metadatum.name].normalized50 = jsonLine[metadatum.name].value;
-                options.body[metadatum.name].normalized75 = jsonLine[metadatum.name].value;
-            }
-        } else {
-          options.body[metadatum.name]=jsonLine[metadatum.name];
-        }
-    }
-  });
+  insertMetadata(jsonLine, options);
 
   options.body.path = jsonLine.path;
   options.body.source = jsonLine.source;
@@ -69,6 +77,8 @@ function insereNotice(jsonLine){
 
 }
 
+
+
 function aggregeNotice(jsonLine, data) {
 
 
@@ -80,7 +90,8 @@ function aggregeNotice(jsonLine, data) {
     _.each(data.hits.hits,(hit)=>{
         duplicate.push({idConditor:hit._source.idConditor,rules:hit.matched_queries,rules_keyword:hit.matched_queries,idIngest:hit._source.idIngest});
         idchain=_.union(idchain,hit._source.idChain.split('!'));
-        allMergedRules = _.union(hit._source.duplicateRules, allMergedRules);
+        allMergedRules = _.union(hit.matched_queries, allMergedRules);
+        if (Array.isArray(hit._source.duplicateRules)) { allMergedRules = _.union(hit._source.duplicateRules, allMergedRules);}
     });
 
     idchain.sort();
@@ -96,20 +107,7 @@ function aggregeNotice(jsonLine, data) {
         'dateCreation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
     };
 
-    _.each(metadata,(metadatum)=>{
-        if (metadatum.indexed===undefined || metadatum.indexed===true){
-            if (jsonLine[metadatum.name] && jsonLine[metadatum.name].value && jsonLine[metadatum.name].value!=='') {
-                options.body[metadatum.name] ={'value':jsonLine[metadatum.name].value,'normalized':jsonLine[metadatum.name].value};
-                if (metadatum.name ==='titre' || metadatum.name ==='titrefr' || metadatum.name ==='titreen'){
-                    options.body[metadatum.name].normalized50 = jsonLine[metadatum.name].value;
-                    options.body[metadatum.name].normalized75 = jsonLine[metadatum.name].value;
-                }
-            } else {
-              options.body[metadatum.name]=jsonLine[metadatum.name];
-            }
-        }
-    });
-
+    insertMetadata(jsonLine, options);
 
     options.body.path = jsonLine.path;
     options.body.source = jsonLine.source;
@@ -136,7 +134,7 @@ function propagate(jsonLine,data,result){
     let body=[];
     let option;
     let arrayDuplicate;
-    let allMatchedRules=[];
+    let allMatchedRules=jsonLine.duplicateRules;
 
     jsonLine.idElasticsearch = result._id;
 
@@ -152,9 +150,8 @@ function propagate(jsonLine,data,result){
             }
         });
 
-        if (Array.isArray(hit._source.duplicateRules)) { allMatchedRules = hit._source.duplicateRules; }
         _.each(hit._source.duplicate,(duplicate)=>{
-          allMatchedRules = _.union(allMatchedRules,duplicate.rules_keyword);
+            if (Array.isArray(duplicate.rules_keyword)) { allMatchedRules = _.union(allMatchedRules,duplicate.rules_keyword);}
         });
 
         update={doc:{idChain:jsonLine.idChain,duplicate:arrayDuplicate,duplicateRules:_.sortBy(allMatchedRules),isDuplicate: (allMatchedRules.length > 0)},refresh:true};
@@ -169,7 +166,7 @@ function propagate(jsonLine,data,result){
 function dispatch(jsonLine,data) {
 
     // creation de l'id
-    jsonLine.idConditor = generate('1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_',25);
+    jsonLine.idConditor = generate(idAlphabet,25);
     
     if (data.hits.total===0){
         //console.log('on insere');
@@ -277,15 +274,17 @@ function existNotice(jsonLine){
 }
 
 function deleteNotice(jsonLine,data){
+    jsonLine.idConditor = data.hits.hits[0].idConditor;
     return esClient.delete({
         index:esConf.index,
         type :esConf.type,
-        id:data.hits.hits[0]._id
+        id:data.hits.hits[0]._id,
+        refresh:true
     });
 
 }
 
-function getDuplicate(jsonLine,data){
+function getDuplicate(jsonLine,data,result){
     let request = _.cloneDeep(baseRequest);
     request.query.bool.should.push({"bool":{"must":[{"match":{"idChain":data.hits.hits[0]._source.idChain}}]}});
     return esClient.search({
@@ -310,20 +309,15 @@ function propagateDelete(jsonLine,data,result){
             
                 options={update:{_index:esConf.index,_type:esConf.type,_id:hit._id,retry_on_conflict:3}};
                 //constitution du duplicate
-
-                _.each(hit.duplicate,(duplicate)=>{
                     
-                    _.each(hit._source.duplicate,(duplicateSource)=>{
-                        if (duplicate.idConditor!==duplicateSource.idConditor){
-                            arrayDuplicate.push({idConditor:jsonLine.idConditor,rules:duplicate.rules,rules_keyword:duplicate.rules,idIngest:jsonLine.idIngest});
-                        }
-                    });
+                _.each(hit._source.duplicate,(duplicateSource)=>{
+                    if (jsonLine.idConditor!==duplicateSource.idConditor){
+                        arrayDuplicate.push({idConditor:duplicateSource.idConditor,rules:duplicateSource.rules,rules_keyword:duplicateSource.rules,idIngest:jsonLine.idIngest});
+                        allMatchedRules = _.union(allMatchedRules,duplicateSource.rules_keyword)
+                    }
                 });
-                
-                if (Array.isArray(hit._source.duplicateRules)) { allMatchedRules = hit._source.duplicateRules;}
-                _.each(hit._source.duplicate,(duplicate)=>{
-                    allMatchedRules = _.union(allMatchedRules,duplicate.rules_keyword);
-                });
+               
+
 
                 regexp = new RegExp('/'+hit._source.source+':'+hit._source.idConditor+'[!]*/','g');
                 idChainModify = hit._source.idChain.replace(regexp,'');
