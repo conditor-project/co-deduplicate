@@ -80,7 +80,7 @@
     "datePubli":{
       "value":""
     },
-    "typeConditor":[{"type":"Conférence"}],
+    "typeConditor":[{"type":"Article"}],
     "path":"/applis/istex/li/corpus-resources-conditor/notice-1.xml",
     "source":"TU1"
   }
@@ -166,7 +166,7 @@
     "datePubli":{
       "value":""
     },
-    "typeConditor":[{"type":"Conférence"}],
+    "typeConditor":[{"type":"Article"}],
     "path":"/applis/istex/li/corpus-resources-conditor/notice-2.xml",
     "source":"TU2"
   }
@@ -254,7 +254,7 @@
       "value":"",
       "normalized":""
     },
-    "typeConditor":[{"type":"Conférence"}],
+    "typeConditor":[{"type":"Article"}],
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
     "source":"TU3"
   }
@@ -342,7 +342,7 @@
       "value":"",
       "normalized":""
     },
-    "typeConditor":[{"type":"Conférence"}],
+    "typeConditor":[{"type":"Article"}],
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
     "source":"TU4"
   }
@@ -430,7 +430,7 @@
       "value":"",
       "normalized":""
     },
-    "typeConditor":[{"type":"Conférence"}],
+    "typeConditor":[{"type":"Article"}],
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
     "source":"TU5"
   }
@@ -516,7 +516,7 @@
     "datePubli":{
       "value":""
     },
-    "typeConditor":[{"type":"Conférence"}],
+    "typeConditor":[{"type":"Article"}],
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
     "source":"TU6"
   }
@@ -604,7 +604,7 @@
       "value":"",
       "normalized":""
     },
-    "typeConditor":[{"type":"Conférence"}],
+    "typeConditor":[{"type":"Article"}],
     "path":"/applis/istex/li/corpus-resources-conditor/notice-7.xml",
     "source":"hal"
   }
@@ -691,7 +691,7 @@
       "value":"",
       "normalized":""
     },
-    "typeConditor":[{"type":"Conférence"}],
+    "typeConditor":[{"type":"Article"}],
     "path":"/applis/istex/li/corpus-resources-conditor/notice-7.xml",
     "source":"hal"
   }
