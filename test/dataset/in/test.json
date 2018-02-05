@@ -438,22 +438,22 @@
   {
     "_comment" : " === Notice 6, sensée matcher avec titre+auteurInit+issn seul (REGLE 5) ===",
     "titre": {
-      "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
+      "value" : ""
     },
     "titrefr": {
-      "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
+      "value" : ""
     },
     "titreen": {
-      "value" : "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
+      "value" : ""
     },
     "auteur": {
-      "value" : "Guidetti-Gonzales Simone"
+      "value" : ""
     } ,
     "auteurInit":{
       "value": "Guidetti-Gonzalez S"
     },
     "doi":{
-      "value": "10.1093/bioinformatics/btu019ut=WOS:0003360951000344"
+      "value": ""
     },
     "hasDoi":true,
     "arxiv": {

@@ -65,6 +65,7 @@ function insereNotice(jsonLine){
   options.body.idConditor = jsonLine.idConditor;
   options.body.ingestId = jsonLine.ingestId;
   options.body.ingestBaseName = jsonLine.ingestBaseName; 
+  options.body.isDeduplicable = jsonLine.isDeduplicable;
   _.each(jsonLine.typeConditor,(typeCond)=>{
     options.body.typeConditor.push({'value':typeCond.type,'raw':typeCond.type});
   });
@@ -91,7 +92,6 @@ function aggregeNotice(jsonLine, data) {
         duplicate.push({idConditor:hit._source.idConditor,rules:hit.matched_queries,rules_keyword:hit.matched_queries,idIngest:hit._source.idIngest});
         idchain=_.union(idchain,hit._source.idChain.split('!'));
         allMergedRules = _.union(hit.matched_queries, allMergedRules);
-        if (Array.isArray(hit._source.duplicateRules)) { allMergedRules = _.union(hit._source.duplicateRules, allMergedRules);}
     });
 
     idchain.sort();
@@ -118,6 +118,7 @@ function aggregeNotice(jsonLine, data) {
     options.body.idConditor = jsonLine.idConditor;
     options.body.ingestId = jsonLine.ingestId;
     options.body.ingestBaseName = jsonLine.ingestBaseName;
+    options.body.isDeduplicable = jsonLine.isDeduplicable;
     _.each(jsonLine.typeConditor,(typeCond)=>{
         options.body.typeConditor.push({'value':typeCond.type,'raw':typeCond.type});
     });
@@ -134,7 +135,7 @@ function propagate(jsonLine,data,result){
     let body=[];
     let option;
     let arrayDuplicate;
-    let allMatchedRules=jsonLine.duplicateRules;
+    let allMatchedRules=[];
 
     jsonLine.idElasticsearch = result._id;
 
@@ -149,6 +150,8 @@ function propagate(jsonLine,data,result){
                 arrayDuplicate.push({idConditor:jsonLine.idConditor,rules:duplicate.rules,rules_keyword:duplicate.rules,idIngest:jsonLine.idIngest});
             }
         });
+
+        allMatchedRules=[];
 
         _.each(hit._source.duplicate,(duplicate)=>{
             if (Array.isArray(duplicate.rules_keyword)) { allMatchedRules = _.union(allMatchedRules,duplicate.rules_keyword);}
@@ -247,15 +250,18 @@ function existNotice(jsonLine){
     
     return Promise.try(function(){
         let request = _.cloneDeep(baseRequest);
-
+        let data;
         // construction des règles par scénarii
         request = buildQuery(jsonLine,request);
 
         if (request.query.bool.should.length===0){
-            throw new Error('Métadatas insuffisantes pour traiter la notice.');
+            jsonLine.isDeduplicable = false;
+            data = {'hits':{'total':0}};
+            return dispatch(jsonLine,data);
         }
         else{
-        
+            
+            jsonLine.isDeduplicable = true;
             // construction des règles uniquement sur l'identifiant de la source
             _.each(provider_rules,(provider_rule)=>{
                 if (jsonLine.source.trim()===provider_rule.source.trim() && testParameter(jsonLine,provider_rule.non_empty)){
