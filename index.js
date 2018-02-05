@@ -135,7 +135,7 @@ function propagate(jsonLine,data,result){
     let body=[];
     let option;
     let arrayDuplicate;
-    let allMatchedRules=[];
+    let allMatchedRules;
 
     jsonLine.idElasticsearch = result._id;
 
@@ -144,19 +144,18 @@ function propagate(jsonLine,data,result){
         options={update:{_index:esConf.index,_type:esConf.type,_id:hit._id,retry_on_conflict:3}};
         //constitution du duplicate
 
+        allMatchedRules=[];
+
         _.each(jsonLine.duplicate,(duplicate)=>{
             if (duplicate.idConditor===hit._source.idConditor){
                 arrayDuplicate=hit._source.duplicate;
                 arrayDuplicate.push({idConditor:jsonLine.idConditor,rules:duplicate.rules,rules_keyword:duplicate.rules,idIngest:jsonLine.idIngest});
+                allMatchedRules=_.union(allMatchedRules,hit.matched_queries);
             }
         });
 
-        allMatchedRules=[];
-
-        _.each(hit._source.duplicate,(duplicate)=>{
-            if (Array.isArray(duplicate.rules_keyword)) { allMatchedRules = _.union(allMatchedRules,duplicate.rules_keyword);}
-        });
-
+        allMatchedRules = _.union(allMatchedRules,hit._source.duplicateRules);
+        
         update={doc:{idChain:jsonLine.idChain,duplicate:arrayDuplicate,duplicateRules:_.sortBy(allMatchedRules),isDuplicate: (allMatchedRules.length > 0)},refresh:true};
         body.push(options);
         body.push(update);
@@ -263,6 +262,7 @@ function existNotice(jsonLine){
             
             jsonLine.isDeduplicable = true;
             // construction des règles uniquement sur l'identifiant de la source
+            
             _.each(provider_rules,(provider_rule)=>{
                 if (jsonLine.source.trim()===provider_rule.source.trim() && testParameter(jsonLine,provider_rule.non_empty)){
                     request.query.bool.should.push(interprete(jsonLine,provider_rule.query,''))
