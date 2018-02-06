@@ -17,6 +17,14 @@ const provider_rules = require('co-config/rules_provider.json');
 const metadata =require('co-config/metadata-xpaths.json');
 const truncateList = ['titre','titrefr','titreen'];
 const idAlphabet = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_';
+const scriptList = {
+  "setIdChain":"ctx._source.idChain = params.idChain",
+  "setIsDuplicate":"if (ctx._source.duplicate == null || ctx._source.duplicate.size() == 0 ) { ctx._source.isDuplicate = false } else { ctx._source.isDuplicate = true }",
+  "addDuplicate":"if (ctx._source.duplicate == null || ctx._source.duplicate.length==0){ ctx._source.duplicate = params.duplicate } else { if (!ctx._source.duplicate.contains(params.duplicate[0])) {ctx._source.duplicate.add(params.duplicate[0])}} ",
+  "removeDuplicate":"if ((ctx._source.duplicate != null && ctx._source.duplicate.length>0)){ for (int i=0;i<ctx._source.duplicate.length;i++){ if (ctx._source.duplicate[i].idConditor==params.idConditor){ ctx.source.duplicate.remove(i)}}}",
+  "setDuplicateRules":"ArrayList mergedRules = new ArrayList(); for (int i=0;i<ctx._source.duplicate.length;i++) { for (int j = 0 ; j < ctx._source.duplicate[i].rules.length; j++){ if (!mergedRules.contains(ctx._source.duplicate[i].rules[j])) mergedRules.add(ctx._source.duplicate[i].rules[j]); }} mergedRules.sort(null); ctx._source.duplicateRules = mergedRules; "
+};
+
 
 const esClient = new es.Client({
     host: esConf.host,
@@ -160,7 +168,7 @@ function propagate(jsonLine,data,result){
         //update={doc:{idChain:jsonLine.idChain,duplicate:arrayDuplicate,duplicateRules:_.sortBy(allMatchedRules),isDuplicate: (allMatchedRules.length > 0)},refresh:true};
         update={script:
             {lang:"painless",
-            inline:"if (ctx._source.duplicate == null || ctx._source.duplicate.length==0){ ctx._source.duplicate = params.duplicate } else { if (!ctx._source.duplicate.contains(params.duplicate[0])) {ctx._source.duplicate.add(params.duplicate[0])}} ",
+            inline:scriptList.addDuplicate,
             params:{duplicate:[{
                     idConditor:jsonLine.idConditor,
                     rules:hit.matched_queries,
@@ -173,7 +181,7 @@ function propagate(jsonLine,data,result){
 
         update={script:
             {lang:"painless",
-            inline:"ctx._source.idChain = params.idChain",
+            inline:scriptList.setIdChain,
             params:{idChain:jsonLine.idChain}
             }
         };
@@ -183,7 +191,7 @@ function propagate(jsonLine,data,result){
 
         update={script:
             {lang:"painless",
-            inline:"if (ctx._source.duplicate == null || ctx._source.duplicate.size() == 0 ) { ctx._source.isDuplicate = false } else { ctx._source.isDuplicate = true }",
+            inline:scriptList.setIsDuplicate,
             }
         };
 
@@ -192,7 +200,7 @@ function propagate(jsonLine,data,result){
 
         update={script:
             {lang:"painless",
-            inline:"ArrayList mergedRules = new ArrayList(); for (int i=0;i<ctx._source.duplicate.length;i++) { for (int j = 0 ; j < ctx._source.duplicate[i].rules.length; j++){ if (!mergedRules.contains(ctx._source.duplicate[i].rules[j])) mergedRules.add(ctx._source.duplicate[i].rules[j]); }} mergedRules.sort(null); ctx._source.duplicateRules = mergedRules; ",
+            inline:scriptList.setDuplicateRules,
             }
         };
 
@@ -219,8 +227,6 @@ function dispatch(jsonLine,data) {
         return aggregeNotice(jsonLine,data)
                 .then(propagate.bind(null,jsonLine,data),(error)=>{
                     console.error(error);
-        }).then((result)=>{
-            console.log(result);
         });
     }
 }
@@ -377,7 +383,7 @@ function propagateDelete(jsonLine,data,result){
                 //update={doc:{idChain:jsonLine.idChain,duplicate:arrayDuplicate,duplicateRules:_.sortBy(allMatchedRules),isDuplicate: (allMatchedRules.length > 0)},refresh:true};
                 update={script:
                     {lang:"painless",
-                    inline:"if ((ctx._source.duplicate != null && ctx._source.duplicate.length>0)){ for (int i=0;i<ctx._source.duplicate.length;i++){ if (ctx._source.duplicate[i].idConditor==params.idConditor){ ctx.source.duplicate.remove(i)}}}",
+                    inline:scriptList.removeDuplicate,
                     params:{idConditor:jsonLine.idConditor,
                     }}
                 };
@@ -386,7 +392,7 @@ function propagateDelete(jsonLine,data,result){
         
                 update={script:
                     {lang:"painless",
-                    inline:"ctx._source.idChain = params.idChain",
+                    inline:scriptList.setIdChain,
                     params:{idChain:idChainModify}
                     }
                 };
@@ -396,7 +402,7 @@ function propagateDelete(jsonLine,data,result){
         
                 update={script:
                     {lang:"painless",
-                    inline:"if (ctx._source.duplicate == null || ctx._source.duplicate.length == 0 ) { ctx._source.isDuplicate = false } else { ctx._source.isDuplicate = true }",
+                    inline:scriptList.setIsDuplicate,
                     }
                 };
         
@@ -405,7 +411,7 @@ function propagateDelete(jsonLine,data,result){
         
                 update={script:
                     {lang:"painless",
-                    inline:"ArrayList mergedRules = new ArrayList(); for (int i=0;i<ctx._source.duplicate.length;i++) { for (int j=0; j<ctx._source.duplicate[i].rules.size(); j++){ if (!mergedRules.contains(ctx._source.duplicate[i].rules[j])) mergedRules.add(ctx._source.duplicate[i].rules[j]); }} mergedRules.sort(null); ctx._source.duplicateRules = mergedRules; ",
+                    inline:scriptList.setDuplicateRules,
                     }
                 };
         
