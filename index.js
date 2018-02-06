@@ -150,22 +150,7 @@ function propagate(jsonLine,data,result){
     _.each(data.hits.hits,(hit)=>{
        
         options={update:{_index:esConf.index,_type:esConf.type,_id:hit._id,retry_on_conflict:3}};
-        //constitution du duplicate
-        /**
-        allMatchedRules=[];
-
-        _.each(jsonLine.duplicate,(duplicate)=>{
-            if (duplicate.idConditor===hit._source.idConditor){
-                arrayDuplicate=hit._source.duplicate;
-                arrayDuplicate.push({idConditor:jsonLine.idConditor,rules:duplicate.rules,rules_keyword:duplicate.rules,idIngest:jsonLine.idIngest});
-                allMatchedRules=_.union(allMatchedRules,hit.matched_queries);
-            }
-        });
-
-        allMatchedRules = _.union(allMatchedRules,hit._source.duplicateRules);
-        */
-        
-        //update={doc:{idChain:jsonLine.idChain,duplicate:arrayDuplicate,duplicateRules:_.sortBy(allMatchedRules),isDuplicate: (allMatchedRules.length > 0)},refresh:true};
+       
         update={script:
             {lang:"painless",
             inline:scriptList.addDuplicate,
@@ -365,22 +350,7 @@ function propagateDelete(jsonLine,data,result){
                 idChainModify = hit._source.idChain.replace(regexp,'');
                
                 options={update:{_index:esConf.index,_type:esConf.type,_id:hit._id,retry_on_conflict:3}};
-                //constitution du duplicate
-                /**
-                allMatchedRules=[];
-        
-                _.each(jsonLine.duplicate,(duplicate)=>{
-                    if (duplicate.idConditor===hit._source.idConditor){
-                        arrayDuplicate=hit._source.duplicate;
-                        arrayDuplicate.push({idConditor:jsonLine.idConditor,rules:duplicate.rules,rules_keyword:duplicate.rules,idIngest:jsonLine.idIngest});
-                        allMatchedRules=_.union(allMatchedRules,hit.matched_queries);
-                    }
-                });
-        
-                allMatchedRules = _.union(allMatchedRules,hit._source.duplicateRules);
-                */
-                
-                //update={doc:{idChain:jsonLine.idChain,duplicate:arrayDuplicate,duplicateRules:_.sortBy(allMatchedRules),isDuplicate: (allMatchedRules.length > 0)},refresh:true};
+               
                 update={script:
                     {lang:"painless",
                     inline:scriptList.removeDuplicate,
@@ -418,19 +388,6 @@ function propagateDelete(jsonLine,data,result){
                 body.push(options);
                 body.push(update);
 
-                /**
-                _.each(hit._source.duplicate,(duplicateSource)=>{
-                    if (jsonLine.idConditor!==duplicateSource.idConditor){
-                        arrayDuplicate.push({idConditor:duplicateSource.idConditor,rules:duplicateSource.rules,rules_keyword:duplicateSource.rules,idIngest:jsonLine.idIngest});
-                        allMatchedRules = _.union(allMatchedRules,duplicateSource.rules_keyword)
-                    }
-                });
-            
-                
-                update={doc:{idChain:idChainModify,duplicate:arrayDuplicate,duplicateRules:_.sortBy(allMatchedRules),isDuplicate: (allMatchedRules.length > 0)},refresh:true};
-                body.push(options);
-                body.push(update);
-                */
             });
 
             option={body:body};
