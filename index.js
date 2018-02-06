@@ -143,7 +143,7 @@ function propagate(jsonLine,data,result){
        
         options={update:{_index:esConf.index,_type:esConf.type,_id:hit._id,retry_on_conflict:3}};
         //constitution du duplicate
-
+        /**
         allMatchedRules=[];
 
         _.each(jsonLine.duplicate,(duplicate)=>{
@@ -155,13 +155,53 @@ function propagate(jsonLine,data,result){
         });
 
         allMatchedRules = _.union(allMatchedRules,hit._source.duplicateRules);
+        */
         
-        update={doc:{idChain:jsonLine.idChain,duplicate:arrayDuplicate,duplicateRules:_.sortBy(allMatchedRules),isDuplicate: (allMatchedRules.length > 0)},refresh:true};
+        //update={doc:{idChain:jsonLine.idChain,duplicate:arrayDuplicate,duplicateRules:_.sortBy(allMatchedRules),isDuplicate: (allMatchedRules.length > 0)},refresh:true};
+        update={script:
+            {lang:"painless",
+            inline:"if (ctx._source.duplicate == null || ctx._source.duplicate.length==0){ ctx._source.duplicate = params.duplicate } else { if (!ctx._source.duplicate.contains(params.duplicate[0])) {ctx._source.duplicate.add(params.duplicate[0])}} ",
+            params:{duplicate:[{
+                    idConditor:jsonLine.idConditor,
+                    rules:hit.matched_queries,
+                    rules_keyword:hit.matched_queries
+                }],
+            }}
+        };
         body.push(options);
         body.push(update);
-        
+
+        update={script:
+            {lang:"painless",
+            inline:"ctx._source.idChain = params.idChain",
+            params:{idChain:jsonLine.idChain}
+            }
+        };
+
+        body.push(options);
+        body.push(update);
+
+        update={script:
+            {lang:"painless",
+            inline:"if (ctx._source.duplicate == null || ctx._source.duplicate.size() == 0 ) { ctx._source.isDuplicate = false } else { ctx._source.isDuplicate = true }",
+            }
+        };
+
+        body.push(options);
+        body.push(update);
+
+        update={script:
+            {lang:"painless",
+            inline:"ArrayList mergedRules = new ArrayList(); for (int i=0;i<ctx._source.duplicate.length;i++) { for (int j = 0 ; j < ctx._source.duplicate[i].rules.length; j++){ if (!mergedRules.contains(ctx._source.duplicate[i].rules[j])) mergedRules.add(ctx._source.duplicate[i].rules[j]); }} mergedRules.sort(null); ctx._source.duplicateRules = mergedRules; ",
+            }
+        };
+
+        body.push(options);
+        body.push(update);
+
     });
     option={body:body};
+    
     return esClient.bulk(option);
 }
 
@@ -179,6 +219,8 @@ function dispatch(jsonLine,data) {
         return aggregeNotice(jsonLine,data)
                 .then(propagate.bind(null,jsonLine,data),(error)=>{
                     console.error(error);
+        }).then((result)=>{
+            console.log(result);
         });
     }
 }
@@ -313,25 +355,76 @@ function propagateDelete(jsonLine,data,result){
         if (result.hits.total>0){
             _.each(result.hits.hits,(hit)=>{
             
+                regexp = new RegExp('/'+hit._source.source+':'+hit._source.idConditor+'[!]*/','g');
+                idChainModify = hit._source.idChain.replace(regexp,'');
+               
                 options={update:{_index:esConf.index,_type:esConf.type,_id:hit._id,retry_on_conflict:3}};
                 //constitution du duplicate
-                    
+                /**
+                allMatchedRules=[];
+        
+                _.each(jsonLine.duplicate,(duplicate)=>{
+                    if (duplicate.idConditor===hit._source.idConditor){
+                        arrayDuplicate=hit._source.duplicate;
+                        arrayDuplicate.push({idConditor:jsonLine.idConditor,rules:duplicate.rules,rules_keyword:duplicate.rules,idIngest:jsonLine.idIngest});
+                        allMatchedRules=_.union(allMatchedRules,hit.matched_queries);
+                    }
+                });
+        
+                allMatchedRules = _.union(allMatchedRules,hit._source.duplicateRules);
+                */
+                
+                //update={doc:{idChain:jsonLine.idChain,duplicate:arrayDuplicate,duplicateRules:_.sortBy(allMatchedRules),isDuplicate: (allMatchedRules.length > 0)},refresh:true};
+                update={script:
+                    {lang:"painless",
+                    inline:"if ((ctx._source.duplicate != null && ctx._source.duplicate.length>0)){ for (int i=0;i<ctx._source.duplicate.length;i++){ if (ctx._source.duplicate[i].idConditor==params.idConditor){ ctx.source.duplicate.remove(i)}}}",
+                    params:{idConditor:jsonLine.idConditor,
+                    }}
+                };
+                body.push(options);
+                body.push(update);
+        
+                update={script:
+                    {lang:"painless",
+                    inline:"ctx._source.idChain = params.idChain",
+                    params:{idChain:idChainModify}
+                    }
+                };
+        
+                body.push(options);
+                body.push(update);
+        
+                update={script:
+                    {lang:"painless",
+                    inline:"if (ctx._source.duplicate == null || ctx._source.duplicate.length == 0 ) { ctx._source.isDuplicate = false } else { ctx._source.isDuplicate = true }",
+                    }
+                };
+        
+                body.push(options);
+                body.push(update);
+        
+                update={script:
+                    {lang:"painless",
+                    inline:"ArrayList mergedRules = new ArrayList(); for (int i=0;i<ctx._source.duplicate.length;i++) { for (int j=0; j<ctx._source.duplicate[i].rules.size(); j++){ if (!mergedRules.contains(ctx._source.duplicate[i].rules[j])) mergedRules.add(ctx._source.duplicate[i].rules[j]); }} mergedRules.sort(null); ctx._source.duplicateRules = mergedRules; ",
+                    }
+                };
+        
+                body.push(options);
+                body.push(update);
+
+                /**
                 _.each(hit._source.duplicate,(duplicateSource)=>{
                     if (jsonLine.idConditor!==duplicateSource.idConditor){
                         arrayDuplicate.push({idConditor:duplicateSource.idConditor,rules:duplicateSource.rules,rules_keyword:duplicateSource.rules,idIngest:jsonLine.idIngest});
                         allMatchedRules = _.union(allMatchedRules,duplicateSource.rules_keyword)
                     }
                 });
-               
-
-
-                regexp = new RegExp('/'+hit._source.source+':'+hit._source.idConditor+'[!]*/','g');
-                idChainModify = hit._source.idChain.replace(regexp,'');
-
+            
+                
                 update={doc:{idChain:idChainModify,duplicate:arrayDuplicate,duplicateRules:_.sortBy(allMatchedRules),isDuplicate: (allMatchedRules.length > 0)},refresh:true};
                 body.push(options);
                 body.push(update);
-                
+                */
             });
 
             option={body:body};
