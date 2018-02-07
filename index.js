@@ -153,7 +153,7 @@ function propagate(docObject,data,result){
        
         update={script:
             {lang:"painless",
-            inline:scriptList.addDuplicate,
+            source:scriptList.addDuplicate,
             params:{duplicate:[{
                     idConditor:docObject.idConditor,
                     rules:hit.matched_queries,
@@ -166,7 +166,7 @@ function propagate(docObject,data,result){
 
         update={script:
             {lang:"painless",
-            inline:scriptList.setIdChain,
+            source:scriptList.setIdChain,
             params:{idChain:docObject.idChain}
             }
         };
@@ -176,7 +176,7 @@ function propagate(docObject,data,result){
 
         update={script:
             {lang:"painless",
-            inline:scriptList.setIsDuplicate,
+            source:scriptList.setIsDuplicate,
             }
         };
 
@@ -185,7 +185,7 @@ function propagate(docObject,data,result){
 
         update={script:
             {lang:"painless",
-            inline:scriptList.setDuplicateRules,
+            source:scriptList.setDuplicateRules,
             }
         };
 
@@ -351,7 +351,7 @@ function propagateDelete(docObject,data,result){
                
                 update={script:
                     {lang:"painless",
-                    inline:scriptList.removeDuplicate,
+                    source:scriptList.removeDuplicate,
                     params:{idConditor:docObject.idConditor}
                     }
                 };
@@ -361,7 +361,7 @@ function propagateDelete(docObject,data,result){
         
                 update={script:
                     {lang:"painless",
-                    inline:scriptList.setIdChain,
+                    source:scriptList.setIdChain,
                     params:{idChain:idChainModify}
                     }
                 };
@@ -371,7 +371,7 @@ function propagateDelete(docObject,data,result){
         
                 update={script:
                     {lang:"painless",
-                    inline:scriptList.setIsDuplicate,
+                    source:scriptList.setIsDuplicate,
                     }
                 };
         
@@ -380,7 +380,7 @@ function propagateDelete(docObject,data,result){
         
                 update={script:
                     {lang:"painless",
-                    inline:scriptList.setDuplicateRules,
+                    source:scriptList.setDuplicateRules,
                     }
                 };
         
