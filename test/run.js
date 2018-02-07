@@ -79,11 +79,11 @@ describe(pkg.name + '/index.js', function () {
     let docObject;
     let request = _.cloneDeep(baseRequest);
 
-    it('Le constructeur de requête devrait pour la notice remonter 39 règles',function(done){
+    it('Le constructeur de requête devrait pour la notice remonter 27 règles',function(done){
 
       docObject = testData[0];
       request = business.__get__("buildQuery")(docObject = testData[0],request);
-      expect(request.query.bool.should.length).to.be.equal(23);
+      expect(request.query.bool.should.length).to.be.equal(27);
       done();
     });
 
@@ -411,6 +411,7 @@ describe(pkg.name + '/index.js', function () {
   });
 
 // Méthde finale sensée faire du nettoyage après les tests
+  
   after(function (done) {
     esClient.indices.delete({index: esConf.index}).then(
       function () {
