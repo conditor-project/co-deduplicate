@@ -345,9 +345,8 @@ function propagateDelete(jsonLine,data,result){
         if (result.hits.total>0){
             _.each(result.hits.hits,(hit)=>{
             
-                regexp = new RegExp('/'+hit._source.source+':'+hit._source.idConditor+'[!]*/','g');
+                regexp = new RegExp(''+hit._source.source+':'+hit._source.idConditor+'[!]*','g');
                 idChainModify = hit._source.idChain.replace(regexp,'');
-               
                 options={update:{_index:esConf.index,_type:esConf.type,_id:hit._id,retry_on_conflict:3}};
                
                 update={script:
@@ -356,6 +355,7 @@ function propagateDelete(jsonLine,data,result){
                     params:{idConditor:jsonLine.idConditor,
                     }}
                 };
+
                 body.push(options);
                 body.push(update);
         
