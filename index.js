@@ -21,7 +21,7 @@ const scriptList = {
   "setIdChain":"ctx._source.idChain = params.idChain",
   "setIsDuplicate":"if (ctx._source.duplicate == null || ctx._source.duplicate.size() == 0 ) { ctx._source.isDuplicate = false } else { ctx._source.isDuplicate = true }",
   "addDuplicate":"if (ctx._source.duplicate == null || ctx._source.duplicate.length==0){ ctx._source.duplicate = params.duplicate } else { if (!ctx._source.duplicate.contains(params.duplicate[0])) {ctx._source.duplicate.add(params.duplicate[0])}} ",
-  "removeDuplicate":"if ((ctx._source.duplicate != null && ctx._source.duplicate.length>0)){ for (int i=0;i<ctx._source.duplicate.length;i++){ if (ctx._source.duplicate[i].idConditor==params.idConditor){ ctx.source.duplicate.remove(i)}}}",
+  "removeDuplicate":"if ((ctx._source.duplicate != null && ctx._source.duplicate.length>0)){ for (int i=0;i<ctx._source.duplicate.length;i++){ if (ctx._source.duplicate[i].idConditor==params.idConditor){ ctx._source.duplicate.remove(i)}}}",
   "setDuplicateRules":"ArrayList mergedRules = new ArrayList(); for (int i=0;i<ctx._source.duplicate.length;i++) { for (int j = 0 ; j < ctx._source.duplicate[i].rules.length; j++){ if (!mergedRules.contains(ctx._source.duplicate[i].rules[j])) mergedRules.add(ctx._source.duplicate[i].rules[j]); }} mergedRules.sort(null); ctx._source.duplicateRules = mergedRules; "
 };
 
@@ -352,8 +352,8 @@ function propagateDelete(jsonLine,data,result){
                 update={script:
                     {lang:"painless",
                     inline:scriptList.removeDuplicate,
-                    params:{idConditor:jsonLine.idConditor,
-                    }}
+                    params:{idConditor:jsonLine.idConditor}
+                    }
                 };
 
                 body.push(options);
