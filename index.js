@@ -37,24 +37,24 @@ const esClient = new es.Client({
 const business = {};
 
 
-function insertMetadata(jsonLine, options) {
+function insertMetadata(docObject, options) {
     _.each(metadata, (metadatum) => {
         if (metadatum.indexed === undefined || metadatum.indexed === true) {
-            if (jsonLine[metadatum.name] && jsonLine[metadatum.name].value && jsonLine[metadatum.name].value !== '') {
-                options.body[metadatum.name] = { 'value': jsonLine[metadatum.name].value, 'normalized': jsonLine[metadatum.name].value };
+            if (docObject[metadatum.name] && docObject[metadatum.name].value && docObject[metadatum.name].value !== '') {
+                options.body[metadatum.name] = { 'value': docObject[metadatum.name].value, 'normalized': docObject[metadatum.name].value };
                 if (_.indexOf(truncateList,metadatum.name)!==-1) {
-                    options.body[metadatum.name].normalized50 = jsonLine[metadatum.name].value;
-                    options.body[metadatum.name].normalized75 = jsonLine[metadatum.name].value;
+                    options.body[metadatum.name].normalized50 = docObject[metadatum.name].value;
+                    options.body[metadatum.name].normalized75 = docObject[metadatum.name].value;
                 }
             }
             else {
-                options.body[metadatum.name] = jsonLine[metadatum.name];
+                options.body[metadatum.name] = docObject[metadatum.name];
             }
         }
     });
 }
 
-function insereNotice(jsonLine){
+function insereNotice(docObject){
 
 	
 	let options = {index : esConf.index,type : esConf.type,refresh:true};
@@ -65,37 +65,37 @@ function insereNotice(jsonLine){
 		'dateCreation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
 	};
 
-  insertMetadata(jsonLine, options);
+  insertMetadata(docObject, options);
 
-  options.body.path = jsonLine.path;
-  options.body.source = jsonLine.source;
+  options.body.path = docObject.path;
+  options.body.source = docObject.source;
   options.body.typeConditor = [];
-  options.body.idConditor = jsonLine.idConditor;
-  options.body.ingestId = jsonLine.ingestId;
-  options.body.ingestBaseName = jsonLine.ingestBaseName; 
-  options.body.isDeduplicable = jsonLine.isDeduplicable;
-  _.each(jsonLine.typeConditor,(typeCond)=>{
+  options.body.idConditor = docObject.idConditor;
+  options.body.ingestId = docObject.ingestId;
+  options.body.ingestBaseName = docObject.ingestBaseName; 
+  options.body.isDeduplicable = docObject.isDeduplicable;
+  _.each(docObject.typeConditor,(typeCond)=>{
     options.body.typeConditor.push({'value':typeCond.type,'raw':typeCond.type});
   });
-  options.body.idChain = jsonLine.source+':'+jsonLine.idConditor;
+  options.body.idChain = docObject.source+':'+docObject.idConditor;
   options.body.duplicate = [];
   options.body.isDuplicate = false;
-  jsonLine.duplicate = [];
-  jsonLine.isDuplicate = false;
+  docObject.duplicate = [];
+  docObject.isDuplicate = false;
   return esClient.index(options);
 
 }
 
 
 
-function aggregeNotice(jsonLine, data) {
+function aggregeNotice(docObject, data) {
 
 
     let duplicate=[];
     let allMergedRules=[];
     let idchain=[];
 
-    idchain.push(jsonLine.source+':'+jsonLine.idConditor);
+    idchain.push(docObject.source+':'+docObject.idConditor);
     _.each(data.hits.hits,(hit)=>{
         duplicate.push({idConditor:hit._source.idConditor,rules:hit.matched_queries,rules_keyword:hit.matched_queries,idIngest:hit._source.idIngest});
         idchain=_.union(idchain,hit._source.idChain.split('!'));
@@ -103,9 +103,9 @@ function aggregeNotice(jsonLine, data) {
     });
 
     idchain.sort();
-    jsonLine.duplicate = duplicate;
-    jsonLine.duplicateRules = _.sortBy(allMergedRules);
-    jsonLine.isDuplicate = (allMergedRules.length > 0);
+    docObject.duplicate = duplicate;
+    docObject.duplicateRules = _.sortBy(allMergedRules);
+    docObject.isDuplicate = (allMergedRules.length > 0);
 
     let options = {index : esConf.index,type : esConf.type,refresh:true};
     
@@ -115,27 +115,27 @@ function aggregeNotice(jsonLine, data) {
         'dateCreation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
     };
 
-    insertMetadata(jsonLine, options);
+    insertMetadata(docObject, options);
 
-    options.body.path = jsonLine.path;
-    options.body.source = jsonLine.source;
+    options.body.path = docObject.path;
+    options.body.source = docObject.source;
     options.body.duplicate = duplicate;
     options.body.duplicateRules = allMergedRules;
     options.body.isDuplicate = (allMergedRules.length > 0);
     options.body.typeConditor = [];
-    options.body.idConditor = jsonLine.idConditor;
-    options.body.ingestId = jsonLine.ingestId;
-    options.body.ingestBaseName = jsonLine.ingestBaseName;
-    options.body.isDeduplicable = jsonLine.isDeduplicable;
-    _.each(jsonLine.typeConditor,(typeCond)=>{
+    options.body.idConditor = docObject.idConditor;
+    options.body.ingestId = docObject.ingestId;
+    options.body.ingestBaseName = docObject.ingestBaseName;
+    options.body.isDeduplicable = docObject.isDeduplicable;
+    _.each(docObject.typeConditor,(typeCond)=>{
         options.body.typeConditor.push({'value':typeCond.type,'raw':typeCond.type});
     });
     options.body.idChain = _.join(idchain,'!');
-    jsonLine.idChain = options.body.idChain;
+    docObject.idChain = options.body.idChain;
     return esClient.index(options);
 }
 
-function propagate(jsonLine,data,result){
+function propagate(docObject,data,result){
 
 
     let options;
@@ -145,7 +145,7 @@ function propagate(jsonLine,data,result){
     let arrayDuplicate;
     let allMatchedRules;
 
-    jsonLine.idElasticsearch = result._id;
+    docObject.idElasticsearch = result._id;
 
     _.each(data.hits.hits,(hit)=>{
        
@@ -155,7 +155,7 @@ function propagate(jsonLine,data,result){
             {lang:"painless",
             inline:scriptList.addDuplicate,
             params:{duplicate:[{
-                    idConditor:jsonLine.idConditor,
+                    idConditor:docObject.idConditor,
                     rules:hit.matched_queries,
                     rules_keyword:hit.matched_queries
                 }],
@@ -167,7 +167,7 @@ function propagate(jsonLine,data,result){
         update={script:
             {lang:"painless",
             inline:scriptList.setIdChain,
-            params:{idChain:jsonLine.idChain}
+            params:{idChain:docObject.idChain}
             }
         };
 
@@ -198,39 +198,39 @@ function propagate(jsonLine,data,result){
     return esClient.bulk(option);
 }
 
-function dispatch(jsonLine,data) {
+function dispatch(docObject,data) {
 
     // creation de l'id
-    jsonLine.idConditor = generate(idAlphabet,25);
+    docObject.idConditor = generate(idAlphabet,25);
     
     if (data.hits.total===0){
         //console.log('on insere');
-        return insereNotice(jsonLine);
+        return insereNotice(docObject);
     }
     else {
         //console.log('on aggrege');
-        return aggregeNotice(jsonLine,data)
-                .then(propagate.bind(null,jsonLine,data),(error)=>{
+        return aggregeNotice(docObject,data)
+                .then(propagate.bind(null,docObject,data),(error)=>{
                     console.error(error);
         });
     }
 }
 
-function testParameter(jsonLine,rules){
+function testParameter(docObject,rules){
 
     let arrayParameter = rules.non_empty;
     let arrayNonParameter = (rules.is_empty!==undefined) ? rules.is_empty : [];
     let bool=true;
     _.each(arrayParameter,function(parameter){
-        if (_.get(jsonLine,parameter)===undefined || _.get(jsonLine,parameter).trim()===''){ bool = false ;}
+        if (_.get(docObject,parameter)===undefined || _.get(docObject,parameter).trim()===''){ bool = false ;}
     });
     _.each(arrayNonParameter,function(nonparameter){
-        if (_.get(jsonLine,nonparameter)!==undefined && _.get(jsonLine,nonparameter).trim()!==''){ bool = false;}
+        if (_.get(docObject,nonparameter)!==undefined && _.get(docObject,nonparameter).trim()!==''){ bool = false;}
     })
     return bool;
 }
 
-function interprete(jsonLine,query,type){
+function interprete(docObject,query,type){
     
     let rulename;
     if (type.trim()!==''){
@@ -249,7 +249,7 @@ function interprete(jsonLine,query,type){
     newQuery.bool.must =  _.map(query.bool.must,(value)=>{
         let match = {'match':null};
         match.match = _.mapValues(value.match,(pattern)=>{
-            return _.get(jsonLine,pattern);
+            return _.get(docObject,pattern);
         });
         return match;
     });
@@ -261,14 +261,14 @@ function interprete(jsonLine,query,type){
   
 }
 
-function buildQuery(jsonLine,request){
+function buildQuery(docObject,request){
     
-    _.each(jsonLine.typeConditor, (type)=>{
+    _.each(docObject.typeConditor, (type)=>{
         
         if (type && type.type && scenario[type.type]){
             _.each(rules,(rule)=>{
-                if (_.indexOf(scenario[type.type],rule.rule)!==-1 && testParameter(jsonLine,rule)) {
-                        request.query.bool.should.push(interprete(jsonLine,rule.query,type.type));
+                if (_.indexOf(scenario[type.type],rule.rule)!==-1 && testParameter(docObject,rule)) {
+                        request.query.bool.should.push(interprete(docObject,rule.query,type.type));
                     }
             });
         }
@@ -277,27 +277,27 @@ function buildQuery(jsonLine,request){
 }
 
 // on crée la requete puis on teste si l'entrée existe
-function existNotice(jsonLine){
+function existNotice(docObject){
     
     return Promise.try(function(){
         let request = _.cloneDeep(baseRequest);
         let data;
         // construction des règles par scénarii
-        request = buildQuery(jsonLine,request);
+        request = buildQuery(docObject,request);
 
         if (request.query.bool.should.length===0){
-            jsonLine.isDeduplicable = false;
+            docObject.isDeduplicable = false;
             data = {'hits':{'total':0}};
-            return dispatch(jsonLine,data);
+            return dispatch(docObject,data);
         }
         else{
             
-            jsonLine.isDeduplicable = true;
+            docObject.isDeduplicable = true;
             // construction des règles uniquement sur l'identifiant de la source
             
             _.each(provider_rules,(provider_rule)=>{
-                if (jsonLine.source.trim()===provider_rule.source.trim() && testParameter(jsonLine,provider_rule.non_empty)){
-                    request.query.bool.should.push(interprete(jsonLine,provider_rule.query,''))
+                if (docObject.source.trim()===provider_rule.source.trim() && testParameter(docObject,provider_rule.non_empty)){
+                    request.query.bool.should.push(interprete(docObject,provider_rule.query,''))
                 }
             });
             
@@ -305,14 +305,14 @@ function existNotice(jsonLine){
             return esClient.search({
                 index: esConf.index,
                 body : request
-            }).then(dispatch.bind(null,jsonLine));
+            }).then(dispatch.bind(null,docObject));
         }
     });
 
 }
 
-function deleteNotice(jsonLine,data){
-    jsonLine.idConditor = data.hits.hits[0].idConditor;
+function deleteNotice(docObject,data){
+    docObject.idConditor = data.hits.hits[0].idConditor;
     return esClient.delete({
         index:esConf.index,
         type :esConf.type,
@@ -322,7 +322,7 @@ function deleteNotice(jsonLine,data){
 
 }
 
-function getDuplicate(jsonLine,data,result){
+function getDuplicate(docObject,data,result){
     let request = _.cloneDeep(baseRequest);
     request.query.bool.should.push({"bool":{"must":[{"match":{"idChain":data.hits.hits[0]._source.idChain}}]}});
     return esClient.search({
@@ -331,7 +331,7 @@ function getDuplicate(jsonLine,data,result){
     });
 }
 
-function propagateDelete(jsonLine,data,result){
+function propagateDelete(docObject,data,result){
 
     return Promise.try(function(){
         let options;
@@ -352,7 +352,7 @@ function propagateDelete(jsonLine,data,result){
                 update={script:
                     {lang:"painless",
                     inline:scriptList.removeDuplicate,
-                    params:{idConditor:jsonLine.idConditor}
+                    params:{idConditor:docObject.idConditor}
                     }
                 };
 
@@ -396,13 +396,13 @@ function propagateDelete(jsonLine,data,result){
 }
 
 
-function erase(jsonLine,data){
+function erase(docObject,data){
     return Promise.try(function(){
         if (data.hits.total===0) {return;}
         else {
-            return deleteNotice(jsonLine,data)
-                    .then(getDuplicate.bind(null,jsonLine,data))
-                    .then(propagateDelete.bind(null,jsonLine,data))
+            return deleteNotice(docObject,data)
+                    .then(getDuplicate.bind(null,docObject,data))
+                    .then(propagateDelete.bind(null,docObject,data))
                     .catch(function(e){
                         throw new Error('Erreur de mise à jour de notice : '+e);
                     });
@@ -411,7 +411,7 @@ function erase(jsonLine,data){
 }
 
 
-function cleanByIdSource(jsonLine){
+function cleanByIdSource(docObject){
 
     return Promise.try(function(){
 
@@ -419,11 +419,11 @@ function cleanByIdSource(jsonLine){
         let request_source;
 
         _.each(provider_rules,(provider_rule)=>{
-            if (jsonLine.source.trim()===provider_rule.source.trim() && testParameter(jsonLine,provider_rule.non_empty)){
-                request.query.bool.should.push(interprete(jsonLine,provider_rule.query,''));
+            if (docObject.source.trim()===provider_rule.source.trim() && testParameter(docObject,provider_rule.non_empty)){
+                request.query.bool.should.push(interprete(docObject,provider_rule.query,''));
                 request_source = {"bool": {
                                     "must":[
-                                        {"match": {"source": jsonLine.source.trim()}}
+                                        {"match": {"source": docObject.source.trim()}}
                                     ],
                                     "_name":"provider"}};
             
@@ -439,21 +439,21 @@ function cleanByIdSource(jsonLine){
         return esClient.search({
             index: esConf.index,
             body : request
-        }).then(erase.bind(null,jsonLine))
+        }).then(erase.bind(null,docObject))
 
     });
 
 }
 
-business.doTheJob = function(jsonLine, cb) {
+business.doTheJob = function(docObject, cb) {
 
     let error;
 
-    cleanByIdSource(jsonLine).then(existNotice.bind(null,jsonLine)).then(function(result) {
+    cleanByIdSource(docObject).then(existNotice.bind(null,docObject)).then(function(result) {
 
         //debug(result);
-        //debug(jsonLine);
-        if (result && result._id && !jsonLine.idElasticsearch) { jsonLine.idElasticsearch = result._id;}
+        //debug(docObject);
+        if (result && result._id && !docObject.idElasticsearch) { docObject.idElasticsearch = result._id;}
         return cb();
 
     }).catch(function(e){
@@ -461,7 +461,7 @@ business.doTheJob = function(jsonLine, cb) {
             errCode: 3,
             errMessage: 'erreur de dédoublonnage : ' + e
         };
-        jsonLine.error = error;
+        docObject.error = error;
         cb(error);
     });
 };
