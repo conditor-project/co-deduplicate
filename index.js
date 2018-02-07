@@ -266,14 +266,13 @@ function buildQuery(jsonLine,request){
     _.each(jsonLine.typeConditor, (type)=>{
         
         if (type && type.type && scenario[type.type]){
-            _.each(scenario[type.type],(rule)=>{
-                if (rules[rule] && testParameter(jsonLine,rules[rule])) {
-                        request.query.bool.should.push(interprete(jsonLine,rules[rule].query,type.type));
+            _.each(rules,(rule)=>{
+                if (_.indexOf(scenario[type.type],rule.rule)!==-1 && testParameter(jsonLine,rule)) {
+                        request.query.bool.should.push(interprete(jsonLine,rule.query,type.type));
                     }
             });
         }
     });
-
     return request;
 }
 
