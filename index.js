@@ -287,15 +287,15 @@ function interprete(docObject,query,type){
     }};
     
     newQuery.bool.must =  _.map(query.bool.must,(value)=>{
-        let match = {'term':null};
-        match.term = _.mapValues(value.match,(pattern)=>{
+        let match = {'match':null};
+        match.match = _.mapValues(value.match,(pattern)=>{
             return _.get(docObject,pattern);
         });
         return match;
     });
    
     if (type!==''){
-        newQuery.bool.must.push({'term':{'typeConditor.value':type}});
+        newQuery.bool.must.push({'match':{'typeConditor.value':type}});
     }
     return newQuery;
   
@@ -366,6 +366,7 @@ function deleteNotice(docObject,data){
 function getDuplicateByIdChain(docObject,data,result){
     let request = _.cloneDeep(baseRequest);
     request.query.bool.should.push({"bool":{"must":[{"term":{"idChain":data.hits.hits[0]._source.idChain}}]}});
+    request.query.bool.minimum_should_match = 1;
     return esClient.search({
         index:esConf.index,
         body:request
