@@ -165,7 +165,7 @@ function propagate(docObject,data,result){
         matched_queries = undefined;
         
         _.each(docObject.duplicate,(directDuplicate)=>{
-            if (directDuplicate.idConditor === hit._source.idConditor) { matched_queries = directDuplicate.matched_queries; }
+            if (directDuplicate.idConditor === hit._source.idConditor) { matched_queries = directDuplicate.rules; }
         });
 
         options={update:{_index:esConf.index,_type:esConf.type,_id:hit._id,retry_on_conflict:3}};
@@ -176,8 +176,8 @@ function propagate(docObject,data,result){
                 source:scriptList.addDuplicate,
                 params:{duplicate:[{
                         idConditor:docObject.idConditor,
-                        rules:hit.matched_queries,
-                        rules_keyword:hit.matched_queries
+                        rules:matched_queries,
+                        rules_keyword:matched_queries
                     }],
                 }},refresh:true
             };
@@ -225,7 +225,7 @@ function getDuplicateByIdConditor(docObject,data,result){
 
     let request = _.cloneDeep(baseRequest);
     _.each(docObject.arrayIdConditor,(idConditor)=>{
-        request.query.bool.should.push({"bool":{"must":[{"match":{"idConditor":idConditor}}]}});
+        request.query.bool.should.push({"bool":{"must":[{"term":{"idConditor":idConditor}}]}});
     });
     
     request.query.bool.minimum_should_match = 1;
@@ -365,7 +365,7 @@ function deleteNotice(docObject,data){
 
 function getDuplicateByIdChain(docObject,data,result){
     let request = _.cloneDeep(baseRequest);
-    request.query.bool.should.push({"bool":{"must":[{"match":{"idChain":data.hits.hits[0]._source.idChain}}]}});
+    request.query.bool.should.push({"bool":{"must":[{"term":{"idChain":data.hits.hits[0]._source.idChain}}]}});
     return esClient.search({
         index:esConf.index,
         body:request
