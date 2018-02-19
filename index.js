@@ -158,24 +158,33 @@ function propagate(docObject,data,result){
     let arrayDuplicate;
     let allMatchedRules;
     let propagateRequest;
+    let matched_queries;
 
     _.each(result.hits.hits,(hit)=>{
        
+        matched_queries = undefined;
+        
+        _.each(docObject.duplicate,(directDuplicate)=>{
+            if (directDuplicate.idConditor === hit._source.idConditor) { matched_queries = directDuplicate.matched_queries; }
+        });
+
         options={update:{_index:esConf.index,_type:esConf.type,_id:hit._id,retry_on_conflict:3}};
        
-        update={script:
-            {lang:"painless",
-            source:scriptList.addDuplicate,
-            params:{duplicate:[{
-                    idConditor:docObject.idConditor,
-                    rules:hit.matched_queries,
-                    rules_keyword:hit.matched_queries
-                }],
-            }},refresh:true
-        };
-        body.push(options);
-        body.push(update);
+        if (matched_queries!==undefined){
+            update={script:
+                {lang:"painless",
+                source:scriptList.addDuplicate,
+                params:{duplicate:[{
+                        idConditor:docObject.idConditor,
+                        rules:hit.matched_queries,
+                        rules_keyword:hit.matched_queries
+                    }],
+                }},refresh:true
+            };
+            body.push(options);
+            body.push(update);
 
+        }
         update={script:
             {lang:"painless",
             source:scriptList.setIdChain,
@@ -220,8 +229,6 @@ function getDuplicateByIdConditor(docObject,data,result){
     });
     
     request.query.bool.minimum_should_match = 1;
-
-    console.log(request);
 
     return esClient.search({
         index:esConf.index,
