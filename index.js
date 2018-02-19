@@ -287,15 +287,15 @@ function interprete(docObject,query,type){
     }};
     
     newQuery.bool.must =  _.map(query.bool.must,(value)=>{
-        let match = {'match':null};
-        match.match = _.mapValues(value.match,(pattern)=>{
+        let match = {'term':null};
+        match.term = _.mapValues(value.match,(pattern)=>{
             return _.get(docObject,pattern);
         });
         return match;
     });
    
     if (type!==''){
-        newQuery.bool.must.push({'match':{'typeConditor.value':type}});
+        newQuery.bool.must.push({'term':{'typeConditor.value':type}});
     }
     return newQuery;
   
@@ -469,7 +469,7 @@ function cleanByIdSource(docObject){
                 request.query.bool.should.push(interprete(docObject,provider_rule.query,''));
                 request_source = {"bool": {
                                     "must":[
-                                        {"match": {"source": docObject.source.trim()}}
+                                        {"term": {"source": docObject.source.trim()}}
                                     ],
                                     "_name":"provider"}};
             
