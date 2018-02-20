@@ -18,7 +18,7 @@ const metadata =require('co-config/metadata-xpaths.json');
 const truncateList = ['titre','titrefr','titreen'];
 const idAlphabet = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_';
 const scriptList = {
-  "setIdChain":"ctx._source.idChain = params.idChain",
+  "setIdChain":"ArrayList mergedId = new ArrayList(); mergedId.add(ctx._source.source+':'+ctx._source.idConditor);String idChain =''; for (int i=0;i<ctx._source.duplicate.length;i++){mergedId.add(ctx._source.duplicate[i].source+':'+ctx._source.duplicate[i].idConditor) } mergedId.sort(null);for (int j = 0; j<mergedId.length ; j++){ idChain+= mergedId[j]+'!' } ctx._source.idChain = idChain ",
   "setIsDuplicate":"if (ctx._source.duplicate == null || ctx._source.duplicate.size() == 0 ) { ctx._source.isDuplicate = false } else { ctx._source.isDuplicate = true }",
   "addDuplicate":"if (ctx._source.duplicate == null || ctx._source.duplicate.length==0){ ctx._source.duplicate = params.duplicate } else { if (!ctx._source.duplicate.contains(params.duplicate[0])) {ctx._source.duplicate.add(params.duplicate[0])}} ",
   "removeDuplicate":"if ((ctx._source.duplicate != null && ctx._source.duplicate.length>0)){ for (int i=0;i<ctx._source.duplicate.length;i++){ if (ctx._source.duplicate[i].idConditor==params.idConditor){ ctx._source.duplicate.remove(i)}}}",
@@ -77,7 +77,7 @@ function insereNotice(docObject){
   _.each(docObject.typeConditor,(typeCond)=>{
     options.body.typeConditor.push({'value':typeCond.type,'raw':typeCond.type});
   });
-  options.body.idChain = docObject.source+':'+docObject.idConditor;
+  options.body.idChain = docObject.source+':'+docObject.idConditor+'!';
   docObject.duplicate = [];
   docObject.isDuplicate = false;
   options.body.duplicate = docObject.duplicate;
@@ -98,21 +98,17 @@ function aggregeNotice(docObject, data) {
     let arrayIdConditor=[];
     let regexp = new RegExp('.*:(.*)','g');
 
-
-    
     _.each(data.hits.hits,(hit)=>{
-        duplicate.push({idConditor:hit._source.idConditor,rules:hit.matched_queries,rules_keyword:hit.matched_queries,idIngest:hit._source.idIngest});
+        duplicate.push({idConditor:hit._source.idConditor,rules:hit.matched_queries,rules_keyword:hit.matched_queries,ingestId:hit._source.ingestId});
         idchain=_.union(idchain,hit._source.idChain.split('!'));
         allMergedRules = _.union(hit.matched_queries, allMergedRules);
     });
-
-    
 
     arrayIdConditor = _.map(idchain,(idConditor)=>{
         return idConditor.replace(regexp,'$1');
     });
 
-    idchain.push(docObject.source+':'+docObject.idConditor);
+    idchain.push(docObject.source+':'+docObject.idConditor+'!');
     idchain.sort();
 
     docObject.duplicate = duplicate;
@@ -143,7 +139,7 @@ function aggregeNotice(docObject, data) {
         options.body.typeConditor.push({'value':typeCond.type,'raw':typeCond.type});
     });
     docObject.arrayIdConditor=arrayIdConditor;
-    options.body.idChain = _.join(idchain,'!');
+    options.body.idChain = _.join(idchain,'');
     docObject.idChain = options.body.idChain;
     return esClient.index(options);
 }
@@ -177,13 +173,29 @@ function propagate(docObject,data,result){
                 params:{duplicate:[{
                         idConditor:docObject.idConditor,
                         rules:matched_queries,
-                        rules_keyword:matched_queries
+                        rules_keyword:matched_queries,
+                        idIngest:docObject.idIngest,
+                        source: hit._source.source
                     }],
                 }},refresh:true
             };
             body.push(options);
             body.push(update);
 
+        }
+        else {
+            update={script:
+                {lang:"painless",
+                source:scriptList.addDuplicate,
+                params:{duplicate:[{
+                        idConditor:docObject.idConditor,
+                        idIngest:docObject.idIngest,
+                        source: hit._source.source
+                    }],
+                }},refresh:true
+            };
+            body.push(options);
+            body.push(update);
         }
         update={script:
             {lang:"painless",
@@ -236,6 +248,13 @@ function getDuplicateByIdConditor(docObject,data,result){
     });
 }
 
+function inspectResult(result){
+    Promise.try(function(){
+        console.log(result);
+        return;
+    });
+}
+
 
 function dispatch(docObject,data) {
 
@@ -250,9 +269,8 @@ function dispatch(docObject,data) {
         //console.log('on aggrege');
         return aggregeNotice(docObject,data)
                 .then(getDuplicateByIdConditor.bind(null,docObject,data))
-                .then(propagate.bind(null,docObject,data),(error)=>{
-                    console.error(error);
-        });
+                .then(propagate.bind(null,docObject,data))
+                .then(inspectResult);
     }
 }
 
