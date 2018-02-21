@@ -18,7 +18,7 @@ const metadata =require('co-config/metadata-xpaths.json');
 const truncateList = ['titre','titrefr','titreen'];
 const idAlphabet = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_';
 const scriptList = {
-  "setIdChain":"ArrayList mergedId = new ArrayList(); mergedId.add(ctx._source.source+':'+ctx._source.idConditor);String idChain =''; for (int i=0;i<ctx._source.duplicate.length;i++){mergedId.add(ctx._source.duplicate[i].source+':'+ctx._source.duplicate[i].idConditor) } mergedId.sort(null);for (int j = 0; j<mergedId.length ; j++){ idChain+= mergedId[j]+'!' } ctx._source.idChain = idChain ",
+  "setIdChain":"ArrayList mergedId = new ArrayList(); mergedId.add(ctx._source.source+':'+ctx._source.idConditor+'!');String idChain =''; for (int i=0;i<ctx._source.duplicate.length;i++){mergedId.add(ctx._source.duplicate[i].source+':'+ctx._source.duplicate[i].idConditor+'!') } mergedId.sort(null);for (int j = 0; j<mergedId.length ; j++){ idChain+= mergedId[j] } ctx._source.idChain = idChain ",
   "setIsDuplicate":"if (ctx._source.duplicate == null || ctx._source.duplicate.size() == 0 ) { ctx._source.isDuplicate = false } else { ctx._source.isDuplicate = true }",
   "addDuplicate":"if (ctx._source.duplicate == null || ctx._source.duplicate.length==0){ ctx._source.duplicate = params.duplicate } else { if (!ctx._source.duplicate.contains(params.duplicate[0])) {ctx._source.duplicate.add(params.duplicate[0])}} ",
   "removeDuplicate":"if ((ctx._source.duplicate != null && ctx._source.duplicate.length>0)){ for (int i=0;i<ctx._source.duplicate.length;i++){ if (ctx._source.duplicate[i].idConditor==params.idConditor){ ctx._source.duplicate.remove(i)}}}",
@@ -103,6 +103,8 @@ function aggregeNotice(docObject, data) {
         idchain=_.union(idchain,hit._source.idChain.split('!'));
         allMergedRules = _.union(hit.matched_queries, allMergedRules);
     });
+
+    _.compact(idchain);
 
     arrayIdConditor = _.map(idchain,(idConditor)=>{
         return idConditor.replace(regexp,'$1');
@@ -237,7 +239,9 @@ function getDuplicateByIdConditor(docObject,data,result){
 
     let request = _.cloneDeep(baseRequest);
     _.each(docObject.arrayIdConditor,(idConditor)=>{
-        request.query.bool.should.push({"bool":{"must":[{"term":{"idConditor":idConditor}}]}});
+        if (idConditor.trim()!==""){
+            request.query.bool.should.push({"bool":{"must":[{"term":{"idConditor":idConditor}}]}});
+        }
     });
     
     request.query.bool.minimum_should_match = 1;
