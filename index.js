@@ -44,7 +44,6 @@ function insertMetadata(docObject, options) {
                 options.body[metadatum.name] = { 'value': docObject[metadatum.name].value, 'normalized': docObject[metadatum.name].value };
                 if (_.indexOf(truncateList,metadatum.name)!==-1) {
                     options.body[metadatum.name].normalized50 = docObject[metadatum.name].value;
-                    options.body[metadatum.name].normalized75 = docObject[metadatum.name].value;
                 }
             }
             else {
@@ -99,7 +98,7 @@ function aggregeNotice(docObject, data) {
     let regexp = new RegExp('.*:(.*)','g');
 
     _.each(data.hits.hits,(hit)=>{
-        duplicate.push({idConditor:hit._source.idConditor,rules:hit.matched_queries,rules_keyword:hit.matched_queries,ingestId:hit._source.ingestId,});
+        duplicate.push({idConditor:hit._source.idConditor,rules:hit.matched_queries,ingestId:hit._source.ingestId,});
         idchain=_.union(idchain,hit._source.idChain.split('!'));
         allMergedRules = _.union(hit.matched_queries, allMergedRules);
     });
@@ -179,7 +178,6 @@ function propagate(docObject,data,result){
                 params:{duplicate:[{
                         idConditor:docObject.idConditor,
                         rules:matched_queries,
-                        rules_keyword:matched_queries,
                         ingestId:docObject.ingestId,
                         source: hit._source.source
                     }],
