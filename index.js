@@ -265,7 +265,7 @@ function inspectResult(result){
 function dispatch(docObject,data) {
 
     // creation de l'id
-    docObject.idConditor = generate(idAlphabet,25);
+    if (docObject.idConditor ===undefined ){ docObject.idConditor = generate(idAlphabet,25);}
     
     if (data.hits.total===0){
         //console.log('on insere');
