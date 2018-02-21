@@ -99,7 +99,7 @@ function aggregeNotice(docObject, data) {
     let regexp = new RegExp('.*:(.*)','g');
 
     _.each(data.hits.hits,(hit)=>{
-        duplicate.push({idConditor:hit._source.idConditor,rules:hit.matched_queries,rules_keyword:hit.matched_queries,ingestId:hit._source.ingestId});
+        duplicate.push({idConditor:hit._source.idConditor,rules:hit.matched_queries,rules_keyword:hit.matched_queries,ingestId:hit._source.ingestId,});
         idchain=_.union(idchain,hit._source.idChain.split('!'));
         allMergedRules = _.union(hit.matched_queries, allMergedRules);
     });
@@ -108,6 +108,10 @@ function aggregeNotice(docObject, data) {
 
     arrayIdConditor = _.map(idchain,(idConditor)=>{
         return idConditor.replace(regexp,'$1');
+    });
+
+    idchain = _.map(idchain,(idConditor)=>{
+        return idConditor+'!';
     });
 
     idchain.push(docObject.source+':'+docObject.idConditor+'!');
@@ -176,7 +180,7 @@ function propagate(docObject,data,result){
                         idConditor:docObject.idConditor,
                         rules:matched_queries,
                         rules_keyword:matched_queries,
-                        idIngest:docObject.idIngest,
+                        ingestId:docObject.ingestId,
                         source: hit._source.source
                     }],
                 }},refresh:true
@@ -191,7 +195,7 @@ function propagate(docObject,data,result){
                 source:scriptList.addDuplicate,
                 params:{duplicate:[{
                         idConditor:docObject.idConditor,
-                        idIngest:docObject.idIngest,
+                        ingestId:docObject.ingestId,
                         source: hit._source.source
                     }],
                 }},refresh:true
