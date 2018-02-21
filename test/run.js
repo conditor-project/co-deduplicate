@@ -270,25 +270,6 @@ describe(pkg.name + '/index.js', function () {
     });
 
 
-    it('Titre 75 normalizer retourne la bonne valeur',function(done){
-      
-      esClient.indices.analyze({
-        index:esConf.index,
-        format:"text",
-        body:{
-          "field":"titre.normalized75",
-          "text":"Alors voyons si on a systematiquement le bon résultat dans la boucle, après tout ça devrait être bon"
-        }
-      },function(esError,response){
-          expect(esError).to.be.undefined;
-          expect(response).to.not.be.undefined;
-          expect(response.tokens[0].token).to.be.equal('alorsvoyonssionasystematiquementlebonresultatdanslaboucleaprestoutcadevrait');
-          done();
-        });
-
-    });
-
-
     it('Titre 50 normalizer retourne la bonne valeur',function(done){
       
       esClient.indices.analyze({
