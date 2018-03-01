@@ -126,7 +126,7 @@
     }
   },
   "mappings":{
-    "notice": {
+    "record": {
       "dynamic": "false",
       "properties": {
         "idConditor":{

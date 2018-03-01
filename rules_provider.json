@@ -5,7 +5,7 @@
         "query":{
             "bool": {
                     "must":[
-                        {"match": {"idHal.normalized": "idHal.value"}}
+                        {"term": {"idHal.normalized": "idHal.value"}}
                     ],
                     "_name":"provider::idHal"
             }
@@ -17,7 +17,7 @@
         "query":{
             "bool": {
                     "must":[
-                        {"match": {"ut.normalized": "ut.value"}}
+                        {"term": {"ut.normalized": "ut.value"}}
                     ],
                     "_name":"provider::wos"
             }
@@ -29,7 +29,7 @@
         "query":{
             "bool":{
                 "must":[
-                    {"match":{"idProdinra.normalized":"idProdinra.value"}}  
+                    {"term":{"idProdinra.normalized":"idProdinra.value"}}  
                 ] ,
                 "_name":"provider::prodinra"
             }
