@@ -13,8 +13,8 @@ const scenario = require('co-config/scenario.json');
 const rules = require('co-config/rules_certain.json');
 //const rules = require('./rules_perline_newname_suppression_indent.json');
 const baseRequest = require('co-config/base_request.json');
-//const provider_rules = require('co-config/rules_provider.json');
-const provider_rules = require('./rules_provider.json');
+const provider_rules = require('co-config/rules_provider.json');
+//const provider_rules = require('./rules_provider.json');
 const metadata =require('co-config/metadata-xpaths.json');
 const truncateList = ['titre','titrefr','titreen'];
 const idAlphabet = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_';
@@ -85,7 +85,7 @@ function insereNotice(docObject){
         options.body.isDuplicate = docObject.isDuplicate;
         
 
-        console.log('insertion : '+options.body.idHal.value);
+        //console.log('insertion : '+options.body.idHal.value);
         return esClient.index(options);
     });
 
@@ -151,7 +151,7 @@ function aggregeNotice(docObject, data) {
         docObject.arrayIdConditor=arrayIdConditor;
         options.body.idChain = _.join(idchain,'');
         docObject.idChain = options.body.idChain;
-        console.log('insertion :'+JSON.stringify(options.body.idHal));
+        //console.log('insertion :'+JSON.stringify(options.body.idHal));
         return esClient.index(options);
     })
 }
@@ -277,13 +277,13 @@ function dispatch(docObject,data) {
         if (docObject.idConditor ===undefined ){ docObject.idConditor = generate(idAlphabet,25);}
         
         if (data.hits.total===0){
-            console.log('on insere');
+            //console.log('on insere');
             return insereNotice(docObject).catch(function(err){
                 if (err){  throw new Error('Erreur d insertion de notice: '+err);}
             });
         }
         else {
-            console.log('on aggrege');
+            //console.log('on aggrege');
             return aggregeNotice(docObject,data)
                     .then(getDuplicateByIdConditor.bind(null,docObject,data))
                     .then(propagate.bind(null,docObject,data))
@@ -498,22 +498,17 @@ function erase(docObject,data){
     return Promise.try(()=>{
         console.log('DATA:'+JSON.stringify(data));
         if (data.hits.total>=2) {
-            console.log('erreur de mise à jour de notice');
+            //console.log('erreur de mise à jour de notice');
             throw new Error('Erreur de mise à jour de notice : ID source présent en plusieurs exemplaires'); 
         }
         else if (data.hits.total===1){
             if (data.hits.hits){
-                console.log('on va bien delete : '+data.hits.hits[0]._source.source+' '+data.hits.hits[0]._source.idHal.value);
+                //console.log('on va bien delete : '+data.hits.hits[0]._source.source+' '+data.hits.hits[0]._source.idHal.value);
             }
             else {
-                console.log('on va bien delete mais bizarrement '+console.log(JSON.stringify(data)));
+                //console.log('on va bien delete mais bizarrement '+console.log(JSON.stringify(data)));
             }
             return deleteNotice(docObject,data)
-                .then((result)=>{
-                    Promise.try(()=>{
-                        console.log('result delete :'+JSON.stringify(result));
-                    })
-                })
                 .then(getDuplicateByIdChain.bind(null,docObject,data))
                 .then(propagateDelete.bind(null,docObject,data))
                 .catch(function(e){
@@ -549,7 +544,7 @@ function cleanByIdSource(docObject){
         }
     });
     
-    console.log(JSON.stringify(request));
+    //console.log(JSON.stringify(request));
 
     if (request.query.bool.should.length===0) {
         data = {'hits':{'total':0}};
