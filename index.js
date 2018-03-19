@@ -103,7 +103,7 @@ function aggregeNotice(docObject, data) {
         let regexp = new RegExp('.*:(.*)','g');
 
         _.each(data.hits.hits,(hit)=>{
-            duplicate.push({idConditor:hit._source.idConditor,rules:hit.matched_queries,ingestId:hit._source.ingestId,});
+            duplicate.push({idConditor:hit._source.idConditor,rules:hit.matched_queries,ingestId:hit._source.ingestId,source:hit._source.source});
             idchain=_.union(idchain,hit._source.idChain.split('!'));
             allMergedRules = _.union(hit.matched_queries, allMergedRules);
         });
