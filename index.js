@@ -186,7 +186,7 @@ function propagate(docObject,data,result){
                             idConditor:docObject.idConditor,
                             rules:matched_queries,
                             ingestId:docObject.ingestId,
-                            source: hit._source.source
+                            source: docObject._source.source
                         }],
                     }},refresh:true
                 };
@@ -201,7 +201,7 @@ function propagate(docObject,data,result){
                     params:{duplicate:[{
                             idConditor:docObject.idConditor,
                             ingestId:docObject.ingestId,
-                            source: hit._source.source
+                            source: docObject._source.source
                         }],
                     }},refresh:true
                 };
