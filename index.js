@@ -31,7 +31,7 @@ const esClient = new es.Client({
     host: esConf.host,
     log: {
         type: 'file',
-        level: ['debug']
+        level: ['error']
     }
 });
 
