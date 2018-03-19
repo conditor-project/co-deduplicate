@@ -148,7 +148,7 @@ function aggregeNotice(docObject, data) {
             options.body.typeConditor.push({'value':typeCond.type,'raw':typeCond.type});
         });
         docObject.arrayIdConditor=arrayIdConditor;
-        options.body.idChain = _.join(idchain,'');
+        options.body.idChain ='!'+_.join(idchain,'');
         docObject.idChain = options.body.idChain;
         //console.log('insertion :'+JSON.stringify(options.body.idHal));
         return esClient.index(options);
