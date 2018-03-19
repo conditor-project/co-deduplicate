@@ -63,7 +63,7 @@ function insereNotice(docObject){
         debug(esConf);
 
         options.body= {
-            'dateCreation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
+            'dateCreation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,'')
         };
 
         insertMetadata(docObject, options);
@@ -83,7 +83,6 @@ function insereNotice(docObject){
         docObject.isDuplicate = false;
         options.body.duplicate = docObject.duplicate;
         options.body.isDuplicate = docObject.isDuplicate;
-        
 
         //console.log('insertion : '+options.body.idHal.value);
         return esClient.index(options);
@@ -186,7 +185,7 @@ function propagate(docObject,data,result){
                             idConditor:docObject.idConditor,
                             rules:matched_queries,
                             ingestId:docObject.ingestId,
-                            source: docObject._source.source
+                            source: docObject.source
                         }],
                     }},refresh:true
                 };
@@ -201,7 +200,7 @@ function propagate(docObject,data,result){
                     params:{duplicate:[{
                             idConditor:docObject.idConditor,
                             ingestId:docObject.ingestId,
-                            source: docObject._source.source
+                            source: docObject.source
                         }],
                     }},refresh:true
                 };
@@ -288,7 +287,7 @@ function dispatch(docObject,data) {
                     .then(getDuplicateByIdConditor.bind(null,docObject,data))
                     .then(propagate.bind(null,docObject,data))
                     .catch((err)=>{
-                        if (err) { throw new Error('Erreur d insertion de notice: '+err);}
+                        if (err) { throw new Error('Erreur d aggregation de notice: '+err);}
                     });
                     //.then(inspectResult);
         }
