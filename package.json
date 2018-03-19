@@ -24,7 +24,7 @@
     "chai": "^3.5.0",
     "co-config": "git+https://github.com/conditor-project/co-config.git",
     "debug": "^2.6.8",
-    "elasticsearch": "^14.1.0",
+    "elasticsearch": "^14.2.0",
     "fs-extra": "^5.0.0",
     "lodash": "^4.17.5",
     "mocha": "^3.3.0",
