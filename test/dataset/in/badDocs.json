@@ -2,15 +2,15 @@
   "R3": {
     "emptyDOI1": {
       "_comment" : " === Notice de test avec DOI vide (pour REGLE 3) ===",
-      "titre": {
+      "title": {
         "value" : "On est tombés par hasard sur ce cas",
         "normalized" : "onesttombesparhasardsurcecas"
       },
-      "auteur": {
+      "author": {
         "value" : "Ate Tom",
         "normalized" : "atetom"
       } ,
-      "auteurInit":{
+      "authorInit":{
         "value": "T Ate",
         "normalized": "tate"
       },
@@ -24,15 +24,15 @@
     },
     "emptyDOI2": {
       "_comment" : " === Notice de test avec DOI vide (pour REGLE 3) ===",
-      "titre": {
+      "title": {
         "value" : "Il faut pas que ça matche",
         "normalized" : "ilfautpasquecamatche"
       },
-      "auteur": {
+      "author": {
         "value" : "Ate Pat",
         "normalized" : "atepat"
       } ,
-      "auteurInit":{
+      "authorInit":{
         "value": "P Ate",
         "normalized": "pate"
       },

@@ -1,11 +1,11 @@
 [{
 		"rule": "0",
-		"non_empty": ["titre.value", "doi.value"],
+		"non_empty": ["title.value", "doi.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -18,12 +18,12 @@
 	},
 	{
 		"rule": "1",
-		"non_empty": ["titre.value", "ut.value"],
+		"non_empty": ["title.value", "ut.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -36,12 +36,12 @@
 	},
 	{
 		"rule": "2",
-		"non_empty": ["titre.value", "pubmedId.value"],
+		"non_empty": ["title.value", "pubmedId.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -54,12 +54,12 @@
 	},
 	{
 		"rule": "3",
-		"non_empty": ["titre.value", "idHal.value"],
+		"non_empty": ["title.value", "idHal.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -126,12 +126,12 @@
 	},
 	{
 		"rule": "7",
-		"non_empty": ["titre.value", "issn.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["title.value", "issn.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -143,7 +143,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -151,22 +151,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti+issn+volume+numero+page+annee"
+				"_name": "2 Collation : Ti+issn+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "8",
-		"non_empty": ["titre.value", "issn.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["title.value", "issn.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -174,7 +174,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -182,22 +182,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti+issn+numero+page+annee"
+				"_name": "2 Collation : Ti+issn+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "9",
-		"non_empty": ["titre.value", "issn.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["title.value", "issn.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -213,7 +213,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti+issn+volume+page+annee"
@@ -222,13 +222,13 @@
 	},
 	{
 		"rule": "16",
-		"non_empty": ["titre.value", "eissn.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["title.value", "eissn.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -244,7 +244,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti+eissn+volume+page+annee"
@@ -253,13 +253,13 @@
 	},
 	{
 		"rule": "17",
-		"non_empty": ["titre.value", "eissn.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["title.value", "eissn.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -267,7 +267,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -275,21 +275,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti+eissn+numero+page+annee"
+				"_name": "2 Collation : Ti+eissn+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "18",
-		"non_empty": ["titre.value", "eissn.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["title.value", "eissn.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -301,7 +301,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -309,21 +309,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti+eissn+volume+numero+page+annee"
+				"_name": "2 Collation : Ti+eissn+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "19",
-		"non_empty": ["titrefr.value", "doi.value"],
+		"non_empty": ["titlefr.value", "doi.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -336,12 +336,12 @@
 	},
 	{
 		"rule": "20",
-		"non_empty": ["titreen.value", "doi.value"],
+		"non_empty": ["titleen.value", "doi.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -354,12 +354,12 @@
 	},
 	{
 		"rule": "21",
-		"non_empty": ["titrefr.value", "ut.value"],
+		"non_empty": ["titlefr.value", "ut.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -372,12 +372,12 @@
 	},
 	{
 		"rule": "22",
-		"non_empty": ["titreen.value", "ut.value"],
+		"non_empty": ["titleen.value", "ut.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -390,12 +390,12 @@
 	},
 	{
 		"rule": "23",
-		"non_empty": ["titrefr.value", "pubmedId.value"],
+		"non_empty": ["titlefr.value", "pubmedId.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -408,12 +408,12 @@
 	},
 	{
 		"rule": "24",
-		"non_empty": ["titreen.value", "pubmedId.value"],
+		"non_empty": ["titleen.value", "pubmedId.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -426,12 +426,12 @@
 	},
 	{
 		"rule": "25",
-		"non_empty": ["titrefr.value", "idHal.value"],
+		"non_empty": ["titlefr.value", "idHal.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -444,12 +444,12 @@
 	},
 	{
 		"rule": "26",
-		"non_empty": ["titreen.value", "idHal.value"],
+		"non_empty": ["titleen.value", "idHal.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -462,12 +462,12 @@
 	},
 	{
 		"rule": "27",
-		"non_empty": ["titrefr.value", "issn.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "issn.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -479,7 +479,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -487,22 +487,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_FRE+issn+volume+numero+page+annee"
+				"_name": "2 Collation : Ti_FRE+issn+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "28",
-		"non_empty": ["titrefr.value", "issn.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "issn.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -510,7 +510,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -518,22 +518,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_FRE+issn+numero+page+annee"
+				"_name": "2 Collation : Ti_FRE+issn+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "29",
-		"non_empty": ["titrefr.value", "issn.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titlefr.value", "issn.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -549,7 +549,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_FRE+issn+volume+page+annee"
@@ -558,13 +558,13 @@
 	},
 	{
 		"rule": "36",
-		"non_empty": ["titrefr.value", "eissn.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titlefr.value", "eissn.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -580,7 +580,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_FRE+eissn+volume+page+annee"
@@ -589,13 +589,13 @@
 	},
 	{
 		"rule": "37",
-		"non_empty": ["titrefr.value", "eissn.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "eissn.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -603,7 +603,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -611,21 +611,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_FRE+eissn+numero+page+annee"
+				"_name": "2 Collation : Ti_FRE+eissn+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "38",
-		"non_empty": ["titrefr.value", "eissn.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "eissn.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -637,7 +637,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -645,21 +645,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_FRE+eissn+volume+numero+page+annee"
+				"_name": "2 Collation : Ti_FRE+eissn+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "39",
-		"non_empty": ["titreen.value", "issn.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "issn.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -671,7 +671,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -679,22 +679,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_ENG+issn+volume+numero+page+annee"
+				"_name": "2 Collation : Ti_ENG+issn+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "40",
-		"non_empty": ["titreen.value", "issn.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "issn.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -702,7 +702,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -710,22 +710,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_ENG+issn+numero+page+annee"
+				"_name": "2 Collation : Ti_ENG+issn+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "41",
-		"non_empty": ["titreen.value", "issn.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titleen.value", "issn.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -741,7 +741,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_ENG+issn+volume+page+annee"
@@ -750,13 +750,13 @@
 	},
 	{
 		"rule": "48",
-		"non_empty": ["titreen.value", "eissn.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titleen.value", "eissn.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -772,7 +772,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_ENG+eissn+volume+page+annee"
@@ -781,13 +781,13 @@
 	},
 	{
 		"rule": "49",
-		"non_empty": ["titreen.value", "eissn.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "eissn.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -795,7 +795,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -803,21 +803,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_ENG+eissn+numero+page+annee"
+				"_name": "2 Collation : Ti_ENG+eissn+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "50",
-		"non_empty": ["titreen.value", "eissn.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "eissn.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -829,7 +829,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -837,21 +837,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_ENG+eissn+volume+numero+page+annee"
+				"_name": "2 Collation : Ti_ENG+eissn+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "51",
-		"non_empty": ["titre.value", "doi.value"],
+		"non_empty": ["title.value", "doi.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -864,12 +864,12 @@
 	},
 	{
 		"rule": "52",
-		"non_empty": ["titre.value", "ut.value"],
+		"non_empty": ["title.value", "ut.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -882,12 +882,12 @@
 	},
 	{
 		"rule": "53",
-		"non_empty": ["titre.value", "pubmedId.value"],
+		"non_empty": ["title.value", "pubmedId.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -900,12 +900,12 @@
 	},
 	{
 		"rule": "54",
-		"non_empty": ["titre.value", "idHal.value"],
+		"non_empty": ["title.value", "idHal.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -918,12 +918,12 @@
 	},
 	{
 		"rule": "59",
-		"non_empty": ["titre.value", "issn.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["title.value", "issn.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -935,7 +935,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -943,22 +943,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50+issn+volume+numero+page+annee"
+				"_name": "2 Collation : Ti_50+issn+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "60",
-		"non_empty": ["titre.value", "issn.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["title.value", "issn.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -966,7 +966,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -974,22 +974,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50+issn+numero+page+annee"
+				"_name": "2 Collation : Ti_50+issn+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "61",
-		"non_empty": ["titre.value", "issn.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["title.value", "issn.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -1005,7 +1005,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50+issn+volume+page+annee"
@@ -1014,13 +1014,13 @@
 	},
 	{
 		"rule": "68",
-		"non_empty": ["titre.value", "eissn.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["title.value", "eissn.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -1036,7 +1036,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50+eissn+volume+page+annee"
@@ -1045,13 +1045,13 @@
 	},
 	{
 		"rule": "69",
-		"non_empty": ["titre.value", "eissn.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["title.value", "eissn.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -1059,7 +1059,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -1067,21 +1067,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50+eissn+numero+page+annee"
+				"_name": "2 Collation : Ti_50+eissn+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "70",
-		"non_empty": ["titre.value", "eissn.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["title.value", "eissn.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -1093,7 +1093,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -1101,21 +1101,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50+eissn+volume+numero+page+annee"
+				"_name": "2 Collation : Ti_50+eissn+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "71",
-		"non_empty": ["titrefr.value", "doi.value"],
+		"non_empty": ["titlefr.value", "doi.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -1128,12 +1128,12 @@
 	},
 	{
 		"rule": "72",
-		"non_empty": ["titreen.value", "doi.value"],
+		"non_empty": ["titleen.value", "doi.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -1146,12 +1146,12 @@
 	},
 	{
 		"rule": "73",
-		"non_empty": ["titrefr.value", "ut.value"],
+		"non_empty": ["titlefr.value", "ut.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -1164,12 +1164,12 @@
 	},
 	{
 		"rule": "74",
-		"non_empty": ["titreen.value", "ut.value"],
+		"non_empty": ["titleen.value", "ut.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -1182,12 +1182,12 @@
 	},
 	{
 		"rule": "75",
-		"non_empty": ["titrefr.value", "pubmedId.value"],
+		"non_empty": ["titlefr.value", "pubmedId.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -1200,12 +1200,12 @@
 	},
 	{
 		"rule": "76",
-		"non_empty": ["titreen.value", "pubmedId.value"],
+		"non_empty": ["titleen.value", "pubmedId.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -1218,12 +1218,12 @@
 	},
 	{
 		"rule": "77",
-		"non_empty": ["titrefr.value", "idHal.value"],
+		"non_empty": ["titlefr.value", "idHal.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -1236,12 +1236,12 @@
 	},
 	{
 		"rule": "78",
-		"non_empty": ["titreen.value", "idHal.value"],
+		"non_empty": ["titleen.value", "idHal.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -1254,12 +1254,12 @@
 	},
 	{
 		"rule": "79",
-		"non_empty": ["titrefr.value", "issn.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "issn.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -1271,7 +1271,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -1279,22 +1279,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_FRE+issn+volume+numero+page+annee"
+				"_name": "2 Collation : Ti_50_FRE+issn+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "80",
-		"non_empty": ["titrefr.value", "issn.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "issn.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -1302,7 +1302,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -1310,22 +1310,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_FRE+issn+numero+page+annee"
+				"_name": "2 Collation : Ti_50_FRE+issn+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "81",
-		"non_empty": ["titrefr.value", "issn.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titlefr.value", "issn.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -1341,7 +1341,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50_FRE+issn+volume+page+annee"
@@ -1350,13 +1350,13 @@
 	},
 	{
 		"rule": "88",
-		"non_empty": ["titrefr.value", "eissn.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titlefr.value", "eissn.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -1372,7 +1372,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50_FRE+eissn+volume+page+annee"
@@ -1381,13 +1381,13 @@
 	},
 	{
 		"rule": "89",
-		"non_empty": ["titrefr.value", "eissn.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "eissn.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -1395,7 +1395,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -1403,21 +1403,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_FRE+eissn+numero+page+annee"
+				"_name": "2 Collation : Ti_50_FRE+eissn+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "90",
-		"non_empty": ["titrefr.value", "eissn.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "eissn.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -1429,7 +1429,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -1437,21 +1437,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_FRE+eissn+volume+numero+page+annee"
+				"_name": "2 Collation : Ti_50_FRE+eissn+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "91",
-		"non_empty": ["titreen.value", "issn.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "issn.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -1463,7 +1463,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -1471,22 +1471,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_ENG+issn+volume+numero+page+annee"
+				"_name": "2 Collation : Ti_50_ENG+issn+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "92",
-		"non_empty": ["titreen.value", "issn.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "issn.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -1494,7 +1494,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -1502,22 +1502,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_ENG+issn+numero+page+annee"
+				"_name": "2 Collation : Ti_50_ENG+issn+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "93",
-		"non_empty": ["titreen.value", "issn.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titleen.value", "issn.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -1533,7 +1533,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50_ENG+issn+volume+page+annee"
@@ -1542,13 +1542,13 @@
 	},
 	{
 		"rule": "100",
-		"non_empty": ["titreen.value", "eissn.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titleen.value", "eissn.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -1564,7 +1564,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50_ENG+eissn+volume+page+annee"
@@ -1573,13 +1573,13 @@
 	},
 	{
 		"rule": "101",
-		"non_empty": ["titreen.value", "eissn.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "eissn.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -1587,7 +1587,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -1595,21 +1595,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_ENG+eissn+numero+page+annee"
+				"_name": "2 Collation : Ti_50_ENG+eissn+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "102",
-		"non_empty": ["titreen.value", "eissn.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "eissn.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -1621,7 +1621,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -1629,21 +1629,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_ENG+eissn+volume+numero+page+annee"
+				"_name": "2 Collation : Ti_50_ENG+eissn+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "147",
-		"non_empty": ["titre.value", "nnt.value"],
+		"non_empty": ["title.value", "nnt.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -1656,12 +1656,12 @@
 	},
 	{
 		"rule": "148",
-		"non_empty": ["titre.value", "nnt.value"],
+		"non_empty": ["title.value", "nnt.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -1674,12 +1674,12 @@
 	},
 	{
 		"rule": "150",
-		"non_empty": ["titrefr.value", "nnt.value"],
+		"non_empty": ["titlefr.value", "nnt.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -1692,12 +1692,12 @@
 	},
 	{
 		"rule": "151",
-		"non_empty": ["titrefr.value", "nnt.value"],
+		"non_empty": ["titlefr.value", "nnt.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -1710,12 +1710,12 @@
 	},
 	{
 		"rule": "153",
-		"non_empty": ["titreen.value", "nnt.value"],
+		"non_empty": ["titleen.value", "nnt.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -1728,12 +1728,12 @@
 	},
 	{
 		"rule": "154",
-		"non_empty": ["titreen.value", "nnt.value"],
+		"non_empty": ["titleen.value", "nnt.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -1746,12 +1746,12 @@
 	},
 	{
 		"rule": "156",
-		"non_empty": ["titre.value", "isbn.value"],
+		"non_empty": ["title.value", "isbn.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -1764,12 +1764,12 @@
 	},
 	{
 		"rule": "157",
-		"non_empty": ["titre.value", "isbn.value"],
+		"non_empty": ["title.value", "isbn.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -1782,12 +1782,12 @@
 	},
 	{
 		"rule": "159",
-		"non_empty": ["titrefr.value", "isbn.value"],
+		"non_empty": ["titlefr.value", "isbn.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -1800,12 +1800,12 @@
 	},
 	{
 		"rule": "160",
-		"non_empty": ["titrefr.value", "isbn.value"],
+		"non_empty": ["titlefr.value", "isbn.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -1818,12 +1818,12 @@
 	},
 	{
 		"rule": "162",
-		"non_empty": ["titreen.value", "isbn.value"],
+		"non_empty": ["titleen.value", "isbn.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -1836,12 +1836,12 @@
 	},
 	{
 		"rule": "163",
-		"non_empty": ["titreen.value", "isbn.value"],
+		"non_empty": ["titleen.value", "isbn.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -1854,152 +1854,152 @@
 	},
 	{
 		"rule": "168",
-		"non_empty": ["auteur.value", "titre.value", "datePubli.value"],
+		"non_empty": ["author.value", "title.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
-						"auteur.normalized": "auteur.value"
+						"author.normalized": "author.value"
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Auteurs : Ti+auteur+annee"
+				"_name": "2 Auteurs : Ti+author+annee"
 			}
 		}
 	},
 	{
 		"rule": "170",
-		"non_empty": ["auteur.value", "titre.value", "datePubli.value"],
+		"non_empty": ["author.value", "title.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
-						"auteur.normalized": "auteur.value"
+						"author.normalized": "author.value"
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Auteurs : Ti_50+auteur+annee"
+				"_name": "2 Auteurs : Ti_50+author+annee"
 			}
 		}
 	},
 	{
 		"rule": "171",
-		"non_empty": ["auteur.value", "titrefr.value", "datePubli.value"],
+		"non_empty": ["author.value", "titlefr.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
-						"auteur.normalized": "auteur.value"
+						"author.normalized": "author.value"
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Auteurs : Ti_FRE+auteur+annee"
+				"_name": "2 Auteurs : Ti_FRE+author+annee"
 			}
 		}
 	},
 	{
 		"rule": "173",
-		"non_empty": ["auteur.value", "titrefr.value", "datePubli.value"],
+		"non_empty": ["author.value", "titlefr.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
-						"auteur.normalized": "auteur.value"
+						"author.normalized": "author.value"
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Auteurs : Ti_50_FRE+auteur+annee"
+				"_name": "2 Auteurs : Ti_50_FRE+author+annee"
 			}
 		}
 	},
 	{
 		"rule": "174",
-		"non_empty": ["auteur.value", "titreen.value", "datePubli.value"],
+		"non_empty": ["author.value", "titleen.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
-						"auteur.normalized": "auteur.value"
+						"author.normalized": "author.value"
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Auteurs : Ti_ENG+auteur+annee"
+				"_name": "2 Auteurs : Ti_ENG+author+annee"
 			}
 		}
 	},
 	{
 		"rule": "176",
-		"non_empty": ["auteur.value", "titreen.value", "datePubli.value"],
+		"non_empty": ["author.value", "titleen.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
-						"auteur.normalized": "auteur.value"
+						"author.normalized": "author.value"
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Auteurs : Ti_50_ENG+auteur+annee"
+				"_name": "2 Auteurs : Ti_50_ENG+author+annee"
 			}
 		}
 	},
 	{
 		"rule": "177",
-		"non_empty": ["auteurInit.value", "titre.value", "datePubli.value"],
+		"non_empty": ["authorInit.value", "title.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
-						"auteurInit.normalized": "auteurInit.value"
+						"authorInit.normalized": "authorInit.value"
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Auteurs : Ti+auteur_init+annee"
@@ -2008,20 +2008,20 @@
 	},
 	{
 		"rule": "179",
-		"non_empty": ["auteurInit.value", "titre.value", "datePubli.value"],
+		"non_empty": ["authorInit.value", "title.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
-						"auteurInit.normalized": "auteurInit.value"
+						"authorInit.normalized": "authorInit.value"
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Auteurs : Ti_50+auteur_init+annee"
@@ -2030,20 +2030,20 @@
 	},
 	{
 		"rule": "180",
-		"non_empty": ["auteurInit.value", "titrefr.value", "datePubli.value"],
+		"non_empty": ["authorInit.value", "titlefr.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
-						"auteurInit.normalized": "auteurInit.value"
+						"authorInit.normalized": "authorInit.value"
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Auteurs : Ti_FRE+auteur_init+annee"
@@ -2052,20 +2052,20 @@
 	},
 	{
 		"rule": "182",
-		"non_empty": ["auteurInit.value", "titrefr.value", "datePubli.value"],
+		"non_empty": ["authorInit.value", "titlefr.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
-						"auteurInit.normalized": "auteurInit.value"
+						"authorInit.normalized": "authorInit.value"
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Auteurs : Ti_50_FRE+auteur_init+annee"
@@ -2074,20 +2074,20 @@
 	},
 	{
 		"rule": "183",
-		"non_empty": ["auteurInit.value", "titreen.value", "datePubli.value"],
+		"non_empty": ["authorInit.value", "titleen.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
-						"auteurInit.normalized": "auteurInit.value"
+						"authorInit.normalized": "authorInit.value"
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Auteurs : Ti_ENG+auteur_init+annee"
@@ -2096,20 +2096,20 @@
 	},
 	{
 		"rule": "185",
-		"non_empty": ["auteurInit.value", "titreen.value", "datePubli.value"],
+		"non_empty": ["authorInit.value", "titleen.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
-						"auteurInit.normalized": "auteurInit.value"
+						"authorInit.normalized": "authorInit.value"
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Auteurs : Ti_50_ENG+auteur_init+annee"
@@ -2118,13 +2118,13 @@
 	},
 	{
 		"rule": "186",
-		"non_empty": ["titreen.value", "titreSourceJ.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "titreSourceJ.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -2132,7 +2132,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -2140,22 +2140,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_ENG+Ti_Source+numero+page+annee"
+				"_name": "2 Collation : Ti_50_ENG+Ti_Source+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "187",
-		"non_empty": ["titreen.value", "titreSourceJ.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titleen.value", "titreSourceJ.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -2171,7 +2171,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50_ENG+Ti_Source+volume+page+annee"
@@ -2180,13 +2180,13 @@
 	},
 	{
 		"rule": "188",
-		"non_empty": ["titrefr.value", "titreSourceJ.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "titreSourceJ.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -2194,7 +2194,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -2202,22 +2202,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_FRE+Ti_Source+numero+page+annee"
+				"_name": "2 Collation : Ti_50_FRE+Ti_Source+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "189",
-		"non_empty": ["titrefr.value", "titreSourceJ.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titlefr.value", "titreSourceJ.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -2233,7 +2233,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50_FRE+Ti_Source+volume+page+annee"
@@ -2242,13 +2242,13 @@
 	},
 	{
 		"rule": "190",
-		"non_empty": ["titre.value", "titreSourceJ.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["title.value", "titreSourceJ.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -2256,7 +2256,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -2264,22 +2264,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50+Ti_Source+numero+page+annee"
+				"_name": "2 Collation : Ti_50+Ti_Source+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "191",
-		"non_empty": ["titre.value", "titreSourceJ.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["title.value", "titreSourceJ.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -2295,7 +2295,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50+Ti_Source+volume+page+annee"
@@ -2304,13 +2304,13 @@
 	},
 	{
 		"rule": "192",
-		"non_empty": ["titreen.value", "titreSourceJ.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "titreSourceJ.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -2318,7 +2318,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -2326,22 +2326,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_ENG+Ti_Source+numero+page+annee"
+				"_name": "2 Collation : Ti_ENG+Ti_Source+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "193",
-		"non_empty": ["titreen.value", "titreSourceJ.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titleen.value", "titreSourceJ.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -2357,7 +2357,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_ENG+Ti_Source+volume+page+annee"
@@ -2366,13 +2366,13 @@
 	},
 	{
 		"rule": "194",
-		"non_empty": ["titrefr.value", "titreSourceJ.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "titreSourceJ.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -2380,7 +2380,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -2388,22 +2388,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_FRE+Ti_Source+numero+page+annee"
+				"_name": "2 Collation : Ti_FRE+Ti_Source+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "195",
-		"non_empty": ["titrefr.value", "titreSourceJ.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titlefr.value", "titreSourceJ.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -2419,7 +2419,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_FRE+Ti_Source+volume+page+annee"
@@ -2428,13 +2428,13 @@
 	},
 	{
 		"rule": "196",
-		"non_empty": ["titre.value", "titreSourceJ.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["title.value", "titreSourceJ.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -2442,7 +2442,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -2450,22 +2450,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti+Ti_Source+numero+page+annee"
+				"_name": "2 Collation : Ti+Ti_Source+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "197",
-		"non_empty": ["titre.value", "titreSourceJ.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["title.value", "titreSourceJ.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -2481,7 +2481,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti+Ti_Source+volume+page+annee"
@@ -2490,13 +2490,13 @@
 	},
 	{
 		"rule": "198",
-		"non_empty": ["titreen.value", "eissn.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "eissn.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -2504,7 +2504,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -2512,22 +2512,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_ENG+eissn+numero+numArt+annee"
+				"_name": "2 Collation : Ti_50_ENG+eissn+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "199",
-		"non_empty": ["titreen.value", "eissn.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titleen.value", "eissn.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -2543,7 +2543,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50_ENG+eissn+volume+numArt+annee"
@@ -2552,13 +2552,13 @@
 	},
 	{
 		"rule": "200",
-		"non_empty": ["titreen.value", "issn.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "issn.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -2566,7 +2566,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -2574,22 +2574,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_ENG+issn+numero+numArt+annee"
+				"_name": "2 Collation : Ti_50_ENG+issn+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "201",
-		"non_empty": ["titreen.value", "issn.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titleen.value", "issn.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -2605,7 +2605,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50_ENG+issn+volume+numArt+annee"
@@ -2614,13 +2614,13 @@
 	},
 	{
 		"rule": "202",
-		"non_empty": ["titrefr.value", "eissn.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "eissn.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -2628,7 +2628,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -2636,22 +2636,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_FRE+eissn+numero+numArt+annee"
+				"_name": "2 Collation : Ti_50_FRE+eissn+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "203",
-		"non_empty": ["titrefr.value", "eissn.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titlefr.value", "eissn.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -2667,7 +2667,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50_FRE+eissn+volume+numArt+annee"
@@ -2676,13 +2676,13 @@
 	},
 	{
 		"rule": "204",
-		"non_empty": ["titrefr.value", "issn.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "issn.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -2690,7 +2690,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -2698,22 +2698,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_FRE+issn+numero+numArt+annee"
+				"_name": "2 Collation : Ti_50_FRE+issn+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "205",
-		"non_empty": ["titrefr.value", "issn.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titlefr.value", "issn.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -2729,7 +2729,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50_FRE+issn+volume+numArt+annee"
@@ -2738,13 +2738,13 @@
 	},
 	{
 		"rule": "206",
-		"non_empty": ["titre.value", "eissn.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["title.value", "eissn.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -2752,7 +2752,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -2760,22 +2760,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50+eissn+numero+numArt+annee"
+				"_name": "2 Collation : Ti_50+eissn+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "207",
-		"non_empty": ["titre.value", "eissn.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["title.value", "eissn.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -2791,7 +2791,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50+eissn+volume+numArt+annee"
@@ -2800,13 +2800,13 @@
 	},
 	{
 		"rule": "208",
-		"non_empty": ["titre.value", "issn.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["title.value", "issn.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -2814,7 +2814,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -2822,22 +2822,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50+issn+numero+numArt+annee"
+				"_name": "2 Collation : Ti_50+issn+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "209",
-		"non_empty": ["titre.value", "issn.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["title.value", "issn.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -2853,7 +2853,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50+issn+volume+numArt+annee"
@@ -2862,13 +2862,13 @@
 	},
 	{
 		"rule": "210",
-		"non_empty": ["titreen.value", "eissn.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "eissn.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -2876,7 +2876,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -2884,22 +2884,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_ENG+eissn+numero+numArt+annee"
+				"_name": "2 Collation : Ti_ENG+eissn+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "211",
-		"non_empty": ["titreen.value", "eissn.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titleen.value", "eissn.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -2915,7 +2915,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_ENG+eissn+volume+numArt+annee"
@@ -2924,13 +2924,13 @@
 	},
 	{
 		"rule": "212",
-		"non_empty": ["titreen.value", "issn.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "issn.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -2938,7 +2938,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -2946,22 +2946,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_ENG+issn+numero+numArt+annee"
+				"_name": "2 Collation : Ti_ENG+issn+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "213",
-		"non_empty": ["titreen.value", "issn.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titleen.value", "issn.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -2977,7 +2977,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_ENG+issn+volume+numArt+annee"
@@ -2986,13 +2986,13 @@
 	},
 	{
 		"rule": "214",
-		"non_empty": ["titrefr.value", "eissn.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "eissn.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -3000,7 +3000,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3008,22 +3008,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_FRE+eissn+numero+numArt+annee"
+				"_name": "2 Collation : Ti_FRE+eissn+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "215",
-		"non_empty": ["titrefr.value", "eissn.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titlefr.value", "eissn.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -3039,7 +3039,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_FRE+eissn+volume+numArt+annee"
@@ -3048,13 +3048,13 @@
 	},
 	{
 		"rule": "216",
-		"non_empty": ["titrefr.value", "issn.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "issn.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -3062,7 +3062,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3070,22 +3070,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_FRE+issn+numero+numArt+annee"
+				"_name": "2 Collation : Ti_FRE+issn+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "217",
-		"non_empty": ["titrefr.value", "issn.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titlefr.value", "issn.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -3101,7 +3101,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_FRE+issn+volume+numArt+annee"
@@ -3110,13 +3110,13 @@
 	},
 	{
 		"rule": "218",
-		"non_empty": ["titre.value", "eissn.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["title.value", "eissn.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -3124,7 +3124,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3132,22 +3132,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti+eissn+numero+numArt+annee"
+				"_name": "2 Collation : Ti+eissn+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "219",
-		"non_empty": ["titre.value", "eissn.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["title.value", "eissn.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -3163,7 +3163,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti+eissn+volume+numArt+annee"
@@ -3172,13 +3172,13 @@
 	},
 	{
 		"rule": "220",
-		"non_empty": ["titre.value", "issn.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["title.value", "issn.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -3186,7 +3186,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3194,22 +3194,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti+issn+numero+numArt+annee"
+				"_name": "2 Collation : Ti+issn+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "221",
-		"non_empty": ["titre.value", "issn.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["title.value", "issn.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -3225,7 +3225,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti+issn+volume+numArt+annee"
@@ -3234,12 +3234,12 @@
 	},
 	{
 		"rule": "224",
-		"non_empty": ["titrefr.value", "eissn.value", "volume.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "eissn.value", "volume.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -3251,7 +3251,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3259,21 +3259,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_FRE+eissn+volume+numero+numArt+annee"
+				"_name": "2 Collation : Ti_50_FRE+eissn+volume+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "225",
-		"non_empty": ["titrefr.value", "issn.value", "volume.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "issn.value", "volume.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -3285,7 +3285,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3293,21 +3293,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_FRE+issn+volume+numero+numArt+annee"
+				"_name": "2 Collation : Ti_50_FRE+issn+volume+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "226",
-		"non_empty": ["titre.value", "eissn.value", "volume.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["title.value", "eissn.value", "volume.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -3319,7 +3319,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3327,21 +3327,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50+eissn+volume+numero+numArt+annee"
+				"_name": "2 Collation : Ti_50+eissn+volume+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "227",
-		"non_empty": ["titre.value", "issn.value", "volume.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["title.value", "issn.value", "volume.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -3353,7 +3353,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3361,21 +3361,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50+issn+volume+numero+numArt+annee"
+				"_name": "2 Collation : Ti_50+issn+volume+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "228",
-		"non_empty": ["titrefr.value", "eissn.value", "volume.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "eissn.value", "volume.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -3387,7 +3387,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3395,21 +3395,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_FRE+eissn+volume+numero+numArt+annee"
+				"_name": "2 Collation : Ti_FRE+eissn+volume+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "229",
-		"non_empty": ["titrefr.value", "issn.value", "volume.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "issn.value", "volume.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -3421,7 +3421,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3429,21 +3429,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_FRE+issn+volume+numero+numArt+annee"
+				"_name": "2 Collation : Ti_FRE+issn+volume+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "230",
-		"non_empty": ["titre.value", "eissn.value", "volume.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["title.value", "eissn.value", "volume.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -3455,7 +3455,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3463,21 +3463,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti+eissn+volume+numero+numArt+annee"
+				"_name": "2 Collation : Ti+eissn+volume+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "231",
-		"non_empty": ["titre.value", "issn.value", "volume.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["title.value", "issn.value", "volume.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -3489,7 +3489,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3497,21 +3497,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti+issn+volume+numero+numArt+annee"
+				"_name": "2 Collation : Ti+issn+volume+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "232",
-		"non_empty": ["titreen.value", "issn.value", "volume.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "issn.value", "volume.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -3523,7 +3523,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3531,21 +3531,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_ENG+issn+volume+numero+numArt+annee"
+				"_name": "2 Collation : Ti_ENG+issn+volume+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "233",
-		"non_empty": ["titreen.value", "eissn.value", "volume.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "eissn.value", "volume.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -3557,7 +3557,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3565,21 +3565,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_ENG+eissn+volume+numero+numArt+annee"
+				"_name": "2 Collation : Ti_ENG+eissn+volume+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "234",
-		"non_empty": ["titreen.value", "titreSourceJ.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "titreSourceJ.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -3591,7 +3591,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3599,21 +3599,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_ENG+Ti_Source+volume+numero+page+annee"
+				"_name": "2 Collation : Ti_50_ENG+Ti_Source+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "235",
-		"non_empty": ["titrefr.value", "titreSourceJ.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "titreSourceJ.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -3625,7 +3625,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3633,21 +3633,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_FRE+Ti_Source+volume+numero+page+annee"
+				"_name": "2 Collation : Ti_50_FRE+Ti_Source+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "236",
-		"non_empty": ["titre.value", "titreSourceJ.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["title.value", "titreSourceJ.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -3659,7 +3659,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3667,21 +3667,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50+Ti_Source+volume+numero+page+annee"
+				"_name": "2 Collation : Ti_50+Ti_Source+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "237",
-		"non_empty": ["titreen.value", "titreSourceJ.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "titreSourceJ.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -3693,7 +3693,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3701,21 +3701,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_ENG+Ti_Source+volume+numero+page+annee"
+				"_name": "2 Collation : Ti_ENG+Ti_Source+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "238",
-		"non_empty": ["titrefr.value", "titreSourceJ.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "titreSourceJ.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -3727,7 +3727,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3735,21 +3735,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_FRE+Ti_Source+volume+numero+page+annee"
+				"_name": "2 Collation : Ti_FRE+Ti_Source+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "239",
-		"non_empty": ["titre.value", "titreSourceJ.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["title.value", "titreSourceJ.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -3761,7 +3761,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3769,21 +3769,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti+Ti_Source+volume+numero+page+annee"
+				"_name": "2 Collation : Ti+Ti_Source+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "240",
-		"non_empty": ["titreen.value", "titreSourceJ.value", "volume.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "titreSourceJ.value", "volume.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -3795,7 +3795,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3803,21 +3803,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_ENG+Ti_Source+volume+numero+numArt+annee"
+				"_name": "2 Collation : Ti_50_ENG+Ti_Source+volume+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "241",
-		"non_empty": ["titrefr.value", "titreSourceJ.value", "volume.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "titreSourceJ.value", "volume.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -3829,7 +3829,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3837,21 +3837,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_FRE+Ti_Source+volume+numero+numArt+annee"
+				"_name": "2 Collation : Ti_50_FRE+Ti_Source+volume+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "242",
-		"non_empty": ["titre.value", "titreSourceJ.value", "volume.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["title.value", "titreSourceJ.value", "volume.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -3863,7 +3863,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3871,21 +3871,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50+Ti_Source+volume+numero+numArt+annee"
+				"_name": "2 Collation : Ti_50+Ti_Source+volume+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "243",
-		"non_empty": ["titreen.value", "titreSourceJ.value", "volume.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "titreSourceJ.value", "volume.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -3897,7 +3897,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3905,21 +3905,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_ENG+Ti_Source+volume+numero+numArt+annee"
+				"_name": "2 Collation : Ti_ENG+Ti_Source+volume+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "244",
-		"non_empty": ["titrefr.value", "titreSourceJ.value", "volume.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "titreSourceJ.value", "volume.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -3931,7 +3931,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3939,21 +3939,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_FRE+Ti_Source+volume+numero+numArt+annee"
+				"_name": "2 Collation : Ti_FRE+Ti_Source+volume+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "245",
-		"non_empty": ["titre.value", "titreSourceJ.value", "volume.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["title.value", "titreSourceJ.value", "volume.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -3965,7 +3965,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -3973,10 +3973,10 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti+Ti_Source+volume+numero+numArt+annee"
+				"_name": "2 Collation : Ti+Ti_Source+volume+issue+numArt+annee"
 			}
 		}
 	},
@@ -4000,12 +4000,12 @@
 	},
 	{
 		"rule": "247",
-		"non_empty": ["titre.value", "isbn.value", "page.value"],
+		"non_empty": ["title.value", "isbn.value", "page.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -4018,12 +4018,12 @@
 	},
 	{
 		"rule": "248",
-		"non_empty": ["titrefr.value", "isbn.value", "page.value"],
+		"non_empty": ["titlefr.value", "isbn.value", "page.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -4036,12 +4036,12 @@
 	},
 	{
 		"rule": "249",
-		"non_empty": ["titreen.value", "isbn.value", "page.value"],
+		"non_empty": ["titleen.value", "isbn.value", "page.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -4054,12 +4054,12 @@
 	},
 	{
 		"rule": "250",
-		"non_empty": ["titre.value", "titreSourceM.value", "page.value"],
+		"non_empty": ["title.value", "titreSourceM.value", "page.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -4072,12 +4072,12 @@
 	},
 	{
 		"rule": "251",
-		"non_empty": ["titrefr.value", "titreSourceM.value", "page.value"],
+		"non_empty": ["titlefr.value", "titreSourceM.value", "page.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -4090,12 +4090,12 @@
 	},
 	{
 		"rule": "252",
-		"non_empty": ["titreen.value", "titreSourceM.value", "page.value"],
+		"non_empty": ["titleen.value", "titreSourceM.value", "page.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -4108,7 +4108,7 @@
 	},
 	{
 		"rule": "253",
-		"non_empty": ["auteur.value", "isbn.value", "page.value"],
+		"non_empty": ["author.value", "isbn.value", "page.value"],
 		"query": {
 			"bool": {
 				"must": [{
@@ -4120,13 +4120,13 @@
 						"page.normalized": "page.value"
 					}
 				}],
-				"_name": "3 Auteurs + Collation : auteur+isbn+page"
+				"_name": "3 Auteurs + Collation : author+isbn+page"
 			}
 		}
 	},
 	{
 		"rule": "254",
-		"non_empty": ["auteurInit.value", "isbn.value", "page.value"],
+		"non_empty": ["authorInit.value", "isbn.value", "page.value"],
 		"query": {
 			"bool": {
 				"must": [{
@@ -4144,7 +4144,7 @@
 	},
 	{
 		"rule": "255",
-		"non_empty": ["auteur.value", "titreSourceM.value", "page.value"],
+		"non_empty": ["author.value", "titreSourceM.value", "page.value"],
 		"query": {
 			"bool": {
 				"must": [{
@@ -4156,13 +4156,13 @@
 						"page.normalized": "page.value"
 					}
 				}],
-				"_name": "3 Auteurs + Collation : auteur+Ti_Source+page"
+				"_name": "3 Auteurs + Collation : author+Ti_Source+page"
 			}
 		}
 	},
 	{
 		"rule": "256",
-		"non_empty": ["auteurInit.value", "titreSourceM.value", "page.value"],
+		"non_empty": ["authorInit.value", "titreSourceM.value", "page.value"],
 		"query": {
 			"bool": {
 				"must": [{
@@ -4180,13 +4180,13 @@
 	},
 	{
 		"rule": "257",
-		"non_empty": ["titreen.value", "titreSourceM.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "titreSourceM.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -4194,7 +4194,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -4202,22 +4202,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_ENG+Ti_SourceM+numero+page+annee"
+				"_name": "2 Collation : Ti_50_ENG+Ti_SourceM+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "258",
-		"non_empty": ["titreen.value", "titreSourceM.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titleen.value", "titreSourceM.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -4233,7 +4233,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50_ENG+Ti_SourceM+volume+page+annee"
@@ -4242,13 +4242,13 @@
 	},
 	{
 		"rule": "259",
-		"non_empty": ["titrefr.value", "titreSourceM.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "titreSourceM.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -4256,7 +4256,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -4264,22 +4264,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_FRE+Ti_SourceM+numero+page+annee"
+				"_name": "2 Collation : Ti_50_FRE+Ti_SourceM+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "260",
-		"non_empty": ["titrefr.value", "titreSourceM.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titlefr.value", "titreSourceM.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -4295,7 +4295,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50_FRE+Ti_SourceM+volume+page+annee"
@@ -4304,13 +4304,13 @@
 	},
 	{
 		"rule": "261",
-		"non_empty": ["titre.value", "titreSourceM.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["title.value", "titreSourceM.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -4318,7 +4318,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -4326,22 +4326,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50+Ti_SourceM+numero+page+annee"
+				"_name": "2 Collation : Ti_50+Ti_SourceM+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "262",
-		"non_empty": ["titre.value", "titreSourceM.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["title.value", "titreSourceM.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -4357,7 +4357,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50+Ti_SourceM+volume+page+annee"
@@ -4366,13 +4366,13 @@
 	},
 	{
 		"rule": "263",
-		"non_empty": ["titreen.value", "titreSourceM.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "titreSourceM.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -4380,7 +4380,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -4388,22 +4388,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_ENG+Ti_SourceM+numero+page+annee"
+				"_name": "2 Collation : Ti_ENG+Ti_SourceM+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "264",
-		"non_empty": ["titreen.value", "titreSourceM.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titleen.value", "titreSourceM.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -4419,7 +4419,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_ENG+Ti_SourceM+volume+page+annee"
@@ -4428,13 +4428,13 @@
 	},
 	{
 		"rule": "265",
-		"non_empty": ["titrefr.value", "titreSourceM.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "titreSourceM.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -4442,7 +4442,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -4450,22 +4450,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_FRE+Ti_SourceM+numero+page+annee"
+				"_name": "2 Collation : Ti_FRE+Ti_SourceM+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "266",
-		"non_empty": ["titrefr.value", "titreSourceM.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titlefr.value", "titreSourceM.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -4481,7 +4481,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_FRE+Ti_SourceM+volume+page+annee"
@@ -4490,13 +4490,13 @@
 	},
 	{
 		"rule": "267",
-		"non_empty": ["titre.value", "titreSourceM.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["title.value", "titreSourceM.value", "issue.value", "page.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -4504,7 +4504,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -4512,22 +4512,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti+Ti_SourceM+numero+page+annee"
+				"_name": "2 Collation : Ti+Ti_SourceM+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "268",
-		"non_empty": ["titre.value", "titreSourceM.value", "volume.value", "page.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["title.value", "titreSourceM.value", "volume.value", "page.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -4543,7 +4543,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti+Ti_SourceM+volume+page+annee"
@@ -4552,13 +4552,13 @@
 	},
 	{
 		"rule": "269",
-		"non_empty": ["titreen.value", "titreSourceJ.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "titreSourceJ.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -4566,7 +4566,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -4574,22 +4574,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_ENG+Ti_Source+numero+numArt+annee"
+				"_name": "2 Collation : Ti_50_ENG+Ti_Source+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "270",
-		"non_empty": ["titreen.value", "titreSourceJ.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titleen.value", "titreSourceJ.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -4605,7 +4605,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50_ENG+Ti_Source+volume+numArt+annee"
@@ -4614,13 +4614,13 @@
 	},
 	{
 		"rule": "271",
-		"non_empty": ["titrefr.value", "titreSourceJ.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "titreSourceJ.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -4628,7 +4628,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -4636,22 +4636,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_FRE+Ti_Source+numero+numArt+annee"
+				"_name": "2 Collation : Ti_50_FRE+Ti_Source+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "272",
-		"non_empty": ["titrefr.value", "titreSourceJ.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titlefr.value", "titreSourceJ.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -4667,7 +4667,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50_FRE+Ti_Source+volume+numArt+annee"
@@ -4676,13 +4676,13 @@
 	},
 	{
 		"rule": "273",
-		"non_empty": ["titre.value", "titreSourceJ.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["title.value", "titreSourceJ.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -4690,7 +4690,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -4698,22 +4698,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50+Ti_Source+numero+numArt+annee"
+				"_name": "2 Collation : Ti_50+Ti_Source+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "274",
-		"non_empty": ["titre.value", "titreSourceJ.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["title.value", "titreSourceJ.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -4729,7 +4729,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50+Ti_Source+volume+numArt+annee"
@@ -4738,13 +4738,13 @@
 	},
 	{
 		"rule": "275",
-		"non_empty": ["titreen.value", "titreSourceJ.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "titreSourceJ.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -4752,7 +4752,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -4760,22 +4760,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_ENG+Ti_Source+numero+numArt+annee"
+				"_name": "2 Collation : Ti_ENG+Ti_Source+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "276",
-		"non_empty": ["titreen.value", "titreSourceJ.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titleen.value", "titreSourceJ.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -4791,7 +4791,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_ENG+Ti_Source+volume+numArt+annee"
@@ -4800,13 +4800,13 @@
 	},
 	{
 		"rule": "277",
-		"non_empty": ["titrefr.value", "titreSourceJ.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "titreSourceJ.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -4814,7 +4814,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -4822,22 +4822,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_FRE+Ti_Source+numero+numArt+annee"
+				"_name": "2 Collation : Ti_FRE+Ti_Source+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "278",
-		"non_empty": ["titrefr.value", "titreSourceJ.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titlefr.value", "titreSourceJ.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -4853,7 +4853,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_FRE+Ti_Source+volume+numArt+annee"
@@ -4862,13 +4862,13 @@
 	},
 	{
 		"rule": "279",
-		"non_empty": ["titre.value", "titreSourceJ.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["title.value", "titreSourceJ.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -4876,7 +4876,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -4884,22 +4884,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti+Ti_Source+numero+numArt+annee"
+				"_name": "2 Collation : Ti+Ti_Source+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "280",
-		"non_empty": ["titre.value", "titreSourceJ.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["title.value", "titreSourceJ.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -4915,7 +4915,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti+Ti_Source+volume+numArt+annee"
@@ -4924,13 +4924,13 @@
 	},
 	{
 		"rule": "281",
-		"non_empty": ["titreen.value", "titreSourceM.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "titreSourceM.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -4938,7 +4938,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -4946,22 +4946,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_ENG+Ti_SourceM+numero+numArt+annee"
+				"_name": "2 Collation : Ti_50_ENG+Ti_SourceM+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "282",
-		"non_empty": ["titreen.value", "titreSourceM.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titleen.value", "titreSourceM.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -4977,7 +4977,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50_ENG+Ti_SourceM+volume+numArt+annee"
@@ -4986,13 +4986,13 @@
 	},
 	{
 		"rule": "283",
-		"non_empty": ["titrefr.value", "titreSourceM.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "titreSourceM.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -5000,7 +5000,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -5008,22 +5008,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_FRE+Ti_SourceM+numero+numArt+annee"
+				"_name": "2 Collation : Ti_50_FRE+Ti_SourceM+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "284",
-		"non_empty": ["titrefr.value", "titreSourceM.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titlefr.value", "titreSourceM.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -5039,7 +5039,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50_FRE+Ti_SourceM+volume+numArt+annee"
@@ -5048,13 +5048,13 @@
 	},
 	{
 		"rule": "285",
-		"non_empty": ["titre.value", "titreSourceM.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["title.value", "titreSourceM.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -5062,7 +5062,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -5070,22 +5070,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50+Ti_SourceM+numero+numArt+annee"
+				"_name": "2 Collation : Ti_50+Ti_SourceM+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "286",
-		"non_empty": ["titre.value", "titreSourceM.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["title.value", "titreSourceM.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -5101,7 +5101,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_50+Ti_SourceM+volume+numArt+annee"
@@ -5110,13 +5110,13 @@
 	},
 	{
 		"rule": "287",
-		"non_empty": ["titreen.value", "titreSourceM.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "titreSourceM.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -5124,7 +5124,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -5132,22 +5132,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_ENG+Ti_SourceM+numero+numArt+annee"
+				"_name": "2 Collation : Ti_ENG+Ti_SourceM+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "288",
-		"non_empty": ["titreen.value", "titreSourceM.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titleen.value", "titreSourceM.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -5163,7 +5163,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_ENG+Ti_SourceM+volume+numArt+annee"
@@ -5172,13 +5172,13 @@
 	},
 	{
 		"rule": "289",
-		"non_empty": ["titrefr.value", "titreSourceM.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "titreSourceM.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -5186,7 +5186,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -5194,22 +5194,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_FRE+Ti_SourceM+numero+numArt+annee"
+				"_name": "2 Collation : Ti_FRE+Ti_SourceM+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "290",
-		"non_empty": ["titrefr.value", "titreSourceM.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["titlefr.value", "titreSourceM.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -5225,7 +5225,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti_FRE+Ti_SourceM+volume+numArt+annee"
@@ -5234,13 +5234,13 @@
 	},
 	{
 		"rule": "291",
-		"non_empty": ["titre.value", "titreSourceM.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["title.value", "titreSourceM.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"is_empty": ["volume.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -5248,7 +5248,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -5256,22 +5256,22 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti+Ti_SourceM+numero+numArt+annee"
+				"_name": "2 Collation : Ti+Ti_SourceM+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "292",
-		"non_empty": ["titre.value", "titreSourceM.value", "volume.value", "articleNo.value", "datePubli.value"],
-		"is_empty": ["numero.value"],
+		"non_empty": ["title.value", "titreSourceM.value", "volume.value", "articleNo.value", "publicationDate.value"],
+		"is_empty": ["issue.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -5287,7 +5287,7 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
 				"_name": "2 Collation : Ti+Ti_SourceM+volume+numArt+annee"
@@ -5296,12 +5296,12 @@
 	},
 	{
 		"rule": "293",
-		"non_empty": ["titreen.value", "titreSourceM.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "titreSourceM.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -5313,7 +5313,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -5321,21 +5321,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_ENG+Ti_SourceM+volume+numero+page+annee"
+				"_name": "2 Collation : Ti_50_ENG+Ti_SourceM+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "294",
-		"non_empty": ["titrefr.value", "titreSourceM.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "titreSourceM.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -5347,7 +5347,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -5355,21 +5355,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_FRE+Ti_SourceM+volume+numero+page+annee"
+				"_name": "2 Collation : Ti_50_FRE+Ti_SourceM+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "295",
-		"non_empty": ["titre.value", "titreSourceM.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["title.value", "titreSourceM.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -5381,7 +5381,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -5389,21 +5389,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50+Ti_SourceM+volume+numero+page+annee"
+				"_name": "2 Collation : Ti_50+Ti_SourceM+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "296",
-		"non_empty": ["titreen.value", "titreSourceM.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "titreSourceM.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -5415,7 +5415,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -5423,21 +5423,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_ENG+Ti_SourceM+volume+numero+page+annee"
+				"_name": "2 Collation : Ti_ENG+Ti_SourceM+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "297",
-		"non_empty": ["titrefr.value", "titreSourceM.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "titreSourceM.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -5449,7 +5449,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -5457,21 +5457,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_FRE+Ti_SourceM+volume+numero+page+annee"
+				"_name": "2 Collation : Ti_FRE+Ti_SourceM+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "298",
-		"non_empty": ["titre.value", "titreSourceM.value", "volume.value", "numero.value", "page.value", "datePubli.value"],
+		"non_empty": ["title.value", "titreSourceM.value", "volume.value", "issue.value", "page.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -5483,7 +5483,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -5491,21 +5491,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti+Ti_SourceM+volume+numero+page+annee"
+				"_name": "2 Collation : Ti+Ti_SourceM+volume+issue+page+annee"
 			}
 		}
 	},
 	{
 		"rule": "299",
-		"non_empty": ["titreen.value", "titreSourceM.value", "volume.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "titreSourceM.value", "volume.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized50": "titreen.value"
+						"titleen.normalized50": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -5517,7 +5517,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -5525,21 +5525,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_ENG+Ti_SourceM+volume+numero+numArt+annee"
+				"_name": "2 Collation : Ti_50_ENG+Ti_SourceM+volume+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "300",
-		"non_empty": ["titrefr.value", "titreSourceM.value", "volume.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "titreSourceM.value", "volume.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized50": "titrefr.value"
+						"titlefr.normalized50": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -5551,7 +5551,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -5559,21 +5559,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50_FRE+Ti_SourceM+volume+numero+numArt+annee"
+				"_name": "2 Collation : Ti_50_FRE+Ti_SourceM+volume+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "301",
-		"non_empty": ["titre.value", "titreSourceM.value", "volume.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["title.value", "titreSourceM.value", "volume.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized50": "titre.value"
+						"title.normalized50": "title.value"
 					}
 				}, {
 					"term": {
@@ -5585,7 +5585,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -5593,21 +5593,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_50+Ti_SourceM+volume+numero+numArt+annee"
+				"_name": "2 Collation : Ti_50+Ti_SourceM+volume+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "302",
-		"non_empty": ["titreen.value", "titreSourceM.value", "volume.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titleen.value", "titreSourceM.value", "volume.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titreen.normalized": "titreen.value"
+						"titleen.normalized": "titleen.value"
 					}
 				}, {
 					"term": {
@@ -5619,7 +5619,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -5627,21 +5627,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_ENG+Ti_SourceM+volume+numero+numArt+annee"
+				"_name": "2 Collation : Ti_ENG+Ti_SourceM+volume+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "303",
-		"non_empty": ["titrefr.value", "titreSourceM.value", "volume.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["titlefr.value", "titreSourceM.value", "volume.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titrefr.normalized": "titrefr.value"
+						"titlefr.normalized": "titlefr.value"
 					}
 				}, {
 					"term": {
@@ -5653,7 +5653,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -5661,21 +5661,21 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti_FRE+Ti_SourceM+volume+numero+numArt+annee"
+				"_name": "2 Collation : Ti_FRE+Ti_SourceM+volume+issue+numArt+annee"
 			}
 		}
 	},
 	{
 		"rule": "304",
-		"non_empty": ["titre.value", "titreSourceM.value", "volume.value", "numero.value", "articleNo.value", "datePubli.value"],
+		"non_empty": ["title.value", "titreSourceM.value", "volume.value", "issue.value", "articleNo.value", "publicationDate.value"],
 		"query": {
 			"bool": {
 				"must": [{
 					"term": {
-						"titre.normalized": "titre.value"
+						"title.normalized": "title.value"
 					}
 				}, {
 					"term": {
@@ -5687,7 +5687,7 @@
 					}
 				}, {
 					"term": {
-						"numero.normalized": "numero.value"
+						"issue.normalized": "issue.value"
 					}
 				}, {
 					"term": {
@@ -5695,10 +5695,10 @@
 					}
 				}, {
 					"term": {
-						"datePubli.normalized": "datePubli.value"
+						"publicationDate.normalized": "publicationDate.value"
 					}
 				}],
-				"_name": "2 Collation : Ti+Ti_SourceM+volume+numero+numArt+annee"
+				"_name": "2 Collation : Ti+Ti_SourceM+volume+issue+numArt+annee"
 			}
 		}
 	}

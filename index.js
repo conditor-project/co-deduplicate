@@ -16,7 +16,7 @@ const baseRequest = require('co-config/base_request.json');
 const provider_rules = require('co-config/rules_provider.json');
 //const provider_rules = require('./rules_provider.json');
 const metadata =require('co-config/metadata-xpaths.json');
-const truncateList = ['titre','titrefr','titreen'];
+const truncateList = ['title','titlefr','titleen'];
 const idAlphabet = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_';
 const scriptList = {
   "setIdChain":"ArrayList mergedId = new ArrayList(); mergedId.add(ctx._source.source+':'+ctx._source.idConditor+'!');String idChain ='!'; for (int i=0;i<ctx._source.duplicate.length;i++){mergedId.add(ctx._source.duplicate[i].source+':'+ctx._source.duplicate[i].idConditor+'!') } mergedId.sort(null);for (int j = 0; j<mergedId.length ; j++){ idChain+= mergedId[j] } ctx._source.idChain = idChain ",
@@ -63,7 +63,7 @@ function insereNotice(docObject){
         debug(esConf);
 
         options.body= {
-            'dateCreation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,'')
+            'creationDate': new Date().toISOString().replace(/T/,' ').replace(/\..+/,'')
         };
 
         insertMetadata(docObject, options);
@@ -133,7 +133,7 @@ function aggregeNotice(docObject, data) {
         debug(esConf);
 
         options.body= {
-            'dateCreation': new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
+            'creationDate': new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
         };
 
         insertMetadata(docObject, options);

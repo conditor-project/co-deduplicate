@@ -80,7 +80,7 @@
         }
       },
       "normalizer":{
-        "titre:normalizer":{
+        "title:normalizer":{
           "type": "custom",
           "char_filter":["whitespace_remove","punctuation_remove"],
           "filter":["lowercase","my_asciifolding"]
@@ -95,7 +95,7 @@
           "char_filter":["whitespace_remove","punctuation_remove","trunc_50"],
           "filter":["lowercase","my_asciifolding"]
         },
-        "auteur:normalizer":{
+        "author:normalizer":{
           "type":"custom",
           "char_filter":["whitespace_remove","punctuation_remove"],
           "filter":["lowercase","my_asciifolding"]
@@ -114,11 +114,11 @@
           "char_filter":["spacenum","firstnum"],
           "filter":["lowercase"]
         },
-        "numero:normalizer":{
+        "issue:normalizer":{
           "type":"custom",
           "char_filter":["num"]
         },
-        "datePubli:normalizer":{
+        "publicationDate:normalizer":{
           "type":"custom",
           "char_filter":["annee"]
         }
@@ -142,25 +142,25 @@
           "type":"text",
           "index":false
         },
-        "auteur": {
+        "author": {
           "properties":{
             "value":{
               "type":"text"
             },
             "normalized":{
               "type":"keyword",
-              "normalizer":"auteur:normalizer"
+              "normalizer":"author:normalizer"
             }
           }
         },
-        "auteurInit": {
+        "authorInit": {
           "properties":{
             "value":{
               "type":"text"
             },
             "normalized":{
               "type":"keyword",
-              "normalizer":"auteur:normalizer"
+              "normalizer":"author:normalizer"
             }
           }
         },
@@ -508,14 +508,14 @@
             }
           }
         },
-        "numero": {
+        "issue": {
           "properties":{
             "value":{
               "type":"text"
             },
             "normalized":{
               "type":"keyword",
-              "normalizer":"numero:normalizer"
+              "normalizer":"issue:normalizer"
             }
           }
         },
@@ -533,14 +533,14 @@
         "source": {
           "type": "keyword"
         },
-        "titre": {
+        "title": {
           "properties":{
             "value":{
               "type":"text"
             },
             "normalized":{
               "type":"keyword",
-              "normalizer":"titre:normalizer"
+              "normalizer":"title:normalizer"
             },
             "normalized50":{
               "type":"text",
@@ -552,14 +552,14 @@
             }
           }
         },
-        "titrefr": {
+        "titlefr": {
           "properties":{
             "value":{
               "type":"text"
             },
             "normalized":{
               "type":"keyword",
-              "normalizer":"titre:normalizer"
+              "normalizer":"title:normalizer"
             },
             "normalized50":{
               "type":"text",
@@ -571,14 +571,14 @@
             }
           }
         },
-        "titreen": {
+        "titleen": {
           "properties":{
             "value":{
               "type":"text"
             },
             "normalized":{
               "type":"keyword",
-              "normalizer":"titre:normalizer"
+              "normalizer":"title:normalizer"
             },
             "normalized50":{
               "type":"text",
@@ -648,7 +648,7 @@
             },
             "normalized":{
               "type":"keyword",
-              "normalizer":"titre:normalizer"
+              "normalizer":"title:normalizer"
             }
           }
         },
@@ -659,22 +659,22 @@
             },
             "normalized":{
               "type":"keyword",
-              "normalizer":"titre:normalizer"
+              "normalizer":"title:normalizer"
             }
           }
         },
-        "datePubli": {
+        "publicationDate": {
           "properties":{
             "value":{
               "type":"text"
             },
             "normalized":{
               "type":"keyword",
-              "normalizer":"datePubli:normalizer"
+              "normalizer":"publicationDate:normalizer"
             }
           }
         },
-        "dateCreation":{
+        "creationDate":{
           "type":"date",
           "format": "yyy-MM-dd HH:mm:ss||yyy-MM-dd||epoch_millis"
         }

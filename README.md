@@ -38,7 +38,7 @@ Si vous souhaitez tester les différents filtres, il convient d'interroger Elast
 Prenons en  exemple la normalisation d'un titre, qui est spécifié ainsi dans le mapping  :
 
 ```json
-"titre:normalizer":{
+"title:normalizer":{
   "type": "custom",
   "char_filter":["whitespace_remove","punctuation_remove"],
   "filter":["lowercase","my_asciifolding"]
@@ -48,7 +48,7 @@ Prenons en  exemple la normalisation d'un titre, qui est spécifié ainsi dans l
 Pour le simuler la normalisation d'un titre, il faudra donc envoyer la requête à Elasticsearch la requête suivante :
 
 ```json
-POST /notices/_analyze
+POST /records/_analyze
 {
   "tokenizer": "keyword",
   "char_filter":["whitespace_remove","punctuation_remove"],

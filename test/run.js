@@ -257,7 +257,7 @@ describe(pkg.name + '/index.js', function () {
       esClient.indices.analyze({
         index:esConf.index,
         body:{
-          "field":"titre.normalized",
+          "field":"title.normalized",
           "text":"Voici un test de titre caparaçonner aïoli ! "
         }
       },function(esError,response){
@@ -275,7 +275,7 @@ describe(pkg.name + '/index.js', function () {
       esClient.indices.analyze({
         index:esConf.index,
         body:{
-          "field":"titre.normalized50",
+          "field":"title.normalized50",
           "text":"Alors voyons si on a systematiquement le bon résultat dans la boucle, après tout ça devrait être bon"
         }
       },function(esError,response){
@@ -293,7 +293,7 @@ describe(pkg.name + '/index.js', function () {
       esClient.indices.analyze({
         index:esConf.index,
         body:{
-          "field":"auteur.normalized",
+          "field":"author.normalized",
           "text":"Gérard Philippe, André Gide"
         }
       },function(esError,response){
@@ -360,7 +360,7 @@ describe(pkg.name + '/index.js', function () {
       esClient.indices.analyze({
         index:esConf.index,
         body:{
-          "field":"numero.normalized",
+          "field":"issue.normalized",
           "text":"V14"
         }
       },function(esError,response){
@@ -371,12 +371,12 @@ describe(pkg.name + '/index.js', function () {
         });
 
     });
-    it('datePubli normalizer retourne la bonne valeur',function(done){
+    it('publicationDate normalizer retourne la bonne valeur',function(done){
       
       esClient.indices.analyze({
         index:esConf.index,
         body:{
-          "field":"datePubli.normalized",
+          "field":"publicationDate.normalized",
           "text":"18-11-2012"
         }
       },function(esError,response){
