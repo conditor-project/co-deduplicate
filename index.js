@@ -369,7 +369,7 @@ function interprete(docObject,rule,type){
     //ajout de la précision que les champs doivent exister dans Elasticsearch
     
     _.each(is_empty,(field)=>{
-       let nameField = ''+field;
+       let nameField = ''+field+'.value';
        newQuery.bool.must.push({'match':{nameField :''}});
     });
     
