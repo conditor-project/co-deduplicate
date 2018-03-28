@@ -316,22 +316,25 @@ function dispatch(docObject,data) {
 function testParameter(docObject,rules){
 
     let arrayParameter = rules.non_empty;
-    //let arrayNonParameter = (rules.is_empty!==undefined) ? rules.is_empty : [];
+    let arrayNonParameter = (rules.is_empty!==undefined) ? rules.is_empty : [];
     let bool=true;
     _.each(arrayParameter,function(parameter){
         if (_.get(docObject,parameter)===undefined || _.get(docObject,parameter).trim()===''){ bool = false ;}
     });
-    /**
+    
     _.each(arrayNonParameter,function(nonparameter){
         if (_.get(docObject,nonparameter)!==undefined && _.get(docObject,nonparameter).trim()!==''){ bool = false;}
     })
-     */
+    
     return bool;
 }
 
-function interprete(docObject,query,type){
+function interprete(docObject,rule,type){
     
+    let is_empty = (rules.is_empty!==undefined) ? rules.is_empty : [];
+    let query = rule.query;
     let rulename;
+
     if (type.trim()!==''){
         rulename = type+' : '+query.bool._name;
     }
@@ -362,26 +365,14 @@ function interprete(docObject,query,type){
             return term;
         }
     });
-    let exist=[];
+    
     //ajout de la précision que les champs doivent exister dans Elasticsearch
-    /**
-    _.each(query.bool.must,(rule)=>{
-        if (rule.match){
-            exist=_.union(_.keys(rule.match),exist);
-        }
-        else if (rule.term){
-            exist=_.union(_.keys(rule.term),exist);
-        }
+    
+    _.each(is_empty,(field)=>{
+       let nameField = ''+field;
+       newQuery.bool.must.push({'match':{nameField :''}});
     });
     
-    exist = _.map(exist,(value)=>{
-       return {'exists':{'field':value}};
-    })
-   
-    _.each(exist,(exist_rule)=>{
-        newQuery.bool.must.push(exist_rule);
-    });
-    */
     if (type!==''){
         newQuery.bool.must.push({'match':{'typeConditor.value':type}});
     }
@@ -396,7 +387,7 @@ function buildQuery(docObject,request){
         if (type && type.type && scenario[type.type]){
             _.each(rules,(rule)=>{
                 if (_.indexOf(scenario[type.type],rule.rule)!==-1 && testParameter(docObject,rule)) {
-                        request.query.bool.should.push(interprete(docObject,rule.query,type.type));
+                        request.query.bool.should.push(interprete(docObject,rule,type.type));
                     }
             });
         }
@@ -572,7 +563,7 @@ function getByIdSource(docObject){
 
     _.each(provider_rules,(provider_rule)=>{
         if (docObject.source.trim()===provider_rule.source.trim() && testParameter(docObject,provider_rule.non_empty)){
-            request.query.bool.should.push(interprete(docObject,provider_rule.query,''));
+            request.query.bool.should.push(interprete(docObject,provider_rule,''));
             request_source = {"bool": {
                                 "must":[
                                     {"term": {"source": docObject.source.trim()}}
