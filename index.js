@@ -6,8 +6,10 @@ const es = require('elasticsearch'),
 
 const Promise = require('bluebird');
 const generate = require('nanoid/generate');
+const unidecode = require('unidecode');
 const esConf = require('co-config/es.js');
-const esMapping = require('co-config/mapping.json');
+const esMapping = require('./mapping.json');
+//const esMapping = require('co-config/mapping.json');
 const scenario = require('co-config/scenario.json');
 //const scenario = require('./scenario_newname_suppression.json');
 const rules = require('co-config/rules_certain.json');
@@ -42,13 +44,13 @@ function insertMetadata(docObject, options) {
     _.each(metadata, (metadatum) => {
         if (metadatum.indexed === undefined || metadatum.indexed === true) {
             if (docObject[metadatum.name] && docObject[metadatum.name].value && docObject[metadatum.name].value !== '') {
-                options.body[metadatum.name] = { 'value': docObject[metadatum.name].value, 'normalized': docObject[metadatum.name].value };
+                options.body[metadatum.name] = { 'value': docObject[metadatum.name].value, 'normalized': unidecode(docObject[metadatum.name].value) };
                 if (_.indexOf(truncateList,metadatum.name)!==-1) {
-                    options.body[metadatum.name].normalized50 = docObject[metadatum.name].value;
+                    options.body[metadatum.name].normalized50 = unidecode(docObject[metadatum.name].value);
                 }
             }
             else {
-                options.body[metadatum.name] = docObject[metadatum.name];
+                options.body[metadatum.name] =docObject[metadatum.name];
             }
         }
     });
@@ -148,6 +150,7 @@ function aggregeNotice(docObject, data) {
         options.body.ingestId = docObject.ingestId;
         options.body.ingestBaseName = docObject.ingestBaseName;
         options.body.isDeduplicable = docObject.isDeduplicable;
+
         _.each(docObject.typeConditor,(typeCond)=>{
             options.body.typeConditor.push({'value':typeCond.type,'raw':typeCond.type});
         });
@@ -331,7 +334,7 @@ function testParameter(docObject,rules){
 
 function interprete(docObject,rule,type){
     
-    let is_empty = (rules.is_empty!==undefined) ? rules.is_empty : [];
+    let is_empty = (rule.is_empty!==undefined) ? rule.is_empty : [];
     let query = rule.query;
     let rulename;
 
@@ -353,14 +356,14 @@ function interprete(docObject,rule,type){
         if (value.match){
             match = {'match':null};
             match.match = _.mapValues(value.match,(pattern)=>{
-                return _.get(docObject,pattern);
+                return unidecode(_.get(docObject,pattern));
             });
             return match;
         }
         else if (value.term){
             term = {'term':null};
             term.term = _.mapValues(value.term,(pattern)=>{
-                return _.get(docObject,pattern);
+                return unidecode(_.get(docObject,pattern));
             });
             return term;
         }
@@ -368,14 +371,18 @@ function interprete(docObject,rule,type){
     
     //ajout de la précision que les champs doivent exister dans Elasticsearch
     
+    if (is_empty.length>0) { newQuery.bool.must_not=[]}
+
     _.each(is_empty,(field)=>{
-       let nameField = ''+field+'.value';
-       newQuery.bool.must.push({'match':{nameField :''}});
+        
+       newQuery.bool.must_not.push({'exists':{"field":field.replace('value','normalized')}});
     });
     
     if (type!==''){
         newQuery.bool.must.push({'match':{'typeConditor.value':type}});
     }
+
+
     return newQuery;
   
 }
@@ -403,6 +410,8 @@ function existNotice(docObject){
         let data;
         // construction des règles par scénarii
         request = buildQuery(docObject,request);
+
+        //docObject.query_utile = request;
 
         if (request.query.bool.should.length===0){
             docObject.isDeduplicable = false;
@@ -467,7 +476,6 @@ function getDuplicateByIdChain(docObject,data,result){
 
 function propagateDelete(docObject,data,result){
 
-    
     let options;
     let update;
     let body=[];

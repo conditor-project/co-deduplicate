@@ -33,7 +33,7 @@ let checkAndDeleteIndex = function (cbCheck) {
       console.error(`Problème dans la vérification de l'index ${esConf.index}\n${errorExists.message}`);
       process.exit(1);
     }
-    if (!exists) return cbCheck();
+    if (!exists) { return cbCheck(); }
     esClient.indices.delete({index: esConf.index}, function (errorDelete, responseDelete) {
       if (errorDelete) {
         console.error(`Problème dans la suppression de l'index ${esConf.index}\n${errorDelete.message}`);
@@ -97,7 +97,7 @@ describe(pkg.name + '/index.js', function () {
     it('La notice 1 est intégrée et seule dans l\'index ES', function (done) {
       docObject = testData[0];
       business.doTheJob(docObject = testData[0], function (err) {
-        if (err !== undefined) console.log(err.errMessage);
+        if (err !== undefined) { console.log(err.errMessage); }
         expect(err).to.be.undefined;
         setTimeout(function() {
           esClient.search({
