@@ -11,6 +11,8 @@ node_js:
   - "8"
 before_install:
   - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.1.1.deb && sudo dpkg -i --force-confnew elasticsearch-6.1.1.deb && sudo service elasticsearch start
+  - sudo bin/elasticsearch-plugin install analysis-icu
+  - sudo service elasticsearch start
 notifications:
   email:
     recipients:
