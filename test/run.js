@@ -387,11 +387,22 @@ describe(pkg.name + '/index.js', function () {
         });
 
     });
-
-
   });
 
-// Méthde finale sensée faire du nettoyage après les tests
+
+  describe('#appel à finalJob qui va appeler forcemerge sur l indice', function () {
+
+    it('la commande forcemerge est exécutée sans erreur.',function(done){
+      business.finalJob((err)=>{
+        expect(err).to.be.undefined;
+      });
+
+      done();
+    });
+  });
+
+
+    // Méthde finale sensée faire du nettoyage après les tests
   
   after(function (done) {
     esClient.indices.delete({index: esConf.index}).then(

@@ -744,4 +744,21 @@ business.beforeAnyJob = function(cbBefore) {
 }
 
 
+business.finalJob = function(cbFinal){
+
+    esClient.indices.forcemerge()
+    .catch(err=>{
+        cbFinal(err);
+    })
+    .then(()=>{
+        cbFinal();
+    });
+}
+
+business.afterAllTheJobs=function(cbAfterAll){
+
+    cbAfterAll();
+}
+
+
 module.exports = business;
