@@ -744,7 +744,7 @@ business.beforeAnyJob = function(cbBefore) {
 }
 
 
-business.finalJob = function(cbFinal){
+business.finalJob = function(docObject,cbFinal){
 
     esClient.indices.forcemerge()
     .catch(err=>{
@@ -757,7 +757,21 @@ business.finalJob = function(cbFinal){
 
 business.afterAllTheJobs=function(cbAfterAll){
 
-    cbAfterAll();
+    esClient.snapshots({
+        "index":esConf.index,
+        "body":{
+            "type":"fs",
+            "settings":{
+                "location":"backup_"+new Date().toISOString().replace(/T/,' ').replace(/\..+/,'')
+            }
+        }
+    })
+    .catch(err=>{
+        cbAfterAll(err);
+    })
+    .then(()=>{
+        cbAfterAll();
+    });
 }
 
 
