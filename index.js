@@ -7,6 +7,8 @@ const es = require('elasticsearch'),
 const Promise = require('bluebird');
 const generate = require('nanoid/generate');
 const unidecode = require('unidecode');
+const fse = require('fs-extra');
+const path = require('path');
 const esConf = require('co-config/es.js');
 //const esMapping = require('./mapping.json');
 const esMapping = require('co-config/mapping.json');
@@ -755,21 +757,62 @@ business.finalJob = function(docObject,cbFinal){
     });
 }
 
-business.afterAllTheJobs=function(cbAfterAll){
-
-    esClient.snapshots({
-        "index":esConf.index,
+function createSnapshot(){
+    return esClient.snapshot.create({
+        "repository":esConf.index,
+        "snapshot":"backup_"+esConf.index+new Date().toLocaleString().replace(' ','_').replace(/\..+/,''),
         "body":{
             "type":"fs",
             "settings":{
-                "location":"backup_"+new Date().toISOString().replace(/T/,' ').replace(/\..+/,'')
+                "location":path.join(esConf.backup_path,esConf.index)
             }
         }
-    })
+    });
+}
+
+function getRepository(){
+    return esClient.snapshot.getRepository({
+        "repository":esConf.index,
+        "ignore":[404]
+    });
+}
+
+function createRepository(response){
+    if (response.status===404){
+        return esClient.snapshot.createRepository({
+            "repository":esConf.index,
+            "body":{
+                "type":"fs",
+                "settings":{
+                    "location":path.join(esConf.backup_path,esConf.index)
+                }
+            }
+        })
+        .catch(err=>{
+            throw new Error('Erreur en creation de repository: '+err);
+        });
+    }
+    else {
+        Promise.try(()=>{
+            return true;
+        });
+    }
+}
+
+business.afterAllTheJobs=function(cbAfterAll){
+    getRepository()
+    .then(createRepository)
     .catch(err=>{
+        //console.log(err);
         cbAfterAll(err);
     })
-    .then(()=>{
+    .then(createSnapshot)
+    .catch(err=>{
+        //console.log(err);
+        cbAfterAll(err);
+    })
+    .then((response)=>{
+        //console.log(response);
         cbAfterAll();
     });
 }

@@ -393,7 +393,19 @@ describe(pkg.name + '/index.js', function () {
   describe('#appel à finalJob qui va appeler forcemerge sur l indice', function () {
 
     it('la commande forcemerge est exécutée sans erreur.',function(done){
-      business.finalJob((err)=>{
+      business.finalJob({},(err)=>{
+        expect(err).to.be.undefined;
+      });
+
+      done();
+    });
+  });
+
+
+  describe('#appel à afterAllTheJobs qui va appeler le snapshot sur l indice', function () {
+
+    it('la commande snapshots est exécutée sans erreur.',function(done){
+      business.afterAllTheJobs((err)=>{
         expect(err).to.be.undefined;
       });
 
