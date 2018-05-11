@@ -419,8 +419,8 @@ function interprete(docObject,rule,type){
             return term;
         }
         else if (value.bool){
-            bool = {'bool':null};
-            bool.should = _.map(value.bool.should,(shouldCond)=>{
+            bool = {'bool':{}};
+            bool.bool.should = _.map(value.bool.should,(shouldCond)=>{
                 let shouldTerm,shouldMatch;
                 if (shouldCond.match){
                     shouldMatch = {'match':null};
@@ -437,7 +437,7 @@ function interprete(docObject,rule,type){
                     return shouldTerm;
                 }
             });
-            bool.should.minimum_should_match = 1;
+            bool.bool.minimum_should_match = 1;
             return bool;
         }
     });
@@ -485,7 +485,7 @@ function existNotice(docObject){
         // construction des règles par scénarii
         request = buildQuery(docObject,request);
 
-        //docObject.query_utile = request;
+        docObject.query_utile = request;
 
         if (request.query.bool.should.length===0){
             docObject.isDeduplicable = false;
