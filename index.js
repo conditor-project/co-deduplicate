@@ -485,7 +485,7 @@ function existNotice(docObject){
         // construction des règles par scénarii
         request = buildQuery(docObject,request);
 
-        docObject.query_utile = request;
+        //docObject.query_utile = request;
 
         if (request.query.bool.should.length===0){
             docObject.isDeduplicable = false;
