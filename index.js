@@ -4,14 +4,21 @@ const es = require('elasticsearch'),
     _ = require('lodash'),
     debug = require('debug')('co-deduplicate');
 
+const shingles = false;
 const Promise = require('bluebird');
 const generate = require('nanoid/generate');
 const unidecode = require('unidecode');
 const fse = require('fs-extra');
 const path = require('path');
 const esConf = require('co-config/es.js');
-//const esMapping = require('./mapping.json');
-const esMapping = require('co-config/mapping.json');
+let esMapping;
+if (shingles){
+    esMapping = require('co-config/mapping-shingles.json');
+}
+else {
+    esMapping = require('co-config/mapping.json');
+}
+    
 const scenario = require('co-config/scenario.json');
 //const scenario = require('./scenario_newname_suppression.json');
 const rules = require('co-config/rules_certain.json');
@@ -58,6 +65,22 @@ function insertMetadata(docObject, options) {
     });
 }
 
+function insertMetadataBis(docObject,options){
+    _.each(metadata,(metadatum)=>{
+        if (metadatum.indexed === undefined || metadatum.indexed === true){
+            if (docObject[metadatum.name] && docObject[metadatum.name].value && docObject[metadatum.name].value!==""){
+                options.body[metadatum.name] = docObject[metadatum.name].value;
+            }
+            else if (docObject[metadatum.name] && _.get(docObject[metadatum.name],"value",'')===""){
+                
+            }
+            else if (docObject[metadatum.name]){
+                options.body[metadatum.name] =docObject[metadatum.name];
+            }
+        }
+    });
+}
+
 function insereNotice(docObject){
 
     return Promise.try(()=>{
@@ -70,7 +93,12 @@ function insereNotice(docObject){
             'creationDate': new Date().toISOString().replace(/T/,' ').replace(/\..+/,'')
         };
 
-        insertMetadata(docObject, options);
+        if (shingles){
+            insertMetadataBis(docObject, options);
+        }
+        else {
+            insertMetadata(docObject,options);
+        }
 
         options.body.path = docObject.path;
         options.body.source = docObject.source;
@@ -79,9 +107,18 @@ function insereNotice(docObject){
         options.body.ingestId = docObject.ingestId;
         options.body.ingestBaseName = docObject.ingestBaseName; 
         options.body.isDeduplicable = docObject.isDeduplicable;
-        _.each(docObject.typeConditor,(typeCond)=>{
-            options.body.typeConditor.push({'value':typeCond.type,'raw':typeCond.type});
-        });
+
+        if (shingles){
+            _.each(docObject.typeConditor,(typeCond)=>{
+                options.body.typeConditor.push(typeCond.type);
+            });
+        }
+        else {
+            _.each(docObject.typeConditor,(typeCond)=>{
+                options.body.typeConditor.push({'value':typeCond.type,'raw':typeCond.type});
+            });
+        }
+       
         options.body.idChain = docObject.source+':'+docObject.idConditor+'!';
         docObject.duplicate = [];
         docObject.isDuplicate = false;
@@ -91,7 +128,6 @@ function insereNotice(docObject){
         //console.log('insertion : '+options.body.idHal.value);
         return esClient.index(options);
     });
-
 }
 
 
@@ -140,7 +176,12 @@ function aggregeNotice(docObject, data) {
             'creationDate': new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
         };
 
-        insertMetadata(docObject, options);
+        if (shingles){
+            insertMetadataBis(docObject, options);
+        }
+        else {
+            insertMetadata(docObject,options);
+        }
 
         options.body.path = docObject.path;
         options.body.source = docObject.source;
@@ -153,9 +194,17 @@ function aggregeNotice(docObject, data) {
         options.body.ingestBaseName = docObject.ingestBaseName;
         options.body.isDeduplicable = docObject.isDeduplicable;
 
-        _.each(docObject.typeConditor,(typeCond)=>{
-            options.body.typeConditor.push({'value':typeCond.type,'raw':typeCond.type});
-        });
+        if (shingles){
+            _.each(docObject.typeConditor,(typeCond)=>{
+                options.body.typeConditor.push(typeCond.type);
+            });
+        }
+        else {
+            _.each(docObject.typeConditor,(typeCond)=>{
+                options.body.typeConditor.push({'value':typeCond.type,'raw':typeCond.type});
+            });
+        }
+
         docObject.arrayIdConditor=arrayIdConditor;
         options.body.idChain =_.join(idchain,'');
         docObject.idChain = options.body.idChain;
@@ -354,7 +403,7 @@ function interprete(docObject,rule,type){
     }};
     
     newQuery.bool.must =  _.map(query.bool.must,(value)=>{
-        let term,match;
+        let term,match,bool;
         if (value.match){
             match = {'match':null};
             match.match = _.mapValues(value.match,(pattern)=>{
@@ -369,6 +418,28 @@ function interprete(docObject,rule,type){
             });
             return term;
         }
+        else if (value.bool){
+            bool = {'bool':null};
+            bool.should = _.map(value.bool.should,(shouldCond)=>{
+                let shouldTerm,shouldMatch;
+                if (shouldCond.match){
+                    shouldMatch = {'match':null};
+                    shouldMatch.match = _.mapValues(shouldCond.match,(pattern)=>{
+                        return unidecode(_.get(docObject,pattern));
+                    });
+                    return shouldMatch;
+                }
+                else if (shouldCond.term){
+                    shouldTerm = {'term':null};
+                    shouldTerm.term = _.mapValues(shouldCond.term,(pattern)=>{
+                        return unidecode(_.get(docObject,pattern));
+                    });
+                    return shouldTerm;
+                }
+            });
+            bool.should.minimum_should_match = 1;
+            return bool;
+        }
     });
     
     //ajout de la précision que les champs doivent exister dans Elasticsearch
@@ -376,15 +447,16 @@ function interprete(docObject,rule,type){
     if (is_empty.length>0) { newQuery.bool.must_not=[]}
 
     _.each(is_empty,(field)=>{
-        
        newQuery.bool.must_not.push({'exists':{"field":field.replace('value','normalized')}});
     });
-    
     if (type!==''){
-        newQuery.bool.must.push({'match':{'typeConditor.value':type}});
+        if (shingles){
+            newQuery.bool.must.push({'match':{'typeConditor.normalized':type}});
+        }
+        else {
+            newQuery.bool.must.push({'match':{'typeConditor.value':type}});
+        }
     }
-
-
     return newQuery;
   
 }
