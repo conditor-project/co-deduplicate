@@ -4,20 +4,14 @@ const es = require('elasticsearch'),
     _ = require('lodash'),
     debug = require('debug')('co-deduplicate');
 
-const shingles = false;
 const Promise = require('bluebird');
 const generate = require('nanoid/generate');
 const unidecode = require('unidecode');
 const fse = require('fs-extra');
 const path = require('path');
 const esConf = require('co-config/es.js');
-let esMapping;
-if (shingles){
-    esMapping = require('co-config/mapping-shingles.json');
-}
-else {
-    esMapping = require('co-config/mapping.json');
-}
+let esMapping = require('co-config/mapping-shingles.json');
+
     
 const scenario = require('co-config/scenario.json');
 //const scenario = require('./scenario_newname_suppression.json');
@@ -49,33 +43,14 @@ const esClient = new es.Client({
 const business = {};
 
 
-function insertMetadata(docObject, options) {
-    _.each(metadata, (metadatum) => {
-        if (metadatum.indexed === undefined || metadatum.indexed === true) {
-            if (docObject[metadatum.name] && docObject[metadatum.name].value && docObject[metadatum.name].value !== '') {
-                options.body[metadatum.name] = { 'value': docObject[metadatum.name].value, 'normalized': unidecode(docObject[metadatum.name].value) };
-                if (_.indexOf(truncateList,metadatum.name)!==-1) {
-                    options.body[metadatum.name].normalized50 = unidecode(docObject[metadatum.name].value);
-                }
-            }
-            else {
-                options.body[metadatum.name] =docObject[metadatum.name];
-            }
-        }
-    });
-}
-
-function insertMetadataBis(docObject,options){
+function insertMetadata(docObject,options){
     _.each(metadata,(metadatum)=>{
         if (metadatum.indexed === undefined || metadatum.indexed === true){
-            if (docObject[metadatum.name] && docObject[metadatum.name].value && docObject[metadatum.name].value!==""){
+            if (_.isArray(docObject[metadatum.name])){
+                options.body[metadatum.name] = docObject[metadatum.name];
+            }
+            else if (_.isObject(docObject[metadatum.name]) && !_.isEmpty(docObject[metadatum.name].value)){
                 options.body[metadatum.name] = docObject[metadatum.name].value;
-            }
-            else if (docObject[metadatum.name] && _.get(docObject[metadatum.name],"value",'')===""){
-                
-            }
-            else if (docObject[metadatum.name]){
-                options.body[metadatum.name] =docObject[metadatum.name];
             }
         }
     });
@@ -93,12 +68,9 @@ function insereNotice(docObject){
             'creationDate': new Date().toISOString().replace(/T/,' ').replace(/\..+/,'')
         };
 
-        if (shingles){
-            insertMetadataBis(docObject, options);
-        }
-        else {
-            insertMetadata(docObject,options);
-        }
+        
+        insertMetadata(docObject,options);
+        
 
         options.body.path = docObject.path;
         options.body.source = docObject.source;
@@ -108,23 +80,18 @@ function insereNotice(docObject){
         options.body.ingestBaseName = docObject.ingestBaseName; 
         options.body.isDeduplicable = docObject.isDeduplicable;
 
-        if (shingles){
-            _.each(docObject.typeConditor,(typeCond)=>{
-                options.body.typeConditor.push(typeCond.type);
-            });
-        }
-        else {
-            _.each(docObject.typeConditor,(typeCond)=>{
-                options.body.typeConditor.push({'value':typeCond.type,'raw':typeCond.type});
-            });
-        }
+        
+        _.each(docObject.typeConditor,(typeCond)=>{
+            options.body.typeConditor.push(typeCond.type);
+        });
+       
        
         options.body.idChain = docObject.source+':'+docObject.idConditor+'!';
         docObject.duplicate = [];
         docObject.isDuplicate = false;
         options.body.duplicate = docObject.duplicate;
         options.body.isDuplicate = docObject.isDuplicate;
-
+        //console.dir(options,10);
         //console.log('insertion : '+options.body.idHal.value);
         return esClient.index(options);
     });
@@ -176,12 +143,9 @@ function aggregeNotice(docObject, data) {
             'creationDate': new Date().toISOString().replace(/T/,' ').replace(/\..+/,''),
         };
 
-        if (shingles){
-            insertMetadataBis(docObject, options);
-        }
-        else {
-            insertMetadata(docObject,options);
-        }
+        
+        insertMetadata(docObject,options);
+        
 
         options.body.path = docObject.path;
         options.body.source = docObject.source;
@@ -194,16 +158,11 @@ function aggregeNotice(docObject, data) {
         options.body.ingestBaseName = docObject.ingestBaseName;
         options.body.isDeduplicable = docObject.isDeduplicable;
 
-        if (shingles){
-            _.each(docObject.typeConditor,(typeCond)=>{
-                options.body.typeConditor.push(typeCond.type);
-            });
-        }
-        else {
-            _.each(docObject.typeConditor,(typeCond)=>{
-                options.body.typeConditor.push({'value':typeCond.type,'raw':typeCond.type});
-            });
-        }
+        
+        _.each(docObject.typeConditor,(typeCond)=>{
+            options.body.typeConditor.push(typeCond.type);
+        });
+        
 
         docObject.arrayIdConditor=arrayIdConditor;
         options.body.idChain =_.join(idchain,'');
@@ -447,15 +406,12 @@ function interprete(docObject,rule,type){
     if (is_empty.length>0) { newQuery.bool.must_not=[]}
 
     _.each(is_empty,(field)=>{
-       newQuery.bool.must_not.push({'exists':{"field":field.replace('value','normalized')}});
+       newQuery.bool.must_not.push({'exists':{"field":field}});
     });
     if (type!==''){
-        if (shingles){
-            newQuery.bool.must.push({'match':{'typeConditor.normalized':type}});
-        }
-        else {
-            newQuery.bool.must.push({'match':{'typeConditor.value':type}});
-        }
+        
+        newQuery.bool.must.push({'match':{'typeConditor.normalized':type}});
+       
     }
     return newQuery;
   
