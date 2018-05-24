@@ -406,7 +406,7 @@ function interprete(docObject,rule,type){
     if (is_empty.length>0) { newQuery.bool.must_not=[]}
 
     _.each(is_empty,(field)=>{
-       newQuery.bool.must_not.push({'exists':{"field":field}});
+       newQuery.bool.must_not.push({'exists':{"field":field+".normalized"}});
     });
     if (type!==''){
         
