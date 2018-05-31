@@ -10,6 +10,7 @@ const unidecode = require('unidecode');
 const fse = require('fs-extra');
 const path = require('path');
 const esConf = require('co-config/es.js');
+//let esMapping = require('./mapping-shingles.json');
 let esMapping = require('co-config/mapping-shingles.json');
 
     
