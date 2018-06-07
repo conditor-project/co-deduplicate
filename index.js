@@ -329,15 +329,25 @@ function dispatch(docObject,data) {
 
 function testParameter(docObject,rules){
 
-    let arrayParameter = rules.non_empty;
+    if (docObject.source === "hal"){
+        let x = 0;
+    }
+    let arrayParameter = (rules.non_empty!==undefined) ? rules.non_empty : [];
     let arrayNonParameter = (rules.is_empty!==undefined) ? rules.is_empty : [];
     let bool=true;
     _.each(arrayParameter,function(parameter){
-        if (_.get(docObject,parameter)===undefined || _.get(docObject,parameter).trim()===''){ bool = false ;}
+        if (_.get(docObject,parameter)===undefined || 
+        (_.isArray(_.get(docObject,parameter) && _.get(docObject,parameter).length === 0)) ||
+        (_.isString(_.get(docObject,parameter)) && _.get(docObject,parameter).trim()===''))
+        { bool = false ;}
     });
     
     _.each(arrayNonParameter,function(nonparameter){
-        if (_.get(docObject,nonparameter)!==undefined && _.get(docObject,nonparameter).trim()!==''){ bool = false;}
+        if (_.get(docObject,nonparameter)!==undefined && 
+        ((_.isArray(_.get(docObject,nonparameter)) && _.get(docObject,nonparameter).length > 0) ||
+        (_.isString(_.get(docObject,nonparameter)) && _.get(docObject,nonparameter).trim()!=='') 
+            ))
+         { bool = false;}
     })
     
     return bool;
@@ -364,32 +374,55 @@ function interprete(docObject,rule,type){
     
     newQuery.bool.must =  _.map(query.bool.must,(value)=>{
         let term,match,bool;
-        if (value.match){
+        
+        if (value.match && _.isString(_.get(docObject,_.values(value.match)[0]))){
             match = {'match':null};
             match.match = _.mapValues(value.match,(pattern)=>{
                 return unidecode(_.get(docObject,pattern));
             });
             return match;
         }
-        else if (value.term){
+        else if (value.term && _.isString(_.get(docObject,_.values(value.term)[0]))){
             term = {'term':null};
             term.term = _.mapValues(value.term,(pattern)=>{
                 return unidecode(_.get(docObject,pattern));
             });
             return term;
         }
+        else if (value.match && _.isArray(_.get(docObject,_.values(value.match)[0]))){
+            bool = {'bool':{}};
+            bool.bool.should = _.map(_.get(docObject,_.values(value.match)[0]),(testValue)=>{
+                let shouldMatch;
+                shouldMatch={'match':{}};
+                shouldMatch.match[_.values(value.match)[0]] = unidecode(testValue); 
+                return shouldMatch;
+            });
+            bool.bool.minimum_should_match = 1;
+            return bool;
+        }
+        else if (value.term && _.isArray(_.get(docObject,_.values(value.term)[0]))){
+            bool = {'bool':{}};
+            bool.bool.should = _.map(_.get(docObject,_.values(value.term)[0]),(testValue)=>{
+                let shouldMatch;
+                shouldMatch={'term':{}};
+                shouldMatch.match[_.values(value.term)[0]] = unidecode(testValue);
+                return shouldMatch;
+            });
+            bool.bool.minimum_should_match = 1;
+            return bool;
+        }
         else if (value.bool){
             bool = {'bool':{}};
             bool.bool.should = _.map(value.bool.should,(shouldCond)=>{
                 let shouldTerm,shouldMatch;
-                if (shouldCond.match){
+                if (shouldCond.match && _.isString(_.get(docObject,_.values(shouldCond.match)[0]))){
                     shouldMatch = {'match':null};
                     shouldMatch.match = _.mapValues(shouldCond.match,(pattern)=>{
                         return unidecode(_.get(docObject,pattern));
                     });
                     return shouldMatch;
                 }
-                else if (shouldCond.term){
+                else if (shouldCond.term && _.isString(_.get(docObject,_.values(shouldCond.term)[0]))){
                     shouldTerm = {'term':null};
                     shouldTerm.term = _.mapValues(shouldCond.term,(pattern)=>{
                         return unidecode(_.get(docObject,pattern));
@@ -442,7 +475,7 @@ function existNotice(docObject){
         // construction des règles par scénarii
         request = buildQuery(docObject,request);
 
-        //docObject.query_utile = request;
+        docObject.query_utile = request;
 
         if (request.query.bool.should.length===0){
             docObject.isDeduplicable = false;
@@ -601,7 +634,7 @@ function getByIdSource(docObject){
     let data;
 
     _.each(provider_rules,(provider_rule)=>{
-        if (docObject.source.trim()===provider_rule.source.trim() && testParameter(docObject,provider_rule.non_empty)){
+        if (docObject.source.trim()===provider_rule.source.trim() && testParameter(docObject,provider_rule)){
             request.query.bool.should.push(interprete(docObject,provider_rule,''));
             request_source = {"bool": {
                                 "must":[
