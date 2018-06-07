@@ -78,7 +78,7 @@
     ],
     "titreSource":""
     ,
-    "publicationDate":""
+    "publicationDate":"2014"
     ,
     "typeConditor":[{"type":"Article"}],
     "path":"/applis/istex/li/corpus-resources-conditor/notice-1.xml",
@@ -149,7 +149,7 @@
       ""
     ,
     "publicationDate":
-      ""
+      "2014"
     ,
     "typeConditor":[{"type":"Article"}],
     "path":"/applis/istex/li/corpus-resources-conditor/notice-2.xml",
@@ -232,12 +232,10 @@
       "ART"
     ],
     "titreSource":
-      "",
-      "normalized":""
+      ""
     ,
     "publicationDate":
-      "",
-      "normalized":""
+      "2014"
     ,
     "typeConditor":[{"type":"Article"}],
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
@@ -320,12 +318,10 @@
       "ART"
     ],
     "titreSource":
-      "",
-      "normalized":""
+      ""
     ,
     "publicationDate":
-      "",
-      "normalized":""
+      "2014"
     ,
     "typeConditor":[{"type":"Article"}],
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
@@ -408,12 +404,11 @@
       "ART"
     ],
     "titreSource":
-      "",
-      "normalized":""
+      ""
     ,
     "publicationDate":
-      "",
-      "normalized":""
+      "2014"
+
     ,
     "typeConditor":[{"type":"Article"}],
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
@@ -499,7 +494,7 @@
       ""
     ,
     "publicationDate":
-      ""
+      "2014"
     ,
     "typeConditor":[{"type":"Article"}],
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
@@ -548,6 +543,10 @@
     "eissn":
       "1367-4803"
     ,
+    "xissn":[
+      "1367-4804",
+      "1367-4803"
+    ],
     "isbn":
       "1367-4803"
     ,
@@ -585,7 +584,7 @@
       ""
     ,
     "publicationDate":
-      ""
+      "2014"
     ,
     "typeConditor":[{"type":"Article"}],
     "path":"/applis/istex/li/corpus-resources-conditor/notice-7.xml",
@@ -633,6 +632,10 @@
     "eissn":
       "1367-4803"
     ,
+    "xissn":[
+      "1367-4804",
+      "1367-4803"
+    ],
     "isbn":
       "1367-4803"
     ,
@@ -670,7 +673,7 @@
       ""
     ,
     "publicationDate":
-      ""
+      "2014"
     ,
     "typeConditor":[{"type":"Article"}],
     "path":"/applis/istex/li/corpus-resources-conditor/notice-7.xml",
