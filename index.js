@@ -29,7 +29,9 @@ const scriptList = {
   "setIsDuplicate":"if (ctx._source.duplicate == null || ctx._source.duplicate.length == 0 ) { ctx._source.isDuplicate = false } else { ctx._source.isDuplicate = true }",
   "addDuplicate":"if (ctx._source.duplicate == null || ctx._source.duplicate.length==0){ ctx._source.duplicate = params.duplicate } else { if (!ctx._source.duplicate.contains(params.duplicate[0])) {ctx._source.duplicate.add(params.duplicate[0])}} ",
   "removeDuplicate":"ArrayList newDuplicate = new ArrayList() ; if (ctx._source.duplicate != null && ctx._source.duplicate.length>0){int length = ctx._source.duplicate.length; for (int i=0;i<length;i++){ if (ctx._source.duplicate[i].idConditor!=params.idConditor){ newDuplicate.add(ctx._source.duplicate[i])}}} ctx._source.duplicate=newDuplicate;",
-  "setDuplicateRules":"ArrayList mergedRules = new ArrayList(); for (int i=0;i<ctx._source.duplicate.length;i++) { for (int j = 0 ; j < ctx._source.duplicate[i].rules.length; j++){ if (!mergedRules.contains(ctx._source.duplicate[i].rules[j])) mergedRules.add(ctx._source.duplicate[i].rules[j]); }} mergedRules.sort(null); ctx._source.duplicateRules = mergedRules; "
+  "setDuplicateRules":"ArrayList mergedRules = new ArrayList(); for (int i=0;i<ctx._source.duplicate.length;i++) { for (int j = 0 ; j < ctx._source.duplicate[i].rules.length; j++){ if (!mergedRules.contains(ctx._source.duplicate[i].rules[j])) mergedRules.add(ctx._source.duplicate[i].rules[j]); }} mergedRules.sort(null); ctx._source.duplicateRules = mergedRules; ",
+  "addEmptyDuplicate":"boolean present=false;for (int i=0;i<ctx._source.duplicate.length;i++){ if ( ctx._source.duplicate[i].idConditor == params.idConditor ) { present = true}} if ( !present ){ ctx._source.duplicate.add(params.duplicate[0]) } ",
+  "setHadTransDuplicate":"boolean hadTransDuplicate=false;for (int i=0;i<ctx._source.duplicate.length;i++){ if (ctx._source.duplicate[i].rules.length==0){ hadTransDuplicate = true }} ctx._source.hadTransDuplicate = hadTransDuplicate "
 };
 
 
@@ -179,16 +181,39 @@ function propagate(docObject,data,result){
     let update;
     let body=[];
     let option;
-    let arrayDuplicate;
-    let allMatchedRules;
-    let propagateRequest;
     let matched_queries;
 
     //console.log('nombre de resultat à la recherche par idConditor :'+result.hits.total);
+    // On crée une liaison par défaut entre tous les duplicats trouvés
+    _.each(result.hits.hits,(hit_target)=>{
+        options={update:{_index:esConf.index,_type:esConf.type,_id:hit_target._id},retry_on_conflict:3};
+        _.each(result.hits.hits,(hit_source)=>{
+            if (hit_target._source.idConditor!==hit_source._source.idConditor){
+                
+                update={script:
+                    {lang:"painless",
+                    source:scriptList.addEmptyDuplicate,
+                    params:{duplicate:[{
+                        idConditor:hit_source._source.idConditor,
+                        rules:[],
+                        ingestId:hit_source._source.ingestId,
+                        source: hit_source._source.source}],
+                        idConditor:hit_source._source.idConditor
+                    }},
+                    refresh:true
+                    
+                };
+                
+                body.push(options);
+                body.push(update);
+
+            }
+        });
+    });
 
     _.each(result.hits.hits,(hit)=>{
 
-        matched_queries = undefined;
+        matched_queries = [];
         
         _.each(docObject.duplicate,(directDuplicate)=>{
             if (directDuplicate.idConditor === hit._source.idConditor) { matched_queries = directDuplicate.rules; }
@@ -208,36 +233,21 @@ function propagate(docObject,data,result){
 
 
         if (hit._source.idConditor !== docObject.idConditor){
-            if (matched_queries!==undefined){
-                update={script:
-                    {lang:"painless",
-                    source:scriptList.addDuplicate,
-                    params:{duplicate:[{
-                            idConditor:docObject.idConditor,
-                            rules:matched_queries,
-                            ingestId:docObject.ingestId,
-                            source: docObject.source
-                        }],
-                    }},refresh:true
-                };
-                body.push(options);
-                body.push(update);
+           
+            update={script:
+                {lang:"painless",
+                source:scriptList.addDuplicate,
+                params:{duplicate:[{
+                        idConditor:docObject.idConditor,
+                        rules:matched_queries,
+                        ingestId:docObject.ingestId,
+                        source: docObject.source
+                    }],
+                }},refresh:true
+            };
+            body.push(options);
+            body.push(update);
 
-            }
-            else {
-                update={script:
-                    {lang:"painless",
-                    source:scriptList.addDuplicate,
-                    params:{duplicate:[{
-                            idConditor:docObject.idConditor,
-                            ingestId:docObject.ingestId,
-                            source: docObject.source
-                        }],
-                    }},refresh:true
-                };
-                body.push(options);
-                body.push(update);
-            }
         }
 
         update={script:
@@ -268,7 +278,27 @@ function propagate(docObject,data,result){
         body.push(options);
         body.push(update);
 
+        update={script:
+            {lang:"painless",
+            source:scriptList.setHadTransDuplicate,
+            },refresh:true
+        };
+
+        body.push(options);
+        body.push(update);
+
     });
+
+    options={update:{_index:esConf.index,_type:esConf.type,_id:docObject.idElasticsearch,retry_on_conflict:3}};
+    update={script:
+        {lang:"painless",
+        source:scriptList.setHadTransDuplicate,
+        },refresh:true
+    };
+
+    body.push(options);
+    body.push(update);
+
     option={body:body};
     
     return esClient.bulk(option);
@@ -319,6 +349,7 @@ function dispatch(docObject,data) {
             return aggregeNotice(docObject,data)
                     .then(getDuplicateByIdConditor.bind(null,docObject,data))
                     .then(propagate.bind(null,docObject,data))
+                    //.then(inspectResult)
                     .catch((err)=>{
                         if (err) { throw new Error('Erreur d aggregation de notice: '+err);}
                     });
@@ -329,9 +360,6 @@ function dispatch(docObject,data) {
 
 function testParameter(docObject,rules){
 
-    if (docObject.source === "hal"){
-        let x = 0;
-    }
     let arrayParameter = (rules.non_empty!==undefined) ? rules.non_empty : [];
     let arrayNonParameter = (rules.is_empty!==undefined) ? rules.is_empty : [];
     let bool=true;

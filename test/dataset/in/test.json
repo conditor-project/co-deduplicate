@@ -678,5 +678,405 @@
     "typeConditor":[{"type":"Article"}],
     "path":"/applis/istex/li/corpus-resources-conditor/notice-7.xml",
     "source":"hal"
+  },
+  {
+    "creationDate": "2018-06-11 12:58:24",
+    "title": "Sensitivity Analysis of the New Sizing Tool 'PISTACHE' for Solar Heating, Cooling and Domestic Hot Water Systems",
+    "titleen": "Sensitivity Analysis of the New Sizing Tool “PISTACHE” for Solar Heating, Cooling and Domestic Hot Water Systems",
+    "author": "Semmari Hamza Marc Olivier Praene Jean-Philippe",
+    "authorFull": "Semmari Hamza Marc Olivier Praene Jean-Philippe Le Denn Amandine Boudéhenn François Lucas Franck",
+    "authorInit": "Semmari H Marc O Praene J-P",
+    "authorRef": [
+      {
+        "surname": "Semmari",
+        "forename": "Hamza",
+        "halAuthorId": "1167161",
+        "researcherId": "",
+        "affiliations": [],
+        "idRef": [],
+        "isni": [],
+        "orcid": [],
+        "viaf": []
+      },
+      {
+        "surname": "Marc",
+        "forename": "Olivier",
+        "halAuthorId": "523032",
+        "researcherId": "",
+        "affiliations": [
+          {
+            "ref": "#struct-209018",
+            "adresse": ""
+          }
+        ],
+        "idRef": [],
+        "isni": [],
+        "orcid": [],
+        "viaf": []
+      },
+      {
+        "surname": "Praene",
+        "forename": "Jean-Philippe",
+        "halAuthorId": "872752",
+        "researcherId": "",
+        "affiliations": [
+          {
+            "ref": "#struct-209018",
+            "adresse": ""
+          }
+        ],
+        "idRef": [],
+        "isni": [],
+        "orcid": [],
+        "viaf": []
+      },
+      {
+        "surname": "Le Denn",
+        "forename": "Amandine",
+        "halAuthorId": "1167163",
+        "researcherId": "",
+        "affiliations": [],
+        "idRef": [],
+        "isni": [],
+        "orcid": [],
+        "viaf": []
+      },
+      {
+        "surname": "Boudéhenn",
+        "forename": "François",
+        "halAuthorId": "1167164",
+        "researcherId": "",
+        "affiliations": [
+          {
+            "ref": "#struct-40221",
+            "adresse": ""
+          }
+        ],
+        "idRef": [],
+        "isni": [],
+        "orcid": [],
+        "viaf": []
+      },
+      {
+        "surname": "Lucas",
+        "forename": "Franck",
+        "halAuthorId": "717836",
+        "researcherId": "",
+        "affiliations": [
+          {
+            "ref": "#struct-209018",
+            "adresse": ""
+          }
+        ],
+        "idRef": [],
+        "isni": [],
+        "orcid": [],
+        "viaf": []
+      }
+    ],
+    "issn": [
+      "1876-6102"
+    ],
+    "eissn": [],
+    "xissn": [
+      "1876-6102"
+    ],
+    "isbn": [],
+    "doi": "10.1016/j.egypro.2014.02.114",
+    "page": "alainbastide",
+    "volume": "48",
+    "idHal": "hal-01153024",
+    "halAuthorId": [
+      "1167161",
+      "523032",
+      "872752",
+      "1167163",
+      "1167164",
+      "717836"
+    ],
+    "orcId": [],
+    "researcherId": [],
+    "viaf": [],
+    "publicationDate": "2014",
+    "titreSourceJ": "Energy Procedia",
+    "typeDocument": [
+      "ART"
+    ],
+    "isni": [],
+    "path": "/applis/conditor/home/input/hal/HAL_2018-06-11_1/FICHIERS_TEI/hal-01153024.xml",
+    "source": "hal",
+    "typeConditor": [
+      {"type":"Article"}
+    ],
+    "ingestId": "HAL_2018-06-11_1"
+  },
+  {
+    "title": "Sensitivity analysis of the new sizing tool 'pISTACHE' for solar heating, cooling and domestic hot water systems",
+    "titleen": "Sensitivity analysis of the new sizing tool \"pISTACHE\" for solar heating, cooling and domestic hot water systems",
+    "author": "Semmari Hamza Marc Olivier Praene Jean-Philippe",
+    "authorFull": "Semmari Hamza Marc Olivier Praene Jean-Philippe Le Denn Amandine Boudéhenn François Lucas Franck",
+    "authorInit": "Semmari H Marc O Praene J-P",
+    "authorRef": [
+      {
+        "surname": "Semmari",
+        "forename": "Hamza",
+        "halAuthorId": "1167161",
+        "researcherId": "",
+        "affiliations": [],
+        "idRef": [],
+        "isni": [],
+        "orcid": [],
+        "viaf": []
+      },
+      {
+        "surname": "Marc",
+        "forename": "Olivier",
+        "halAuthorId": "523032",
+        "researcherId": "",
+        "affiliations": [
+          {
+            "ref": "#struct-209018",
+            "adresse": ""
+          }
+        ],
+        "idRef": [],
+        "isni": [],
+        "orcid": [],
+        "viaf": []
+      },
+      {
+        "surname": "Praene",
+        "forename": "Jean-Philippe",
+        "halAuthorId": "872752",
+        "researcherId": "",
+        "affiliations": [
+          {
+            "ref": "#struct-209018",
+            "adresse": ""
+          }
+        ],
+        "idRef": [],
+        "isni": [],
+        "orcid": [],
+        "viaf": []
+      },
+      {
+        "surname": "Le Denn",
+        "forename": "Amandine",
+        "halAuthorId": "1167163",
+        "researcherId": "",
+        "affiliations": [],
+        "idRef": [],
+        "isni": [],
+        "orcid": [],
+        "viaf": []
+      },
+      {
+        "surname": "Boudéhenn",
+        "forename": "François",
+        "halAuthorId": "1167164",
+        "researcherId": "",
+        "affiliations": [
+          {
+            "ref": "#struct-40221",
+            "adresse": ""
+          }
+        ],
+        "idRef": [],
+        "isni": [],
+        "orcid": [],
+        "viaf": []
+      },
+      {
+        "surname": "Lucas",
+        "forename": "Franck",
+        "halAuthorId": "717836",
+        "researcherId": "",
+        "affiliations": [
+          {
+            "ref": "#struct-209018",
+            "adresse": ""
+          }
+        ],
+        "idRef": [],
+        "isni": [],
+        "orcid": [],
+        "viaf": []
+      }
+    ],
+    "issn": [
+      "1876-6102"
+    ],
+    "eissn": [],
+    "xissn": [
+      "1876-6102"
+    ],
+    "isbn": [],
+    "page": "997 – 1006",
+    "volume": "48",
+    "idHal": "hal-01167197",
+    "halAuthorId": [
+      "1167161",
+      "523032",
+      "872752",
+      "1167163",
+      "1167164",
+      "717836"
+    ],
+    "orcId": [],
+    "researcherId": [],
+    "viaf": [],
+    "publicationDate": "2014",
+    "titreSourceJ": "Energy Procedia",
+    "abstract": "The present paper studies the sensitivity analysis of the new PISTACHE tool’s prediction performance and its input parameters. This work is a part of the R&D project MeGaPICS (Method towards Guarantee of Solar Cooling and Heating application – funded by the French National Research Agency). In fact, the PISTACHE tool was developed to provide professionals with a practical tool to design and to estimate the performances of different solar heating and cooling systems. After a short description of the PISTACHE tool, its validation is performed followed by a sensitivity analysis which is conducted using the method of Fourier Amplitude Sensitivity Test (FAST). The obtained results will be displayed and discussed at the end of this paper.",
+    "typeDocument": [
+      "ART"
+    ],
+    "isni": [],
+    "path": "/applis/conditor/home/input/hal/HAL_2018-06-11_1/FICHIERS_TEI/hal-01167197.xml",
+    "source": "hal",
+    "typeConditor": [
+      {"type":"Article"}
+    ],
+    "ingestId": "HAL_2018-06-11_1"
+    
+  },
+  {
+    "title": "Sensitivity analysis of the new sizing tool 'PISTACHE' for solar heating, cooling and domestic hot water systems",
+    "titleen": "Sensitivity analysis of the new sizing tool 'PISTACHE' for solar heating, cooling and domestic hot water systems",
+    "meetingTitle": "2nd International Conference on Solar Heating and Cooling for Buildings and Industry (SHC)",
+    "author": "Semmari Hamza Marc Olivier Praene Jean-Philippe",
+    "authorFull": "Semmari Hamza Marc Olivier Praene Jean-Philippe Le Denn Amandine Boudehenn Francois Lucas Franck",
+    "authorInit": "Semmari H Marc O Praene J-P",
+    "authorRef": [
+      {
+        "surname": "Semmari",
+        "forename": "Hamza",
+        "halAuthorId": "",
+        "researcherId": "",
+        "affiliations": [
+          {
+            "ref": "",
+            "adresse": ""
+          }
+        ],
+        "idRef": [],
+        "isni": [],
+        "orcid": [],
+        "viaf": []
+      },
+      {
+        "surname": "Marc",
+        "forename": "Olivier",
+        "halAuthorId": "",
+        "researcherId": "",
+        "affiliations": [
+          {
+            "ref": "",
+            "adresse": ""
+          }
+        ],
+        "idRef": [],
+        "isni": [],
+        "orcid": [],
+        "viaf": []
+      },
+      {
+        "surname": "Praene",
+        "forename": "Jean-Philippe",
+        "halAuthorId": "",
+        "researcherId": "",
+        "affiliations": [
+          {
+            "ref": "",
+            "adresse": ""
+          }
+        ],
+        "idRef": [],
+        "isni": [],
+        "orcid": [],
+        "viaf": []
+      },
+      {
+        "surname": "Le Denn",
+        "forename": "Amandine",
+        "halAuthorId": "",
+        "researcherId": "",
+        "affiliations": [
+          {
+            "ref": "",
+            "adresse": ""
+          }
+        ],
+        "idRef": [],
+        "isni": [],
+        "orcid": [],
+        "viaf": []
+      },
+      {
+        "surname": "Boudehenn",
+        "forename": "Francois",
+        "halAuthorId": "",
+        "researcherId": "",
+        "affiliations": [
+          {
+            "ref": "",
+            "adresse": ""
+          }
+        ],
+        "idRef": [],
+        "isni": [],
+        "orcid": [],
+        "viaf": []
+      },
+      {
+        "surname": "Lucas",
+        "forename": "Franck",
+        "halAuthorId": "",
+        "researcherId": "",
+        "affiliations": [
+          {
+            "ref": "",
+            "adresse": ""
+          }
+        ],
+        "idRef": [],
+        "isni": [],
+        "orcid": [],
+        "viaf": []
+      }
+    ],
+    "issn": [
+      "1876-6102"
+    ],
+    "eissn": [],
+    "xissn": [
+      "1876-6102"
+    ],
+    "isbn": [],
+    "doi": "10.1016/j.egypro.2014.02.114",
+    "ut": "000345410700113",
+    "page": "997-1006",
+    "volume": "48",
+    "halAuthorId": [],
+    "orcId": [],
+    "researcherId": [],
+    "viaf": [],
+    "publicationDate": "2014",
+    "titreSourceM": "PROCEEDINGS OF THE 2ND INTERNATIONAL CONFERENCE ON SOLAR HEATING AND COOLING FOR BUILDINGS AND INDUSTRY (SHC 2013)",
+    "titreSourceJ": "ENERGY PROCEDIA",
+    "abstract": "The present paper studies the sensitivity analysis of the new PISTACHE tool's prediction performance and its input parameters. This work is a part of the R&D project MeGaPICS (Method towards Guarantee of Solar Cooling and Heating application funded by the French National Research Agency). In fact, the PISTACHE tool was developed to provide professionals with a practical tool to design and to estimate the performances of different solar heating and cooling systems. After a short description of the PISTACHE tool, its validation is performed followed by a sensitivity analysis which is conducted using the method of Fourier Amplitude Sensitivity Test (FAST). The obtained results will be displayed and discussed at the end of this paper. (C) 2014 The Authors. Published by Elsevier Ltd",
+    "typeDocument": [
+      "Proceedings Paper"
+    ],
+    "isni": [],
+    "path": "/applis/conditor/home/input/wos/WOS_2018-06-11_1/FICHIERS_TEI/000345410700113.xml",
+    "source": "wos",
+    "typeConditor": [
+      {"type":"Conférence"},
+      {"type":"Article"}
+    ],
+    "ingestId": "WOS_2018-06-11_1"
   }
+
 ]

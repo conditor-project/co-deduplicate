@@ -248,6 +248,78 @@ describe(pkg.name + '/index.js', function () {
         }, 300);
       });
     });
+    it('La notice 9 matche bien', function (done) {
+      docObject = testData[8];
+      let goodCall;
+      business.doTheJob(docObject, function (err) {
+        expect(err).to.be.undefined;
+        //expect(docObject.conditor_ident).to.be.equal(99);
+        setTimeout(function() {
+          esClient.search({
+            index: esConf.index
+          }, function (esError, response) {
+            expect(esError).to.be.undefined;
+            
+            expect(response.hits.total).to.be.equal(8);
+            /**
+            _.each(response.hits.hits,(hit)=>{
+              if (hit._source.source.length===1) goodCall=hit;
+            });
+            expect(goodCall._source.source[0].name).to.be.equal('TU7');
+            */
+            done();
+          });
+        }, 300);
+      });
+    });
+    it('La notice 10 matche bien', function (done) {
+      docObject = testData[9];
+      let goodCall;
+      business.doTheJob(docObject, function (err) {
+        expect(err).to.be.undefined;
+        //expect(docObject.conditor_ident).to.be.equal(99);
+        setTimeout(function() {
+          esClient.search({
+            index: esConf.index
+          }, function (esError, response) {
+            expect(esError).to.be.undefined;
+            
+            expect(response.hits.total).to.be.equal(9);
+            /**
+            _.each(response.hits.hits,(hit)=>{
+              if (hit._source.source.length===1) goodCall=hit;
+            });
+            expect(goodCall._source.source[0].name).to.be.equal('TU7');
+            */
+            done();
+          });
+        }, 300);
+      });
+    });
+    it('La notice 11 matche bien', function (done) {
+      docObject = testData[10];
+      let goodCall;
+      business.doTheJob(docObject, function (err) {
+        expect(err).to.be.undefined;
+        //expect(docObject.conditor_ident).to.be.equal(99);
+        setTimeout(function() {
+          esClient.search({
+            index: esConf.index
+          }, function (esError, response) {
+            expect(esError).to.be.undefined;
+            
+            expect(response.hits.total).to.be.equal(10);
+            /**
+            _.each(response.hits.hits,(hit)=>{
+              if (hit._source.source.length===1) goodCall=hit;
+            });
+            expect(goodCall._source.source[0].name).to.be.equal('TU7');
+            */
+            done();
+          });
+        }, 300);
+      });
+    });
 
   });
 
