@@ -52,7 +52,7 @@ function insertMetadata(docObject,options){
             if (_.isArray(docObject[metadatum.name])){
                 options.body[metadatum.name] = docObject[metadatum.name];
             }
-            else if (!_.isEmpty(docObject[metadatum.name])){
+            else if (_.isBoolean(docObject[metadatum.name]) || !_.isEmpty(docObject[metadatum.name])){
                 options.body[metadatum.name] = docObject[metadatum.name];
             }
         }
