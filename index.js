@@ -365,7 +365,7 @@ function testParameter(docObject,rules){
     let bool=true;
     _.each(arrayParameter,function(parameter){
         if (_.get(docObject,parameter)===undefined || 
-        (_.isArray(_.get(docObject,parameter) && _.get(docObject,parameter).length === 0)) ||
+        (_.isArray(_.get(docObject,parameter)) && _.get(docObject,parameter).length === 0) ||
         (_.isString(_.get(docObject,parameter)) && _.get(docObject,parameter).trim()===''))
         { bool = false ;}
     });
