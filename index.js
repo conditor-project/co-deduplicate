@@ -316,6 +316,8 @@ function getDuplicateByIdConditor(docObject,data,result){
         }
     });
     
+    _.unset(docObject,"arrayIdConditor");
+    
     request.query.bool.minimum_should_match = 1;
 
     return esClient.search({
