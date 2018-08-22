@@ -79,11 +79,11 @@ describe(pkg.name + '/index.js', function () {
     let docObject;
     let request = _.cloneDeep(baseRequest);
 
-    it('Le constructeur de requête devrait pour la notice remonter 27 règles',function(done){
+    it('Le constructeur de requête devrait pour la notice remonter 15 règles',function(done){
 
       docObject = testData[0];
       request = business.__get__("buildQuery")(docObject = testData[0],request);
-      expect(request.query.bool.should.length).to.be.equal(27);
+      expect(request.query.bool.should.length).to.be.equal(15);
       done();
     });
 
