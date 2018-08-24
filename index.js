@@ -24,15 +24,7 @@ const metadata =require('co-config/metadata-xpaths.json');
 const truncateList = ['title','titlefr','titleen'];
 const idAlphabet = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_';
 
-const scriptList = {
-    "setIdChain":"ArrayList mergedId = new ArrayList(); mergedId.add(ctx._source.source+':'+ctx._source.idConditor+'!');String idChain ='!'; for (int i=0;i<ctx._source.duplicate.length;i++){mergedId.add(ctx._source.duplicate[i].source+':'+ctx._source.duplicate[i].idConditor+'!') } mergedId.sort(null);for (int j = 0; j<mergedId.length ; j++){ idChain+= mergedId[j] } ctx._source.idChain = idChain ",
-    "setIsDuplicate":"if (ctx._source.duplicate == null || ctx._source.duplicate.length == 0 ) { ctx._source.isDuplicate = false } else { ctx._source.isDuplicate = true }",
-    "addDuplicate":"if (ctx._source.duplicate == null || ctx._source.duplicate.length==0){ ctx._source.duplicate = params.duplicate } else { if (!ctx._source.duplicate.contains(params.duplicate[0])) {ctx._source.duplicate.add(params.duplicate[0])}} ",
-    "removeDuplicate":"ArrayList newDuplicate = new ArrayList() ; if (ctx._source.duplicate != null && ctx._source.duplicate.length>0){int length = ctx._source.duplicate.length; for (int i=0;i<length;i++){ if (ctx._source.duplicate[i].idConditor!=params.idConditor){ newDuplicate.add(ctx._source.duplicate[i])}}} ctx._source.duplicate=newDuplicate;",
-    "setDuplicateRules":"ArrayList mergedRules = new ArrayList(); for (int i=0;i<ctx._source.duplicate.length;i++) { for (int j = 0 ; j < ctx._source.duplicate[i].rules.length; j++){ if (!mergedRules.contains(ctx._source.duplicate[i].rules[j])) mergedRules.add(ctx._source.duplicate[i].rules[j]); }} mergedRules.sort(null); ctx._source.duplicateRules = mergedRules; ",
-    "addEmptyDuplicate":"boolean present=false;for (int i=0;i<ctx._source.duplicate.length;i++){ if ( ctx._source.duplicate[i].idConditor == params.idConditor ) { present = true}} if ( !present ){ ctx._source.duplicate.add(params.duplicate[0]) } ",
-    "setHadTransDuplicate":"boolean hadTransDuplicate=false;for (int i=0;i<ctx._source.duplicate.length;i++){ if (ctx._source.duplicate[i].rules.length==0){ hadTransDuplicate = true }} ctx._source.hadTransDuplicate = hadTransDuplicate "
-  };
+const scriptList = loadPainlessScripts();
     
 
 const esClient = new es.Client({
@@ -889,6 +881,21 @@ function createRepository(response){
             return true;
         });
     }
+}
+
+function loadPainlessScripts() {
+    const slist = {};
+    const scriptDir = path.join(__dirname,"painless");
+    const scriptFiles = fse.readdirSync(scriptDir);
+    for (let scriptFileName of scriptFiles) {
+        if (scriptFileName.endsWith(".painless")) {
+            const scriptName = scriptFileName.replace(".painless","");
+            const scriptPath = path.join(__dirname,"painless",scriptFileName);
+            const scriptContent = fse.readFileSync(scriptPath,{encoding:"utf8"}).replace(/\r?\n|\r/g,"").trim();
+            slist[scriptName] = scriptContent;
+        }
+    }
+    return slist;
 }
 
 business.afterAllTheJobs=function(cbAfterAll){

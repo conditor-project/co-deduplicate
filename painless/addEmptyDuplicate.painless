@@ -1,0 +1,9 @@
+boolean present=false;
+for (int i=0;i<ctx._source.duplicate.length;i++) {
+    if ( ctx._source.duplicate[i].idConditor == params.idConditor ) {
+        present = true
+    }
+}
+if ( !present ) {
+    ctx._source.duplicate.add(params.duplicate[0])
+}

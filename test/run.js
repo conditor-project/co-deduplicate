@@ -9,6 +9,7 @@ const
   badData = require('./dataset/in/badDocs.json'),
   baseRequest = require('co-config/base_request.json'),
   chai = require('chai'),
+  debug = require('debug')('test'),
   expect = chai.expect,
   _ = require('lodash'),
   es = require('elasticsearch');
@@ -73,7 +74,17 @@ describe(pkg.name + '/index.js', function () {
 
   });
 
-  
+  describe('#fonction loadScripts',function(){
+    it('devrait lire les fichiers de script et reconstituer l\'objet scriptList', (done) => {
+      const scriptList = business.__get__("loadPainlessScripts")();
+      debug(Object.keys(scriptList));
+      expect(Object.keys(scriptList).length,"il devrait y avoir au moins 7 scripts painless dans la liste").to.be.gte(7);
+      const expectedScripts = ["addDuplicate","addEmptyDuplicate","removeDuplicate","setDuplicateRules","setHadTransDuplicate","setIdChain","setIsDuplicate"];
+      expect(_.intersection(expectedScripts,Object.keys(scriptList)).length,"Les au moins 7 scripts painless doivent avoir le bon nom").to.be.gte(7);
+      done();
+    });
+  });
+
   //test sur la création de règle 
   describe('#fonction buildQuery',function(){
     let docObject;

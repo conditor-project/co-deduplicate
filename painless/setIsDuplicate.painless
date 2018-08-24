@@ -1,0 +1,5 @@
+if (ctx._source.duplicate == null || ctx._source.duplicate.length == 0 ) {
+    ctx._source.isDuplicate = false
+} else {
+    ctx._source.isDuplicate = true 
+}

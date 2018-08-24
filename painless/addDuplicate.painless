@@ -1,0 +1,7 @@
+if (ctx._source.duplicate == null || ctx._source.duplicate.length==0) {
+    ctx._source.duplicate = params.duplicate
+} else {
+    if (!ctx._source.duplicate.contains(params.duplicate[0])) {
+        ctx._source.duplicate.add(params.duplicate[0])
+    }
+}
