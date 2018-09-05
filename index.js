@@ -72,8 +72,6 @@ function insereNotice (docObject) {
     docObject.isDuplicate = false;
     options.body.duplicate = docObject.duplicate;
     options.body.isDuplicate = docObject.isDuplicate;
-    // console.dir(options,10);
-    // console.log('insertion : '+options.body.idHal.value);
     return esClient.index(options);
   });
 }
@@ -150,7 +148,6 @@ function propagate (docObject, data, result) {
   let option;
   let matchedQueries;
 
-  // console.log('nombre de resultat à la recherche par idConditor :'+result.hits.total);
   // On crée une liaison par défaut entre tous les duplicats trouvés
   _.each(result.hits.hits, (hitTarget) => {
     options = { update: { _index: esConf.index, _type: esConf.type, _id: hitTarget._id }, retry_on_conflict: 3 };
@@ -461,24 +458,12 @@ function existNotice (docObject) {
     let data;
     // construction des règles par scénarii
     request = buildQuery(docObject, request);
-
-    // docObject.query_utile = request;
-
     if (request.query.bool.should.length === 0) {
       docObject.isDeduplicable = false;
       data = { 'hits': { 'total': 0 } };
       return dispatch(docObject, data);
     } else {
       docObject.isDeduplicable = true;
-      // construction des règles uniquement sur l'identifiant de la source
-      /**
-                  _.each(providerRules,(providerRule)=>{
-                      if (docObject.source.trim()===providerRule.source.trim() && testParameter(docObject,providerRule.non_empty)){
-                          request.query.bool.should.push(interprete(docObject,providerRule.query,''))
-                      }
-                  });
-                  **/
-      // console.log(JSON.stringify(request));
       return esClient.search({
         index: esConf.index,
         body: request
@@ -498,12 +483,8 @@ function deleteNotice (docObject, data) {
 }
 
 function getDuplicateByIdChain (docObject, data, result) {
-  // console.log('recherche par idChain : ');
   if (data.hits.hits[0]._source.isDuplicate) {
-    // console.log('c est un duplicat');
-    // console.log(data.hits.hits[0]._source.idChain);
     let request = _.cloneDeep(baseRequest);
-    // console.log('idChain:'+data.hits.hits[0]._source.idChain);
     request.query.bool.should.push({ 'bool': { 'must': [{ 'match': { 'idChain': data.hits.hits[0]._source.idChain } }] } });
     request.query.bool.minimum_should_match = 1;
     return esClient.search({
