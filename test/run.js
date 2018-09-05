@@ -1,22 +1,20 @@
+/* eslint-env mocha */
 'use strict';
 
-const
-  fs = require('fs'),
-  rewire = require('rewire'),
-  pkg = require('../package.json'),
-  business = rewire('../index.js'),
-  testData = require('./dataset/in/test.json'),
-  badData = require('./dataset/in/badDocs.json'),
-  baseRequest = require('co-config/base_request.json'),
-  chai = require('chai'),
-  debug = require('debug')('test'),
-  expect = chai.expect,
-  _ = require('lodash'),
-  es = require('elasticsearch');
+const rewire = require('rewire');
+const pkg = require('../package.json');
+const business = rewire('../index.js');
+const testData = require('./dataset/in/test.json');
+const baseRequest = require('co-config/base_request.json');
+const chai = require('chai');
+const debug = require('debug')('test');
+const expect = chai.expect;
+const _ = require('lodash');
+const es = require('elasticsearch');
 
 var esConf = require('../es.js');
 esConf.index = 'tests-deduplicate';
-business.__set__('esConf.index','tests-deduplicate');
+business.__set__('esConf.index', 'tests-deduplicate');
 
 const esClient = new es.Client({
   host: esConf.host,
@@ -26,8 +24,7 @@ const esClient = new es.Client({
   }
 });
 
-
-//fonction de vérification et suppression de l'index pour les tests
+// fonction de vérification et suppression de l'index pour les tests
 let checkAndDeleteIndex = function (cbCheck) {
   esClient.indices.exists({index: esConf.index}, function (errorExists, exists) {
     if (errorExists) {
@@ -45,16 +42,12 @@ let checkAndDeleteIndex = function (cbCheck) {
   });
 };
 
-
 describe(pkg.name + '/index.js', function () {
-
   this.timeout(10000);
 
   // Méthde d'initialisation s'exécutant en tout premier
   before(function (done) {
-
     checkAndDeleteIndex(function (errCheck) {
-
       if (errCheck) {
         console.log('Erreur checkAndDelete() : ' + errCheck.errMessage);
         process.exit(1);
@@ -69,40 +62,34 @@ describe(pkg.name + '/index.js', function () {
         console.log('before OK');
         done();
       });
-
     });
-
   });
 
-  describe('#fonction loadScripts',function(){
+  describe('#fonction loadScripts', function () {
     it('devrait lire les fichiers de script et reconstituer l\'objet scriptList', (done) => {
-      const scriptList = business.__get__("loadPainlessScripts")();
+      const scriptList = business.__get__('loadPainlessScripts')();
       debug(Object.keys(scriptList));
-      expect(Object.keys(scriptList).length,"il devrait y avoir au moins 7 scripts painless dans la liste").to.be.gte(7);
-      const expectedScripts = ["addDuplicate","addEmptyDuplicate","removeDuplicate","setDuplicateRules","setHadTransDuplicate","setIdChain","setIsDuplicate"];
-      expect(_.intersection(expectedScripts,Object.keys(scriptList)).length,"Les au moins 7 scripts painless doivent avoir le bon nom").to.be.gte(7);
+      expect(Object.keys(scriptList).length, 'il devrait y avoir au moins 7 scripts painless dans la liste').to.be.gte(7);
+      const expectedScripts = ['addDuplicate', 'addEmptyDuplicate', 'removeDuplicate', 'setDuplicateRules', 'setHadTransDuplicate', 'setIdChain', 'setIsDuplicate'];
+      expect(_.intersection(expectedScripts, Object.keys(scriptList)).length, 'Les au moins 7 scripts painless doivent avoir le bon nom').to.be.gte(7);
       done();
     });
   });
 
-  //test sur la création de règle 
-  describe('#fonction buildQuery',function(){
+  // test sur la création de règle
+  describe('#fonction buildQuery', function () {
     let docObject;
     let request = _.cloneDeep(baseRequest);
 
-    it('Le constructeur de requête devrait pour la notice remonter 15 règles',function(done){
-
+    it('Le constructeur de requête devrait pour la notice remonter 15 règles', function (done) {
       docObject = testData[0];
-      request = business.__get__("buildQuery")(docObject = testData[0],request);
+      request = business.__get__('buildQuery')(docObject, request);
       expect(request.query.bool.should.length).to.be.equal(15);
       done();
     });
-
-    
   });
   // test sur l'insertion d'une 1ere notice
   describe('#insert notice 1', function () {
-
     let docObject;
 
     it('La notice 1 est intégrée et seule dans l\'index ES', function (done) {
@@ -110,7 +97,7 @@ describe(pkg.name + '/index.js', function () {
       business.doTheJob(docObject = testData[0], function (err) {
         if (err !== undefined) { console.log(err.errMessage); }
         expect(err).to.be.undefined;
-        setTimeout(function() {
+        setTimeout(function () {
           esClient.search({
             index: esConf.index
           }, function (esError, response) {
@@ -127,13 +114,12 @@ describe(pkg.name + '/index.js', function () {
       business.doTheJob(docObject, function (err) {
         if (err !== undefined) console.log(err.errMessage);
         expect(err).to.be.undefined;
-        setTimeout(function() {
+        setTimeout(function () {
           esClient.search({
             index: esConf.index
           }, function (esError, response) {
             expect(esError).to.be.undefined;
             expect(response.hits.total).to.be.equal(2);
-            //expect(response.hits.hits[0]._source.source[1].name).to.be.equal('TU2');
             done();
           });
         }, 300);
@@ -144,31 +130,28 @@ describe(pkg.name + '/index.js', function () {
       docObject = testData[2];
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
-        setTimeout(function() {
+        setTimeout(function () {
           esClient.search({
             index: esConf.index
           }, function (esError, response) {
             expect(esError).to.be.undefined;
-            expect(response.hits.total).to.be.equal(3);
-            //expect(response.hits.hits[0]._source.source[2].name).to.be.equal('TU3');
+            expect(response.hits.total).to.be.equal(3);            
             done();
           });
         }, 300);
       });
     });
 
-
     it('La notice 4 matche bien', function (done) {
       docObject = testData[3];
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
-        setTimeout(function() {
+        setTimeout(function () {
           esClient.search({
             index: esConf.index
           }, function (esError, response) {
             expect(esError).to.be.undefined;
             expect(response.hits.total).to.be.equal(4);
-            //expect(response.hits.hits[0]._source.source[3].name).to.be.equal('TU4');
             done();
           });
         }, 300);
@@ -179,13 +162,12 @@ describe(pkg.name + '/index.js', function () {
       docObject = testData[4];
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
-        setTimeout(function() {
+        setTimeout(function () {
           esClient.search({
             index: esConf.index
           }, function (esError, response) {
             expect(esError).to.be.undefined;
             expect(response.hits.total).to.be.equal(5);
-            //expect(response.hits.hits[0]._source.source[4].name).to.be.equal('TU5');
             done();
           });
         }, 300);
@@ -195,40 +177,28 @@ describe(pkg.name + '/index.js', function () {
       docObject = testData[5];
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
-        //expect(docObject.conditor_ident).to.be.equal(5);
-        setTimeout(function() {
+        setTimeout(function () {
           esClient.search({
             index: esConf.index
           }, function (esError, response) {
             expect(esError).to.be.undefined;
             expect(response.hits.total).to.be.equal(6);
-            //expect(response.hits.hits[0]._source.source[5].name).to.be.equal('TU6');
             done();
           });
         }, 300);
       });
     });
 
-
     it('La notice 7 matche bien', function (done) {
       docObject = testData[6];
-      let goodCall;
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
-        //expect(docObject.conditor_ident).to.be.equal(99);
-        setTimeout(function() {
+        setTimeout(function () {
           esClient.search({
             index: esConf.index
           }, function (esError, response) {
             expect(esError).to.be.undefined;
-
             expect(response.hits.total).to.be.equal(7);
-            /**
-            _.each(response.hits.hits,(hit)=>{
-              if (hit._source.source.length===1) goodCall=hit;
-            });
-            expect(goodCall._source.source[0].name).to.be.equal('TU7');
-            */
             done();
           });
         }, 300);
@@ -237,23 +207,14 @@ describe(pkg.name + '/index.js', function () {
 
     it('La notice 8 matche bien', function (done) {
       docObject = testData[7];
-      let goodCall;
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
-        //expect(docObject.conditor_ident).to.be.equal(99);
-        setTimeout(function() {
+        setTimeout(function () {
           esClient.search({
             index: esConf.index
           }, function (esError, response) {
             expect(esError).to.be.undefined;
-            
             expect(response.hits.total).to.be.equal(7);
-            /**
-            _.each(response.hits.hits,(hit)=>{
-              if (hit._source.source.length===1) goodCall=hit;
-            });
-            expect(goodCall._source.source[0].name).to.be.equal('TU7');
-            */
             done();
           });
         }, 300);
@@ -261,23 +222,14 @@ describe(pkg.name + '/index.js', function () {
     });
     it('La notice 9 matche bien', function (done) {
       docObject = testData[8];
-      let goodCall;
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
-        //expect(docObject.conditor_ident).to.be.equal(99);
-        setTimeout(function() {
+        setTimeout(function () {
           esClient.search({
             index: esConf.index
           }, function (esError, response) {
             expect(esError).to.be.undefined;
-            
             expect(response.hits.total).to.be.equal(8);
-            /**
-            _.each(response.hits.hits,(hit)=>{
-              if (hit._source.source.length===1) goodCall=hit;
-            });
-            expect(goodCall._source.source[0].name).to.be.equal('TU7');
-            */
             done();
           });
         }, 300);
@@ -285,23 +237,14 @@ describe(pkg.name + '/index.js', function () {
     });
     it('La notice 10 matche bien', function (done) {
       docObject = testData[9];
-      let goodCall;
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
-        //expect(docObject.conditor_ident).to.be.equal(99);
-        setTimeout(function() {
+        setTimeout(function () {
           esClient.search({
             index: esConf.index
           }, function (esError, response) {
             expect(esError).to.be.undefined;
-            
             expect(response.hits.total).to.be.equal(9);
-            /**
-            _.each(response.hits.hits,(hit)=>{
-              if (hit._source.source.length===1) goodCall=hit;
-            });
-            expect(goodCall._source.source[0].name).to.be.equal('TU7');
-            */
             done();
           });
         }, 300);
@@ -309,174 +252,144 @@ describe(pkg.name + '/index.js', function () {
     });
     it('La notice 11 matche bien', function (done) {
       docObject = testData[10];
-      let goodCall;
       business.doTheJob(docObject, function (err) {
         expect(err).to.be.undefined;
-        //expect(docObject.conditor_ident).to.be.equal(99);
-        setTimeout(function() {
+        setTimeout(function () {
           esClient.search({
             index: esConf.index
           }, function (esError, response) {
             expect(esError).to.be.undefined;
-            
             expect(response.hits.total).to.be.equal(10);
-            /**
-            _.each(response.hits.hits,(hit)=>{
-              if (hit._source.source.length===1) goodCall=hit;
-            });
-            expect(goodCall._source.source[0].name).to.be.equal('TU7');
-            */
             done();
           });
         }, 300);
       });
     });
-
   });
 
   describe('#tests des normalizer', function () {
-    it('Titre normalizer retourne la bonne valeur',function(done){
-      
+    it('Titre normalizer retourne la bonne valeur', function (done) {
       esClient.indices.analyze({
-        index:esConf.index,
-        body:{
-          "field":"title.normalized",
-          "text":"Voici un test de titre caparaçonner aïoli ! "
+        index: esConf.index,
+        body: {
+          'field': 'title.normalized',
+          'text': 'Voici un test de titre caparaçonner aïoli ! '
         }
-      },function(esError,response){
-          expect(esError).to.be.undefined;
-          expect(response).to.not.be.undefined;
-          expect(response.tokens[0].token).to.be.equal('voiciuntestdetitrecaparaconneraioli');
-          done();
-        });
-
+      }, function (esError, response) {
+        expect(esError).to.be.undefined;
+        expect(response).to.not.be.undefined;
+        expect(response.tokens[0].token).to.be.equal('voiciuntestdetitrecaparaconneraioli');
+        done();
+      });
     });
 
-
-    it('Titre 50 normalizer retourne la bonne valeur',function(done){
-      
+    it('Titre 50 normalizer retourne la bonne valeur', function (done) {
       esClient.indices.analyze({
-        index:esConf.index,
-        body:{
-          "field":"title.normalized50",
-          "text":"Alors voyons si on a systematiquement le bon résultat dans la boucle, après tout ça devrait être bon"
+        index: esConf.index,
+        body: {
+          'field': 'title.normalized50',
+          'text': 'Alors voyons si on a systematiquement le bon résultat dans la boucle, après tout ça devrait être bon'
         }
-      },function(esError,response){
-          expect(esError).to.be.undefined;
-          expect(response).to.not.be.undefined;
-          expect(response.tokens[0].token).to.be.equal('alorsvoyonssionasystematiquementlebonresultatdansl');
-          done();
-        });
-
+      }, function (esError, response) {
+        expect(esError).to.be.undefined;
+        expect(response).to.not.be.undefined;
+        expect(response.tokens[0].token).to.be.equal('alorsvoyonssionasystematiquementlebonresultatdansl');
+        done();
+      });
     });
 
-
-    it('Auteur normalizer retourne la bonne valeur',function(done){
-      
+    it('Auteur normalizer retourne la bonne valeur', function (done) {
       esClient.indices.analyze({
-        index:esConf.index,
-        body:{
-          "field":"author.normalized",
-          "text":"Gérard Philippe, André Gide"
+        index: esConf.index,
+        body: {
+          'field': 'author.normalized',
+          'text': 'Gérard Philippe, André Gide'
         }
-      },function(esError,response){
-          expect(esError).to.be.undefined;
-          expect(response).to.not.be.undefined;
-          expect(response.tokens[0].token).to.be.equal('gerardphilippeandregide');
-          done();
-        });
-
+      }, function (esError, response) {
+        expect(esError).to.be.undefined;
+        expect(response).to.not.be.undefined;
+        expect(response.tokens[0].token).to.be.equal('gerardphilippeandregide');
+        done();
+      });
     });
 
-    it('ID normalizer retourne la bonne valeur',function(done){
-      
+    it('ID normalizer retourne la bonne valeur', function (done) {
       esClient.indices.analyze({
-        index:esConf.index,
-        body:{
-          "field":"doi.normalized",
-          "text":"1586-544984Efrea"
+        index: esConf.index,
+        body: {
+          'field': 'doi.normalized',
+          'text': '1586-544984Efrea'
         }
-      },function(esError,response){
-          expect(esError).to.be.undefined;
-          expect(response).to.not.be.undefined;
-          expect(response.tokens[0].token).to.be.equal('1586544984efrea');
-          done();
-        });
-
+      }, function (esError, response) {
+        expect(esError).to.be.undefined;
+        expect(response).to.not.be.undefined;
+        expect(response.tokens[0].token).to.be.equal('1586544984efrea');
+        done();
+      });
     });
 
-    it('Page normalizer retourne la bonne valeur',function(done){
-      
+    it('Page normalizer retourne la bonne valeur', function (done) {
       esClient.indices.analyze({
-        index:esConf.index,
-        body:{
-          "field":"page.normalized",
-          "text":"158-165"
+        index: esConf.index,
+        body: {
+          'field': 'page.normalized',
+          'text': '158-165'
         }
-      },function(esError,response){
-          expect(esError).to.be.undefined;
-          expect(response).to.not.be.undefined;
-          expect(response.tokens[0].token).to.be.equal('158');
-          done();
-        });
-
+      }, function (esError, response) {
+        expect(esError).to.be.undefined;
+        expect(response).to.not.be.undefined;
+        expect(response.tokens[0].token).to.be.equal('158');
+        done();
+      });
     });
 
-    it('Volume normalizer retourne la bonne valeur',function(done){
-      
+    it('Volume normalizer retourne la bonne valeur', function (done) {
       esClient.indices.analyze({
-        index:esConf.index,
-        body:{
-          "field":"volume.normalized",
-          "text":"v52"
+        index: esConf.index,
+        body: {
+          'field': 'volume.normalized',
+          'text': 'v52'
         }
-      },function(esError,response){
-          expect(esError).to.be.undefined;
-          expect(response).to.not.be.undefined;
-          expect(response.tokens[0].token).to.be.equal('52');
-          done();
-        });
-
+      }, function (esError, response) {
+        expect(esError).to.be.undefined;
+        expect(response).to.not.be.undefined;
+        expect(response.tokens[0].token).to.be.equal('52');
+        done();
+      });
     });
-    it('Numero normalizer retourne la bonne valeur',function(done){
-      
+    it('Numero normalizer retourne la bonne valeur', function (done) {
       esClient.indices.analyze({
-        index:esConf.index,
-        body:{
-          "field":"issue.normalized",
-          "text":"V14"
+        index: esConf.index,
+        body: {
+          'field': 'issue.normalized',
+          'text': 'V14'
         }
-      },function(esError,response){
-          expect(esError).to.be.undefined;
-          expect(response).to.not.be.undefined;
-          expect(response.tokens[0].token).to.be.equal('14');
-          done();
-        });
-
+      }, function (esError, response) {
+        expect(esError).to.be.undefined;
+        expect(response).to.not.be.undefined;
+        expect(response.tokens[0].token).to.be.equal('14');
+        done();
+      });
     });
-    it('publicationDate normalizer retourne la bonne valeur',function(done){
-      
+    it('publicationDate normalizer retourne la bonne valeur', function (done) {
       esClient.indices.analyze({
-        index:esConf.index,
-        body:{
-          "field":"publicationDate.normalized",
-          "text":"18-11-2012"
+        index: esConf.index,
+        body: {
+          'field': 'publicationDate.normalized',
+          'text': '18-11-2012'
         }
-      },function(esError,response){
-          expect(esError).to.be.undefined;
-          expect(response).to.not.be.undefined;
-          expect(response.tokens[0].token).to.be.equal('2012');
-          done();
-        });
-
+      }, function (esError, response) {
+        expect(esError).to.be.undefined;
+        expect(response).to.not.be.undefined;
+        expect(response.tokens[0].token).to.be.equal('2012');
+        done();
+      });
     });
   });
 
-
-  describe('#appel à finalJob qui va appeler forcemerge sur l indice', function () {
-
-    it('la commande forcemerge est exécutée sans erreur.',function(done){
-      business.finalJob({},(err)=>{
+  describe('#appel à finalJob qui va appeler forcemerge sur l\'indice', function () {
+    it('la commande forcemerge est exécutée sans erreur.', function (done) {
+      business.finalJob({}, (err) => {
         expect(err).to.be.undefined;
       });
 
@@ -484,11 +397,9 @@ describe(pkg.name + '/index.js', function () {
     });
   });
 
-
-  describe('#appel à afterAllTheJobs qui va appeler le snapshot sur l indice', function () {
-
-    it('la commande snapshots est exécutée sans erreur.',function(done){
-      business.afterAllTheJobs((err)=>{
+  describe('#appel à afterAllTheJobs qui va appeler le snapshot sur l\'indice', function () {
+    it('la commande snapshots est exécutée sans erreur.', function (done) {
+      business.afterAllTheJobs((err) => {
         expect(err).to.be.undefined;
       });
 
@@ -496,9 +407,8 @@ describe(pkg.name + '/index.js', function () {
     });
   });
 
+  // Méthode finale sensée faire du nettoyage après les tests
 
-    // Méthde finale sensée faire du nettoyage après les tests
-  
   after(function (done) {
     esClient.indices.delete({index: esConf.index}).then(
       function () {
@@ -507,6 +417,4 @@ describe(pkg.name + '/index.js', function () {
       });
     done();
   });
-
-
 });
