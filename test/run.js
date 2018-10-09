@@ -12,7 +12,7 @@ const expect = chai.expect;
 const _ = require('lodash');
 const es = require('elasticsearch');
 
-var esConf = require('../es.js');
+var esConf = require('co-config/es.js');
 esConf.index = 'tests-deduplicate';
 business.__set__('esConf.index', 'tests-deduplicate');
 
