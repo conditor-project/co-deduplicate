@@ -80,7 +80,7 @@
     ,
     "publicationDate":"2014"
     ,
-    "typeConditor":[{"type":"Article"}],
+    "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-1.xml",
     "source":"TU1"
   }
@@ -151,7 +151,7 @@
     "publicationDate":
       "2014"
     ,
-    "typeConditor":[{"type":"Article"}],
+    "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-2.xml",
     "source":"TU2"
   }
@@ -237,7 +237,7 @@
     "publicationDate":
       "2014"
     ,
-    "typeConditor":[{"type":"Article"}],
+    "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
     "source":"TU3"
   }
@@ -323,7 +323,7 @@
     "publicationDate":
       "2014"
     ,
-    "typeConditor":[{"type":"Article"}],
+    "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
     "source":"TU4"
   }
@@ -410,7 +410,7 @@
       "2014"
 
     ,
-    "typeConditor":[{"type":"Article"}],
+    "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
     "source":"TU5"
   }
@@ -496,7 +496,7 @@
     "publicationDate":
       "2014"
     ,
-    "typeConditor":[{"type":"Article"}],
+    "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
     "source":"TU6"
   }
@@ -586,7 +586,7 @@
     "publicationDate":
       "2014"
     ,
-    "typeConditor":[{"type":"Article"}],
+    "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-7.xml",
     "source":"hal"
   }
@@ -675,7 +675,7 @@
     "publicationDate":
       "2014"
     ,
-    "typeConditor":[{"type":"Article"}],
+    "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-7.xml",
     "source":"hal"
   },
@@ -805,9 +805,7 @@
     "isni": [],
     "path": "/applis/conditor/home/input/hal/HAL_2018-06-11_1/FICHIERS_TEI/hal-01153024.xml",
     "source": "hal",
-    "typeConditor": [
-      {"type":"Article"}
-    ],
+    "typeConditor": "Article",
     "ingestId": "HAL_2018-06-11_1"
   },
   {
@@ -935,9 +933,7 @@
     "isni": [],
     "path": "/applis/conditor/home/input/hal/HAL_2018-06-11_1/FICHIERS_TEI/hal-01167197.xml",
     "source": "hal",
-    "typeConditor": [
-      {"type":"Article"}
-    ],
+    "typeConditor": "Article",
     "ingestId": "HAL_2018-06-11_1"
     
   },
@@ -1072,10 +1068,7 @@
     "isni": [],
     "path": "/applis/conditor/home/input/wos/WOS_2018-06-11_1/FICHIERS_TEI/000345410700113.xml",
     "source": "wos",
-    "typeConditor": [
-      {"type":"Conférence"},
-      {"type":"Article"}
-    ],
+    "typeConditor": "Article",
     "ingestId": "WOS_2018-06-11_1"
   }
 

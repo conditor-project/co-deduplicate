@@ -57,16 +57,11 @@ function insereNotice (docObject) {
 
     options.body.path = docObject.path;
     options.body.source = docObject.source;
-    options.body.typeConditor = [];
+    options.body.typeConditor = docObject.typeConditor;
     options.body.idConditor = docObject.idConditor;
     options.body.ingestId = docObject.ingestId;
     options.body.ingestBaseName = docObject.ingestBaseName;
     options.body.isDeduplicable = docObject.isDeduplicable;
-
-    _.each(docObject.typeConditor, (typeCond) => {
-      options.body.typeConditor.push(typeCond.type);
-    });
-
     options.body.idChain = docObject.source + ':' + docObject.idConditor + '!';
     docObject.duplicate = [];
     docObject.isDuplicate = false;
@@ -124,15 +119,11 @@ function aggregeNotice (docObject, data) {
     options.body.duplicate = duplicate;
     options.body.duplicateRules = allMergedRules;
     options.body.isDuplicate = (allMergedRules.length > 0);
-    options.body.typeConditor = [];
+    options.body.typeConditor = docObject.typeConditor;
     options.body.idConditor = docObject.idConditor;
     options.body.ingestId = docObject.ingestId;
     options.body.ingestBaseName = docObject.ingestBaseName;
     options.body.isDeduplicable = docObject.isDeduplicable;
-
-    _.each(docObject.typeConditor, (typeCond) => {
-      options.body.typeConditor.push(typeCond.type);
-    });
 
     docObject.arrayIdConditor = arrayIdConditor;
     options.body.idChain = _.join(idchain, '');
@@ -439,15 +430,13 @@ function interprete (docObject, rule, type) {
 }
 
 function buildQuery (docObject, request) {
-  _.each(docObject.typeConditor, (type) => {
-    if (type && type.type && scenario[type.type]) {
-      _.each(rules, (rule) => {
-        if (_.indexOf(scenario[type.type], rule.rule) !== -1 && testParameter(docObject, rule)) {
-          request.query.bool.should.push(interprete(docObject, rule, type.type));
-        }
-      });
-    }
-  });
+  if (scenario[docObject.typeConditor]) {
+    _.each(rules, (rule) => {
+      if (_.indexOf(scenario[docObject.typeConditor], rule.rule) !== -1 && testParameter(docObject, rule)) {
+        request.query.bool.should.push(interprete(docObject, rule, docObject.typeConditor));
+      }
+    });
+  }
   return request;
 }
 
