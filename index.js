@@ -322,7 +322,7 @@ function dispatch (docObject, data) {
 
 function testParameter (docObject, rules) {
   let arrayParameter = (rules.non_empty !== undefined) ? rules.non_empty : [];
-  let arrayNonParameter = (rules.isEmpty !== undefined) ? rules.isEmpty : [];
+  let arrayNonParameter = (rules.is_empty !== undefined) ? rules.is_empty : [];
   let bool = true;
   _.each(arrayParameter, function (parameter) {
     if (_.get(docObject, parameter) === undefined ||
@@ -341,7 +341,7 @@ function testParameter (docObject, rules) {
 }
 
 function interprete (docObject, rule, type) {
-  let isEmpty = (rule.isEmpty !== undefined) ? rule.isEmpty : [];
+  let isEmpty = (rule.is_empty !== undefined) ? rule.is_empty : [];
   let query = rule.query;
   let rulename;
 
