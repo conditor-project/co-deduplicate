@@ -1,6 +1,6 @@
 {
   "name": "co-deduplicate",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Module de dédoublonnage",
   "main": "index.js",
   "directories": {
