@@ -1,685 +1,359 @@
 [
   {
-    "_comment" : " === Notice initiale ===",
+    "_comment": " === Notice initiale ===",
     "title": "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
-    "titlefr": "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
-    ,
-    "titleen":  "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
-    ,
-    "author":  "Guidetti-Gonzalez Simone"
-     ,
-    "authorInit": "Guidetti-Gonzalez S"
-    ,
-    "authorRef":[
-      {"surname":"Angel",
-        "forename":"Eric",
-        "halAuthorId":"369460",
-        "researcherId":"",
-        "affiliations":["#struct-143247"]
+    "titlefr": "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+    "titleen": "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+    "author": "Guidetti-Gonzalez Simone",
+    "authorInit": "Guidetti-Gonzalez S",
+    "authorRef": [
+      {
+        "surname": "Angel",
+        "forename": "Eric",
+        "halAuthorId": "369460",
+        "researcherId": "",
+        "affiliations": [
+          {
+            "ref": "#struct-143247",
+            "adresse": ""
+          }
+        ]
       },
-        {"surname":"Bampis",
-          "forename":"Evripidis",
-          "halAuthorId":"101401",
-          "researcherId":"",
-          "affiliations":["#struct-406454"]
-        },
-        {"surname":"Pollatos",
-          "forename":"Gerasimos G.",
-          "halAuthorId":"689954",
-          "researcherId":"",
-          "affiliations":["#struct-35029"]
-        },
-        {"surname":"Zissimopoulos",
-          "forename":"Vassilis",
-          "halAuthorId":"79363",
-          "researcherId":"",
-          "affiliations":["#struct-35029"]}
-      ],
-    "doi": "10.1093/bioinformatics/btu019ut=WOS:000336095100034"
-    ,
-    "hasDoi":true,
-    "arxiv": "12-345/678:9"
-    ,
-    "pubmedId": "12-345/678:9"
-    ,
-    "nnt":  "12-345/678:9"
-    ,
-    "patentNumber":"12-345/678:9"
-    ,
-    "ut":  "12-345/678:9"
-    ,
-    "issn":"1367-4803"
-    ,
-    "eissn":"1367-4803"
-    ,
-    "isbn":"1367-4803"
-    ,
-    "issue":"n°5"
-    ,
-    "volume":"v12"
-    ,
-    "page":"page 1589"
-    ,
-    "idHal":"12-345/678:9"
-    ,
-    "halauthorid":"894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246"
-    ,
-    "orcId":"12-345/678:9"
-    ,
-    "researcherId":"123:456:789+"
-    ,
-    "viaf":"123.456.789"
-    ,
-    "typeDocument":[
-      "ART"
+      {
+        "surname": "Bampis",
+        "forename": "Evripidis",
+        "halAuthorId": "101401",
+        "researcherId": "",
+        "affiliations": [
+          {
+            "ref": "#struct-406454",
+            "adresse": ""
+          }
+        ]
+      },
+      {
+        "surname": "Pollatos",
+        "forename": "Gerasimos G.",
+        "halAuthorId": "689954",
+        "researcherId": "",
+        "affiliations": [
+          {
+            "ref": "#struct-35029",
+            "adresse": ""
+          }
+        ]
+      },
+      {
+        "surname": "Zissimopoulos",
+        "forename": "Vassilis",
+        "halAuthorId": "79363",
+        "researcherId": "",
+        "affiliations": [
+          {
+            "ref": "#struct-35029",
+            "adresse": ""
+          }
+        ]
+      }
     ],
-    "typeDocumentFlat":[
-      "ART"
-    ],
-    "titreSource":""
-    ,
-    "publicationDate":"2014"
-    ,
-    "typeConditor":"Article",
-    "path":"/applis/istex/li/corpus-resources-conditor/notice-1.xml",
-    "source":"TU1"
-  }
-,
-  {
-    "_comment" : " === Notice 2, sensée matcher avec titre + doi (REGLE 1) ===",
-    "title": "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
-    ,
-    "titlefr": "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
-    ,
-    "titleen":"ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
-    ,
-    "author":  "Gonzalez Speedy"
-     ,
-    "authorInit": "Gonzalez S"
-    ,
-    "doi": "10.1093bioinformatics/btu019ut=WOS:000336095100034"
-    ,
-    "hasDoi":true,
-    "arxiv": "12-345/678:9"
-    ,
-    "pubmedId":"12-345/678:9"
-    ,
-    "nnt": "12-345/678:9"
-    ,
-    "patentNumber":"12-345/678:9"
-    ,
-    "ut": "12-345/678:9"
-    ,
-    "issn":"1367-4804"
-    ,
-    "eissn":"1367-4803"
-    ,
-    "isbn":"1367-4803"
-    ,
-    "issue":"n°6"
-    ,
-    "volume":
-      "v13"
-    ,
-    "page":
-      "page 1588"
-    ,
-    "idHal":
-      "12-345/678:9"
-    ,
-    "halauthorid":
-      "894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246"
-    ,
-    "orcId":
-      "12-345/678:9"
-    ,
-    "researcherId":
-      "123:456:789+"
-    ,
-    "viaf":
-      "123.456.789"
-    ,
-    "typeDocument":[
+    "doi": "10.1093/bioinformatics/btu019ut=WOS:000336095100034",
+    "hasDoi": true,
+    "arxiv": "12-345/678:9",
+    "pubmedId": "12-345/678:9",
+    "nnt": "12-345/678:9",
+    "patentNumber": "12-345/678:9",
+    "ut": "12-345/678:9",
+    "issn": "1367-4803",
+    "eissn": "1367-4803",
+    "isbn": "1367-4803",
+    "issue": "n°5",
+    "volume": "v12",
+    "page": "page 1589",
+    "idHal": "12-345/678:9",
+    "halauthorid": "894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246",
+    "orcId": "12-345/678:9",
+    "researcherId": "123:456:789+",
+    "viaf": "123.456.789",
+    "typeDocument": [
       "ART"
     ],
     "typeDocumentFlat": [
       "ART"
     ],
-    "titreSource":
-      ""
-    ,
-    "publicationDate":
-      "2014"
-    ,
-    "typeConditor":"Article",
-    "path":"/applis/istex/li/corpus-resources-conditor/notice-2.xml",
-    "source":"TU2"
-  }
-,
-  {
-    "_comment" : " === Notice 3, sensée matcher avec titre+volume+issue+issn (REGLE 2) ===",
-    "title":
-      "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
-    ,
-    "titlefr":
-      "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
-    ,
-    "titleen":
-      "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
-    ,
-    "author":
-      "Gonzalez Speedy"
-    ,
-    "authorInit":
-       "Gonzalez S"
-    ,
-    "doi":
-       "10.1093/bioinformatics/btu019ut=WOS:000336095100035"
-    ,
-    "hasDoi":true,
-    "arxiv":
-       "12-345/678:9"
-    ,
-    "pubmedId":
-       "12-345/678:9"
-    ,
-    "nnt":
-       "12-345/678:9"
-    ,
-    "patentNumber":
-      "12-345/678:9"
-    ,
-    "ut":
-       "12-345/678:9"
-    ,
-    "issn":
-      "1367-4803"
-    ,
-    "eissn":
-      "1367-4803"
-    ,
-    "isbn":
-      "1367-4803"
-    ,
-    "issue":
-      "n°5"
-    ,
-    "volume":
-      "v12"
-    ,
-    "page":
-      "page 1588"
-    ,
-    "idHal":
-      "12-345/678:9"
-    ,
-    "halauthorid":
-      "894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246"
-    ,
-    "orcId":
-      "12-345/678:9"
-    ,
-    "researcherId":
-      "123:456:789+"
-    ,
-    "viaf":
-      "123.456.789"
-    ,
-    "typeDocument":[
-      "ART"
-    ],
-    "typeDocumentFlat": [
-      "ART"
-    ],
-    "titreSource":
-      ""
-    ,
-    "publicationDate":
-      "2014"
-    ,
-    "typeConditor":"Article",
-    "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
-    "source":"TU3"
-  }
-,
-  {
-    "_comment" : " === Notice 4, sensée matcher avec DOI seul (REGLE 3) ===",
-    "title":
-      "ProbMetab: an R package for Bayan probabilistic annotation of LC-MS-based metabolomics"
-    ,
-    "titlefr":
-      "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
-    ,
-    "titleen":
-      "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
-    ,
-    "author":
-      "Gonzalez Speedy"
-    ,
-    "authorInit":
-       "Gonzalez S"
-    ,
-    "doi":
-       "10.1093/bioinformatics/btu019ut=WOS:000336095100034"
-    ,
-    "hasDoi":true,
-    "arxiv":
-       "12-345/678:9"
-    ,
-    "pubmedId":
-       "12-345/678:9"
-    ,
-    "nnt":
-       "12-345/678:9"
-    ,
-    "patentNumber":
-      "12-345/678:9"
-    ,
-    "ut":
-       "12-345/678:9"
-    ,
-    "issn":
-      "1367-480"
-    ,
-    "eissn":
-      "1367-4803"
-    ,
-    "isbn":
-      "1367-4803"
-    ,
-    "issue":
-      "n°5"
-    ,
-    "volume":
-      "v12"
-    ,
-    "page":
-      "page 1588"
-    ,
-    "idHal":
-      "12-345/678:9"
-    ,
-    "halauthorid":
-      "894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246"
-    ,
-    "orcId":
-      "12-345/678:9"
-    ,
-    "researcherId":
-      "123:456:789+"
-    ,
-    "viaf":
-      "123.456.789"
-    ,
-    "typeDocument":[
-      "ART"
-    ],
-    "typeDocumentFlat": [
-      "ART"
-    ],
-    "titreSource":
-      ""
-    ,
-    "publicationDate":
-      "2014"
-    ,
-    "typeConditor":"Article",
-    "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
-    "source":"TU4"
-  }
-,
-  {
-    "_comment" : " === Notice 5, sensée matcher avec titre+auteur+issn seul (REGLE 4) ===",
-    "title":
-      "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
-    ,
-    "titlefr":
-      "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
-    ,
-    "titleen":
-      "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
-    ,
-    "author":
-      "Guidetti-Gonzalez Simone"
-    ,
-    "authorInit":
-       "Gonzalez S"
-    ,
-    "doi":
-       "10.1093/bioinformatics/btu019ut=WOS:0003360951000344"
-    ,
-    "hasDoi":true,
-    "arxiv":
-       "12-345/678:9"
-    ,
-    "pubmedId":
-       "12-345/678:9"
-    ,
-    "nnt":
-       "12-345/678:9"
-    ,
-    "patentNumber":
-      "12-345/678:9"
-    ,
-    "ut":
-       "12-345/678:9"
-    ,
-    "issn":
-      "1367-4803"
-    ,
-    "eissn":
-      "1367-4803"
-    ,
-    "isbn":
-      "1367-4803"
-    ,
-    "issue":
-      "n°6"
-    ,
-    "volume":
-      "v12"
-    ,
-    "page":
-      "page 1588"
-    ,
-    "idHal":
-      "12-345/678:9"
-    ,
-    "halauthorid":
-      "894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246"
-    ,
-    "orcId":
-      "12-345/678:9"
-    ,
-    "researcherId":
-      "123:456:789+"
-    ,
-    "viaf":
-      "123.456.789"
-    ,
-    "typeDocument":[
-      "ART"
-    ],
-    "typeDocumentFlat": [
-      "ART"
-    ],
-    "titreSource":
-      ""
-    ,
-    "publicationDate":
-      "2014"
-
-    ,
-    "typeConditor":"Article",
-    "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
-    "source":"TU5"
-  }
-,
-  {
-    "_comment" : " === Notice 6, sensée matcher avec titre+auteurInit+issn seul (REGLE 5) ===",
-    "title":
-      ""
-    ,
-    "titlefr":
-      ""
-    ,
-    "titleen":
-      ""
-    ,
-    "author":
-      ""
-    ,
-    "authorInit":
-       "Guidetti-Gonzalez S"
-    ,
-    "doi":
-       ""
-    ,
-    "hasDoi":true,
-    "arxiv":
-       "12-345/678:9"
-    ,
-    "pubmedId":
-       "12-345/678:9"
-    ,
-    "nnt":
-       "12-345/678:9"
-    ,
-    "patentNumber":
-      "12-345/678:9"
-    ,
-    "ut":
-       "12-345/678:9"
-    ,
-    "issn":
-      "1367-4803"
-    ,
-    "eissn":
-      "1367-4803"
-    ,
-    "isbn":
-      "1367-4803"
-    ,
-    "issue":
-      "n°6"
-    ,
-    "volume":
-      "v12"
-    ,
-    "page":
-      "page 1588"
-    ,
-    "idHal":
-      "12-345/678:9"
-    ,
-    "halauthorid":
-      "894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246"
-    ,
-    "orcId":
-      "12-345/678:9"
-    ,
-    "researcherId":
-      "123:456:789+"
-    ,
-    "viaf":
-      "123.456.789"
-    ,
-    "typeDocument":[
-      "ART"
-    ],
-    "typeDocumentFlat": [
-      "ART"
-    ],
-    "titreSource":
-      ""
-    ,
-    "publicationDate":
-      "2014"
-    ,
-    "typeConditor":"Article",
-    "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
-    "source":"TU6"
-  }
-,
-  {
-    "_comment" : " === Notice 7, sensée ne pas matcher => PAS UN DOUBLON ===",
-    "title":
-      "ProbMetab: an R package for mayan probabilistic annotation of LC-MS-based metabolomics"
-    ,
-    "titlefr":
-      "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
-    ,
-    "titleen":
-      "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
-    ,
-    "author":
-      "Gonzales Simone"
-    ,
-    "authorInit":
-       "Gonzalez S"
-    ,
-    "doi":
-       "10.1093/bioinformatics/btu019ut=WOS:0003360951000342"
-    ,
-    "hasDoi":true,
-    "arxiv":
-       "12-345/678:9"
-    ,
-    "pubmedId":
-       "12-345/678:9"
-    ,
-    "nnt":
-       "12-345/678:9"
-    ,
-    "patentNumber":
-      "12-345/678:9"
-    ,
-    "ut":
-       "12-345/678:9"
-    ,
-    "issn":
-      "1367-4804"
-    ,
-    "eissn":
-      "1367-4803"
-    ,
-    "xissn":[
-      "1367-4804",
-      "1367-4803"
-    ],
-    "isbn":
-      "1367-4803"
-    ,
-    "issue":
-      "n°6"
-    ,
-    "volume":
-      "v12"
-    ,
-    "page":
-      "page 1588"
-    ,
-    "idHal":
-      "12-345/678:9"
-    ,
-    "halauthorid":
-      "894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246"
-    ,
-    "orcId":
-      "12-345/678:9"
-    ,
-    "researcherId":
-      "123:456:789+"
-    ,
-    "viaf":
-      "123.456.789"
-    ,
-    "typeDocument":[
-      "ART"
-    ],
-    "typeDocumentFlat": [
-      "ART"
-    ],
-    "titreSource":
-      ""
-    ,
-    "publicationDate":
-      "2014"
-    ,
-    "typeConditor":"Article",
-    "path":"/applis/istex/li/corpus-resources-conditor/notice-7.xml",
-    "source":"hal"
-  }
-  ,
-  {
-    "_comment" : " === Notice 8, sensée matcher avec notice 7 et même la remplacer => UN DOUBLON ===",
-    "title":
-      "ProbMetab: an R package for mayan probabilistic annotation of LC-MS-based metabolomics"
-    ,
-    "titlefr":
-      "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
-    ,
-    "titleen":
-      "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics"
-    ,
-    "author":
-      "Gonzales Simone"
-    ,
-    "authorInit":
-       "Gonzalez S"
-    ,
-    "doi":
-       "10.1093/bioinformatics/btu019ut=WOS:0003360951000342"
-    ,
-    "arxiv":
-       "12-345/678:9"
-    ,
-    "pubmedId":
-       "12-345/678:9"
-    ,
-    "nnt":
-       "12-345/678:9"
-    ,
-    "patentNumber":
-      "12-345/678:9"
-    ,
-    "ut":
-       "12-345/678:9"
-    ,
-    "issn":
-      "1367-4804"
-    ,
-    "eissn":
-      "1367-4803"
-    ,
-    "xissn":[
-      "1367-4804",
-      "1367-4803"
-    ],
-    "isbn":
-      "1367-4803"
-    ,
-    "issue":
-      "n°6"
-    ,
-    "volume":
-      "v12"
-    ,
-    "page":
-      "page 1588"
-    ,
-    "idHal":
-      "12-345/678:9"
-    ,
-    "halauthorid":
-      "894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246"
-    ,
-    "orcId":
-      "12-345/678:9"
-    ,
-    "researcherId":
-      "123:456:789+"
-    ,
-    "viaf":
-      "123.456.789"
-    ,
-    "typeDocument":[
-      "ART"
-    ],
-    "typeDocumentFlat": [
-      "ART"
-    ],
-    "titreSource":
-      ""
-    ,
-    "publicationDate":
-      "2014"
-    ,
-    "typeConditor":"Article",
-    "path":"/applis/istex/li/corpus-resources-conditor/notice-7.xml",
-    "source":"hal"
+    "titreSource": "",
+    "publicationDate": "2014",
+    "typeConditor": "Article",
+    "path": "/applis/istex/li/corpus-resources-conditor/notice-1.xml",
+    "source": "TU1"
   },
   {
+    "_comment": " === Notice 2, sensée matcher avec titre + doi (REGLE 1) ===",
+    "title": "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+    "titlefr": "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+    "titleen": "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+    "author": "Gonzalez Speedy",
+    "authorInit": "Gonzalez S",
+    "doi": "10.1093bioinformatics/btu019ut=WOS:000336095100034",
+    "hasDoi": true,
+    "arxiv": "12-345/678:9",
+    "pubmedId": "12-345/678:9",
+    "nnt": "12-345/678:9",
+    "patentNumber": "12-345/678:9",
+    "ut": "12-345/678:9",
+    "issn": "1367-4804",
+    "eissn": "1367-4803",
+    "isbn": "1367-4803",
+    "issue": "n°6",
+    "volume": "v13",
+    "page": "page 1588",
+    "idHal": "12-345/678:9",
+    "halauthorid": "894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246",
+    "orcId": "12-345/678:9",
+    "researcherId": "123:456:789+",
+    "viaf": "123.456.789",
+    "typeDocument": [
+      "ART"
+    ],
+    "typeDocumentFlat": [
+      "ART"
+    ],
+    "titreSource": "",
+    "publicationDate": "2014",
+    "typeConditor": "Article",
+    "path": "/applis/istex/li/corpus-resources-conditor/notice-2.xml",
+    "source": "TU2"
+  },
+  {
+    "_comment": " === Notice 3, sensée matcher avec titre+volume+issue+issn (REGLE 2) ===",
+    "title": "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+    "titlefr": "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+    "titleen": "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+    "author": "Gonzalez Speedy",
+    "authorInit": "Gonzalez S",
+    "doi": "10.1093/bioinformatics/btu019ut=WOS:000336095100035",
+    "hasDoi": true,
+    "arxiv": "12-345/678:9",
+    "pubmedId": "12-345/678:9",
+    "nnt": "12-345/678:9",
+    "patentNumber": "12-345/678:9",
+    "ut": "12-345/678:9",
+    "issn": "1367-4803",
+    "eissn": "1367-4803",
+    "isbn": "1367-4803",
+    "issue": "n°5",
+    "volume": "v12",
+    "page": "page 1588",
+    "idHal": "12-345/678:9",
+    "halauthorid": "894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246",
+    "orcId": "12-345/678:9",
+    "researcherId": "123:456:789+",
+    "viaf": "123.456.789",
+    "typeDocument": [
+      "ART"
+    ],
+    "typeDocumentFlat": [
+      "ART"
+    ],
+    "titreSource": "",
+    "publicationDate": "2014",
+    "typeConditor": "Article",
+    "path": "/applis/istex/li/corpus-resources-conditor/notice-3.xml",
+    "source": "TU3"
+  },
+  {
+    "_comment": " === Notice 4, sensée matcher avec DOI seul (REGLE 3) ===",
+    "title": "ProbMetab: an R package for Bayan probabilistic annotation of LC-MS-based metabolomics",
+    "titlefr": "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+    "titleen": "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+    "author": "Gonzalez Speedy",
+    "authorInit": "Gonzalez S",
+    "doi": "10.1093/bioinformatics/btu019ut=WOS:000336095100034",
+    "hasDoi": true,
+    "arxiv": "12-345/678:9",
+    "pubmedId": "12-345/678:9",
+    "nnt": "12-345/678:9",
+    "patentNumber": "12-345/678:9",
+    "ut": "12-345/678:9",
+    "issn": "1367-480",
+    "eissn": "1367-4803",
+    "isbn": "1367-4803",
+    "issue": "n°5",
+    "volume": "v12",
+    "page": "page 1588",
+    "idHal": "12-345/678:9",
+    "halauthorid": "894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246",
+    "orcId": "12-345/678:9",
+    "researcherId": "123:456:789+",
+    "viaf": "123.456.789",
+    "typeDocument": [
+      "ART"
+    ],
+    "typeDocumentFlat": [
+      "ART"
+    ],
+    "titreSource": "",
+    "publicationDate": "2014",
+    "typeConditor": "Article",
+    "path": "/applis/istex/li/corpus-resources-conditor/notice-3.xml",
+    "source": "TU4"
+  },
+  {
+    "_comment": " === Notice 5, sensée matcher avec titre+auteur+issn seul (REGLE 4) ===",
+    "title": "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+    "titlefr": "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+    "titleen": "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+    "author": "Guidetti-Gonzalez Simone",
+    "authorInit": "Gonzalez S",
+    "doi": "10.1093/bioinformatics/btu019ut=WOS:0003360951000344",
+    "hasDoi": true,
+    "arxiv": "12-345/678:9",
+    "pubmedId": "12-345/678:9",
+    "nnt": "12-345/678:9",
+    "patentNumber": "12-345/678:9",
+    "ut": "12-345/678:9",
+    "issn": "1367-4803",
+    "eissn": "1367-4803",
+    "isbn": "1367-4803",
+    "issue": "n°6",
+    "volume": "v12",
+    "page": "page 1588",
+    "idHal": "12-345/678:9",
+    "halauthorid": "894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246",
+    "orcId": "12-345/678:9",
+    "researcherId": "123:456:789+",
+    "viaf": "123.456.789",
+    "typeDocument": [
+      "ART"
+    ],
+    "typeDocumentFlat": [
+      "ART"
+    ],
+    "titreSource": "",
+    "publicationDate": "2014",
+    "typeConditor": "Article",
+    "path": "/applis/istex/li/corpus-resources-conditor/notice-3.xml",
+    "source": "TU5"
+  },
+  {
+    "_comment": " === Notice 6, sensée matcher avec titre+auteurInit+issn seul (REGLE 5) ===",
+    "title": "",
+    "titlefr": "",
+    "titleen": "",
+    "author": "",
+    "authorInit": "Guidetti-Gonzalez S",
+    "doi": "",
+    "hasDoi": true,
+    "arxiv": "12-345/678:9",
+    "pubmedId": "12-345/678:9",
+    "nnt": "12-345/678:9",
+    "patentNumber": "12-345/678:9",
+    "ut": "12-345/678:9",
+    "issn": "1367-4803",
+    "eissn": "1367-4803",
+    "isbn": "1367-4803",
+    "issue": "n°6",
+    "volume": "v12",
+    "page": "page 1588",
+    "idHal": "12-345/678:9",
+    "halauthorid": "894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246",
+    "orcId": "12-345/678:9",
+    "researcherId": "123:456:789+",
+    "viaf": "123.456.789",
+    "typeDocument": [
+      "ART"
+    ],
+    "typeDocumentFlat": [
+      "ART"
+    ],
+    "titreSource": "",
+    "publicationDate": "2014",
+    "typeConditor": "Article",
+    "path": "/applis/istex/li/corpus-resources-conditor/notice-3.xml",
+    "source": "TU6"
+  },
+  {
+    "_comment": " === Notice 7, sensée ne pas matcher => PAS UN DOUBLON ===",
+    "title": "ProbMetab: an R package for mayan probabilistic annotation of LC-MS-based metabolomics",
+    "titlefr": "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+    "titleen": "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+    "author": "Gonzales Simone",
+    "authorInit": "Gonzalez S",
+    "doi": "10.1093/bioinformatics/btu019ut=WOS:0003360951000342",
+    "hasDoi": true,
+    "arxiv": "12-345/678:9",
+    "pubmedId": "12-345/678:9",
+    "nnt": "12-345/678:9",
+    "patentNumber": "12-345/678:9",
+    "ut": "12-345/678:9",
+    "issn": "1367-4804",
+    "eissn": "1367-4803",
+    "xissn": [
+      "1367-4804",
+      "1367-4803"
+    ],
+    "isbn": "1367-4803",
+    "issue": "n°6",
+    "volume": "v12",
+    "page": "page 1588",
+    "idHal": "12-345/678:9",
+    "halauthorid": "894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246",
+    "orcId": "12-345/678:9",
+    "researcherId": "123:456:789+",
+    "viaf": "123.456.789",
+    "typeDocument": [
+      "ART"
+    ],
+    "typeDocumentFlat": [
+      "ART"
+    ],
+    "titreSource": "",
+    "publicationDate": "2014",
+    "typeConditor": "Article",
+    "path": "/applis/istex/li/corpus-resources-conditor/notice-7.xml",
+    "source": "hal"
+  },
+  {
+    "_comment": " === Notice 8, sensée matcher avec notice 7 et même la remplacer => UN DOUBLON ===",
+    "title": "ProbMetab: an R package for mayan probabilistic annotation of LC-MS-based metabolomics",
+    "titlefr": "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+    "titleen": "ProbMetab: an R package for Bayesian probabilistic annotation of LC-MS-based metabolomics",
+    "author": "Gonzales Simone",
+    "authorInit": "Gonzalez S",
+    "doi": "10.1093/bioinformatics/btu019ut=WOS:0003360951000342",
+    "arxiv": "12-345/678:9",
+    "pubmedId": "12-345/678:9",
+    "nnt": "12-345/678:9",
+    "patentNumber": "12-345/678:9",
+    "ut": "12-345/678:9",
+    "issn": "1367-4804",
+    "eissn": "1367-4803",
+    "xissn": [
+      "1367-4804",
+      "1367-4803"
+    ],
+    "isbn": "1367-4803",
+    "issue": "n°6",
+    "volume": "v12",
+    "page": "page 1588",
+    "idHal": "12-345/678:9",
+    "halauthorid": "894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246",
+    "orcId": "12-345/678:9",
+    "researcherId": "123:456:789+",
+    "viaf": "123.456.789",
+    "typeDocument": [
+      "ART"
+    ],
+    "typeDocumentFlat": [
+      "ART"
+    ],
+    "titreSource": "",
+    "publicationDate": "2014",
+    "typeConditor": "Article",
+    "path": "/applis/istex/li/corpus-resources-conditor/notice-7.xml",
+    "source": "hal"
+  },
+  {
+    "_comment": " === Notice 9",
     "creationDate": "2018-06-11 12:58:24",
     "title": "Sensitivity Analysis of the New Sizing Tool 'PISTACHE' for Solar Heating, Cooling and Domestic Hot Water Systems",
     "titleen": "Sensitivity Analysis of the New Sizing Tool “PISTACHE” for Solar Heating, Cooling and Domestic Hot Water Systems",
@@ -809,6 +483,7 @@
     "ingestId": "HAL_2018-06-11_1"
   },
   {
+    "_comment": " === Notice 10",
     "title": "Sensitivity analysis of the new sizing tool 'pISTACHE' for solar heating, cooling and domestic hot water systems",
     "titleen": "Sensitivity analysis of the new sizing tool \"pISTACHE\" for solar heating, cooling and domestic hot water systems",
     "author": "Semmari Hamza Marc Olivier Praene Jean-Philippe",
@@ -935,9 +610,9 @@
     "source": "hal",
     "typeConditor": "Article",
     "ingestId": "HAL_2018-06-11_1"
-    
   },
   {
+    "_comment": " === Notice 11",
     "title": "Sensitivity analysis of the new sizing tool 'PISTACHE' for solar heating, cooling and domestic hot water systems",
     "titleen": "Sensitivity analysis of the new sizing tool 'PISTACHE' for solar heating, cooling and domestic hot water systems",
     "meetingTitle": "2nd International Conference on Solar Heating and Cooling for Buildings and Industry (SHC)",
@@ -1071,5 +746,4 @@
     "typeConditor": "Article",
     "ingestId": "WOS_2018-06-11_1"
   }
-
 ]

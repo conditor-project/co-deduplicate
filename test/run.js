@@ -26,13 +26,13 @@ const esClient = new es.Client({
 
 // fonction de vérification et suppression de l'index pour les tests
 let checkAndDeleteIndex = function (cbCheck) {
-  esClient.indices.exists({index: esConf.index}, function (errorExists, exists) {
+  esClient.indices.exists({ index: esConf.index }, function (errorExists, exists) {
     if (errorExists) {
       console.error(`Problème dans la vérification de l'index ${esConf.index}\n${errorExists.message}`);
       process.exit(1);
     }
     if (!exists) { return cbCheck(); }
-    esClient.indices.delete({index: esConf.index}, function (errorDelete, responseDelete) {
+    esClient.indices.delete({ index: esConf.index }, function (errorDelete, responseDelete) {
       if (errorDelete) {
         console.error(`Problème dans la suppression de l'index ${esConf.index}\n${errorDelete.message}`);
         process.exit(1);
@@ -90,179 +90,20 @@ describe(pkg.name + '/index.js', function () {
   });
   // test sur l'insertion d'une 1ere notice
   describe('#insert notice 1', function () {
-    let docObject;
-
-    it('La notice 1 est intégrée et seule dans l\'index ES', function (done) {
-      docObject = testData[0];
-      business.doTheJob(docObject = testData[0], function (err) {
-        if (err !== undefined) { console.log(err.errMessage); }
-        expect(err).to.be.undefined;
-        setTimeout(function () {
+    let totalExpected = 0;
+    testData.map((data, index) => {
+      it(data._comment, function (done) {
+        business.doTheJob(data, function (err) {
+          if (err) return done(err.errMessage);
           esClient.search({
             index: esConf.index
           }, function (esError, response) {
-            expect(esError).to.be.undefined;
-            expect(response.hits.total).to.be.equal(1);
+            if (esError) return done(esError);
+            if (index !== 7) totalExpected++;
+            expect(response.hits.total).to.be.equal(totalExpected);
             done();
           });
-        }, 300);
-      });
-    });
-
-    it('La notice 2 matche bien', function (done) {
-      docObject = testData[1];
-      business.doTheJob(docObject, function (err) {
-        if (err !== undefined) console.log(err.errMessage);
-        expect(err).to.be.undefined;
-        setTimeout(function () {
-          esClient.search({
-            index: esConf.index
-          }, function (esError, response) {
-            expect(esError).to.be.undefined;
-            expect(response.hits.total).to.be.equal(2);
-            done();
-          });
-        }, 300);
-      });
-    });
-
-    it('La notice 3 matche bien', function (done) {
-      docObject = testData[2];
-      business.doTheJob(docObject, function (err) {
-        expect(err).to.be.undefined;
-        setTimeout(function () {
-          esClient.search({
-            index: esConf.index
-          }, function (esError, response) {
-            expect(esError).to.be.undefined;
-            expect(response.hits.total).to.be.equal(3);            
-            done();
-          });
-        }, 300);
-      });
-    });
-
-    it('La notice 4 matche bien', function (done) {
-      docObject = testData[3];
-      business.doTheJob(docObject, function (err) {
-        expect(err).to.be.undefined;
-        setTimeout(function () {
-          esClient.search({
-            index: esConf.index
-          }, function (esError, response) {
-            expect(esError).to.be.undefined;
-            expect(response.hits.total).to.be.equal(4);
-            done();
-          });
-        }, 300);
-      });
-    });
-
-    it('La notice 5 matche bien', function (done) {
-      docObject = testData[4];
-      business.doTheJob(docObject, function (err) {
-        expect(err).to.be.undefined;
-        setTimeout(function () {
-          esClient.search({
-            index: esConf.index
-          }, function (esError, response) {
-            expect(esError).to.be.undefined;
-            expect(response.hits.total).to.be.equal(5);
-            done();
-          });
-        }, 300);
-      });
-    });
-    it('La notice 6 matche bien', function (done) {
-      docObject = testData[5];
-      business.doTheJob(docObject, function (err) {
-        expect(err).to.be.undefined;
-        setTimeout(function () {
-          esClient.search({
-            index: esConf.index
-          }, function (esError, response) {
-            expect(esError).to.be.undefined;
-            expect(response.hits.total).to.be.equal(6);
-            done();
-          });
-        }, 300);
-      });
-    });
-
-    it('La notice 7 matche bien', function (done) {
-      docObject = testData[6];
-      business.doTheJob(docObject, function (err) {
-        expect(err).to.be.undefined;
-        setTimeout(function () {
-          esClient.search({
-            index: esConf.index
-          }, function (esError, response) {
-            expect(esError).to.be.undefined;
-            expect(response.hits.total).to.be.equal(7);
-            done();
-          });
-        }, 300);
-      });
-    });
-
-    it('La notice 8 matche bien', function (done) {
-      docObject = testData[7];
-      business.doTheJob(docObject, function (err) {
-        expect(err).to.be.undefined;
-        setTimeout(function () {
-          esClient.search({
-            index: esConf.index
-          }, function (esError, response) {
-            expect(esError).to.be.undefined;
-            expect(response.hits.total).to.be.equal(7);
-            done();
-          });
-        }, 300);
-      });
-    });
-    it('La notice 9 matche bien', function (done) {
-      docObject = testData[8];
-      business.doTheJob(docObject, function (err) {
-        expect(err).to.be.undefined;
-        setTimeout(function () {
-          esClient.search({
-            index: esConf.index
-          }, function (esError, response) {
-            expect(esError).to.be.undefined;
-            expect(response.hits.total).to.be.equal(8);
-            done();
-          });
-        }, 300);
-      });
-    });
-    it('La notice 10 matche bien', function (done) {
-      docObject = testData[9];
-      business.doTheJob(docObject, function (err) {
-        expect(err).to.be.undefined;
-        setTimeout(function () {
-          esClient.search({
-            index: esConf.index
-          }, function (esError, response) {
-            expect(esError).to.be.undefined;
-            expect(response.hits.total).to.be.equal(9);
-            done();
-          });
-        }, 300);
-      });
-    });
-    it('La notice 11 matche bien', function (done) {
-      docObject = testData[10];
-      business.doTheJob(docObject, function (err) {
-        expect(err).to.be.undefined;
-        setTimeout(function () {
-          esClient.search({
-            index: esConf.index
-          }, function (esError, response) {
-            expect(esError).to.be.undefined;
-            expect(response.hits.total).to.be.equal(10);
-            done();
-          });
-        }, 300);
+        });
       });
     });
   });
@@ -410,7 +251,7 @@ describe(pkg.name + '/index.js', function () {
   // Méthode finale sensée faire du nettoyage après les tests
 
   after(function (done) {
-    esClient.indices.delete({index: esConf.index}).then(
+    esClient.indices.delete({ index: esConf.index }).then(
       function () {
         console.log('nettoyage index de test OK');
         done();
