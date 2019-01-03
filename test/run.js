@@ -70,7 +70,7 @@ describe(pkg.name + '/index.js', function () {
       const scriptList = business.__get__('loadPainlessScripts')();
       debug(Object.keys(scriptList));
       expect(Object.keys(scriptList).length, 'il devrait y avoir au moins 7 scripts painless dans la liste').to.be.gte(7);
-      const expectedScripts = ['addDuplicate', 'addEmptyDuplicate', 'removeDuplicate', 'setDuplicateRules', 'setHadTransDuplicate', 'setIdChain', 'setIsDuplicate'];
+      const expectedScripts = ['addDuplicate', 'addEmptyDuplicate', 'removeDuplicate', 'setDuplicateRules', 'setHasTransDuplicate', 'setIdChain', 'setIsDuplicate'];
       expect(_.intersection(expectedScripts, Object.keys(scriptList)).length, 'Les au moins 7 scripts painless doivent avoir le bon nom').to.be.gte(7);
       done();
     });
@@ -272,7 +272,7 @@ describe(pkg.name + '/index.js', function () {
       esClient.indices.analyze({
         index: esConf.index,
         body: {
-          'field': 'title.normalized',
+          'field': 'title.default.normalized',
           'text': 'Voici un test de titre caparaçonner aïoli ! '
         }
       }, function (esError, response) {
@@ -283,26 +283,11 @@ describe(pkg.name + '/index.js', function () {
       });
     });
 
-    it('Titre 50 normalizer retourne la bonne valeur', function (done) {
-      esClient.indices.analyze({
-        index: esConf.index,
-        body: {
-          'field': 'title.normalized50',
-          'text': 'Alors voyons si on a systematiquement le bon résultat dans la boucle, après tout ça devrait être bon'
-        }
-      }, function (esError, response) {
-        expect(esError).to.be.undefined;
-        expect(response).to.not.be.undefined;
-        expect(response.tokens[0].token).to.be.equal('alorsvoyonssionasystematiquementlebonresultatdansl');
-        done();
-      });
-    });
-
     it('Auteur normalizer retourne la bonne valeur', function (done) {
       esClient.indices.analyze({
         index: esConf.index,
         body: {
-          'field': 'author.normalized',
+          'field': 'first3AuthorNames.normalized',
           'text': 'Gérard Philippe, André Gide'
         }
       }, function (esError, response) {
@@ -332,7 +317,7 @@ describe(pkg.name + '/index.js', function () {
       esClient.indices.analyze({
         index: esConf.index,
         body: {
-          'field': 'page.normalized',
+          'field': 'pageRange.normalized',
           'text': '158-165'
         }
       }, function (esError, response) {
@@ -410,11 +395,11 @@ describe(pkg.name + '/index.js', function () {
   // Méthode finale sensée faire du nettoyage après les tests
 
   after(function (done) {
-    esClient.indices.delete({index: esConf.index}).then(
-      function () {
-        console.log('nettoyage index de test OK');
-        done();
-      });
+    // esClient.indices.delete({index: esConf.index}).then(
+    //   function () {
+    //     console.log('nettoyage index de test OK');
+    //     done();
+    //   });
     done();
   });
 });

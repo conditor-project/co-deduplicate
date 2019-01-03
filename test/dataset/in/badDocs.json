@@ -6,11 +6,11 @@
         "value" : "On est tombés par hasard sur ce cas",
         "normalized" : "onesttombesparhasardsurcecas"
       },
-      "author": {
+      "first3AuthorNames": {
         "value" : "Ate Tom",
         "normalized" : "atetom"
       } ,
-      "authorInit":{
+      "first3AuthorNamesWithInitials":{
         "value": "T Ate",
         "normalized": "tate"
       },
@@ -28,11 +28,11 @@
         "value" : "Il faut pas que ça matche",
         "normalized" : "ilfautpasquecamatche"
       },
-      "author": {
+      "first3AuthorNames": {
         "value" : "Ate Pat",
         "normalized" : "atepat"
       } ,
-      "authorInit":{
+      "first3AuthorNamesWithInitials":{
         "value": "P Ate",
         "normalized": "pate"
       },
