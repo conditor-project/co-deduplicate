@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "jshint": "^2.9.5",
+    "jshint": "^2.9.7",
     "mocha": "^3.3.0",
     "nyc": "^13.1.0"
   }
