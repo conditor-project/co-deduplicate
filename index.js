@@ -59,7 +59,7 @@ function insereNotice (docObject) {
     options.body.source = docObject.source;
     options.body.typeConditor = docObject.typeConditor;
     options.body.idConditor = docObject.idConditor;
-    options.body.ingestId = docObject.ingestId;
+    options.body.sessionName = docObject.sessionName;
     options.body.ingestBaseName = docObject.ingestBaseName;
     options.body.isDeduplicable = docObject.isDeduplicable;
     options.body.idChain = docObject.source + ':' + docObject.idConditor + '!';
@@ -81,7 +81,7 @@ function aggregeNotice (docObject, data) {
 
     _.each(data.hits.hits, (hit) => {
       if (hit._source.idConditor !== docObject.idConditor) {
-        duplicate.push({ rules: hit.matched_queries, source: hit._source.source, ingestId: hit._source.ingestId, idConditor: hit._source.idConditor });
+        duplicate.push({ rules: hit.matched_queries, source: hit._source.source, sessionName: hit._source.sessionName, idConditor: hit._source.idConditor });
         idchain = _.union(idchain, hit._source.idChain.split('!'));
         allMergedRules = _.union(hit.matched_queries, allMergedRules);
       }
@@ -121,7 +121,7 @@ function aggregeNotice (docObject, data) {
     options.body.isDuplicate = (allMergedRules.length > 0);
     options.body.typeConditor = docObject.typeConditor;
     options.body.idConditor = docObject.idConditor;
-    options.body.ingestId = docObject.ingestId;
+    options.body.sessionName = docObject.sessionName;
     options.body.ingestBaseName = docObject.ingestBaseName;
     options.body.isDeduplicable = docObject.isDeduplicable;
 
@@ -153,7 +153,7 @@ function propagate (docObject, data, result) {
                         duplicate: [{
                           idConditor: hitSource._source.idConditor,
                           rules: [],
-                          ingestId: hitSource._source.ingestId,
+                          sessionName: hitSource._source.sessionName,
                           source: hitSource._source.source
                         }],
                         idConditor: hitSource._source.idConditor
@@ -201,7 +201,7 @@ function propagate (docObject, data, result) {
                     duplicate: [{
                       idConditor: docObject.idConditor,
                       rules: matchedQueries,
-                      ingestId: docObject.ingestId,
+                      sessionName: docObject.sessionName,
                       source: docObject.source
                     }]
                   }
@@ -253,7 +253,7 @@ function propagate (docObject, data, result) {
       script:
             {
               lang: 'painless',
-              source: scriptList.setHadTransDuplicate
+              source: scriptList.setHasTransDuplicate
             },
       refresh: true
     };
@@ -267,7 +267,7 @@ function propagate (docObject, data, result) {
     script:
         {
           lang: 'painless',
-          source: scriptList.setHadTransDuplicate
+          source: scriptList.setHasTransDuplicate
         },
     refresh: true
   };
