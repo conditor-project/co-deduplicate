@@ -23,7 +23,7 @@ Identique à la structure des champs de sortie du module [co-formatter](https://
 2 champs sont ajoutés au JSON d'entrée :
 
 * `idChain` : la liste des doublons trouvés, sous la forme d'une suite d'identifiants séparés par un caractère délimiteur.
-* `duplicate` : la liste des noms de règles ayant amené au dédoublonnage
+* `duplicates` : la liste des noms de règles ayant amené au dédoublonnage
 
 #### Normalisation
 

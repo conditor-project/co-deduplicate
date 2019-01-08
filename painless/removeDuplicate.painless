@@ -1,10 +1,10 @@
-ArrayList newDuplicate = new ArrayList();
-if (ctx._source.duplicate != null && ctx._source.duplicate.length>0){
-    int length = ctx._source.duplicate.length;
+ArrayList newDuplicates = new ArrayList();
+if (ctx._source.duplicates != null && ctx._source.duplicates.length>0){
+    int length = ctx._source.duplicates.length;
     for (int i=0;i<length;i++) {
-        if (ctx._source.duplicate[i].idConditor!=params.idConditor) {
-            newDuplicate.add(ctx._source.duplicate[i])
+        if (ctx._source.duplicates[i].idConditor!=params.idConditor) {
+            newDuplicates.add(ctx._source.duplicates[i])
         }
     }
 }
-ctx._source.duplicate=newDuplicate
+ctx._source.duplicates=newDuplicates

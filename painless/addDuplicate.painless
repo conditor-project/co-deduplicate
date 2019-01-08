@@ -1,7 +1,7 @@
-if (ctx._source.duplicate == null || ctx._source.duplicate.length==0) {
-    ctx._source.duplicate = params.duplicate
+if (ctx._source.duplicates == null || ctx._source.duplicates.length==0) {
+    ctx._source.duplicates = params.duplicates
 } else {
-    if (!ctx._source.duplicate.contains(params.duplicate[0])) {
-        ctx._source.duplicate.add(params.duplicate[0])
+    if (!ctx._source.duplicates.contains(params.duplicates[0])) {
+        ctx._source.duplicates.add(params.duplicates[0])
     }
 }

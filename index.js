@@ -63,9 +63,9 @@ function insereNotice (docObject) {
     options.body.ingestBaseName = docObject.ingestBaseName;
     options.body.isDeduplicable = docObject.isDeduplicable;
     options.body.idChain = docObject.source + ':' + docObject.idConditor + '!';
-    docObject.duplicate = [];
+    docObject.duplicates = [];
     docObject.isDuplicate = false;
-    options.body.duplicate = docObject.duplicate;
+    options.body.duplicates = docObject.duplicates;
     options.body.isDuplicate = docObject.isDuplicate;
     return esClient.index(options);
   });
@@ -73,7 +73,7 @@ function insereNotice (docObject) {
 
 function aggregeNotice (docObject, data) {
   return Promise.try(() => {
-    let duplicate = [];
+    let duplicates = [];
     let allMergedRules = [];
     let idchain = [];
     let arrayIdConditor = [];
@@ -81,7 +81,7 @@ function aggregeNotice (docObject, data) {
 
     _.each(data.hits.hits, (hit) => {
       if (hit._source.idConditor !== docObject.idConditor) {
-        duplicate.push({ rules: hit.matched_queries, source: hit._source.source, sessionName: hit._source.sessionName, idConditor: hit._source.idConditor });
+        duplicates.push({ rules: hit.matched_queries, source: hit._source.source, sessionName: hit._source.sessionName, idConditor: hit._source.idConditor });
         idchain = _.union(idchain, hit._source.idChain.split('!'));
         allMergedRules = _.union(hit.matched_queries, allMergedRules);
       }
@@ -100,7 +100,7 @@ function aggregeNotice (docObject, data) {
     idchain.push(docObject.source + ':' + docObject.idConditor + '!');
     idchain.sort();
 
-    docObject.duplicate = duplicate;
+    docObject.duplicates = duplicates;
     docObject.duplicateRules = _.sortBy(allMergedRules);
     docObject.isDuplicate = (allMergedRules.length > 0);
 
@@ -116,7 +116,7 @@ function aggregeNotice (docObject, data) {
 
     options.body.path = docObject.path;
     options.body.source = docObject.source;
-    options.body.duplicate = duplicate;
+    options.body.duplicates = duplicates;
     options.body.duplicateRules = allMergedRules;
     options.body.isDuplicate = (allMergedRules.length > 0);
     options.body.typeConditor = docObject.typeConditor;
@@ -150,7 +150,7 @@ function propagate (docObject, data, result) {
                       lang: 'painless',
                       source: scriptList.addEmptyDuplicate,
                       params: {
-                        duplicate: [{
+                        duplicates: [{
                           idConditor: hitSource._source.idConditor,
                           rules: [],
                           sessionName: hitSource._source.sessionName,
@@ -172,7 +172,7 @@ function propagate (docObject, data, result) {
   _.each(result.hits.hits, (hit) => {
     matchedQueries = [];
 
-    _.each(docObject.duplicate, (directDuplicate) => {
+    _.each(docObject.duplicates, (directDuplicate) => {
       if (directDuplicate.idConditor === hit._source.idConditor) { matchedQueries = directDuplicate.rules; }
     });
 
@@ -198,7 +198,7 @@ function propagate (docObject, data, result) {
                   lang: 'painless',
                   source: scriptList.addDuplicate,
                   params: {
-                    duplicate: [{
+                    duplicates: [{
                       idConditor: docObject.idConditor,
                       rules: matchedQueries,
                       sessionName: docObject.sessionName,
