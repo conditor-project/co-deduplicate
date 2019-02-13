@@ -61,7 +61,7 @@
     ,
     "pageRange":"page 1589"
     ,
-    "idHal":"12-345/678:9"
+    "halId":"12-345/678:9"
     ,
     "halauthorid":"894287 1159794 1159800 894286 1126485 726246 894287 1159794 1159800 894286 1126485 726246"
     ,
@@ -124,7 +124,7 @@
     "pageRange":
       "page 1588"
     ,
-    "idHal":
+    "halId":
       "12-345/678:9"
     ,
     "halauthorid":
@@ -208,7 +208,7 @@
     "pageRange":
       "page 1588"
     ,
-    "idHal":
+    "halId":
       "12-345/678:9"
     ,
     "halauthorid":
@@ -292,7 +292,7 @@
     "pageRange":
       "page 1588"
     ,
-    "idHal":
+    "halId":
       "12-345/678:9"
     ,
     "halauthorid":
@@ -376,7 +376,7 @@
     "pageRange":
       "page 1588"
     ,
-    "idHal":
+    "halId":
       "12-345/678:9"
     ,
     "halauthorid":
@@ -461,7 +461,7 @@
     "pageRange":
       "page 1588"
     ,
-    "idHal":
+    "halId":
       "12-345/678:9"
     ,
     "halauthorid":
@@ -549,7 +549,7 @@
     "pageRange":
       "page 1588"
     ,
-    "idHal":
+    "halId":
       "12-345/678:9"
     ,
     "halauthorid":
@@ -638,7 +638,7 @@
     "pageRange":
       "page 1588"
     ,
-    "idHal":
+    "halId":
       "12-345/678:9"
     ,
     "halauthorid":
@@ -775,7 +775,7 @@
     "doi": "10.1016/j.egypro.2014.02.114",
     "pageRange": "alainbastide",
     "volume": "48",
-    "idHal": "hal-01153024",
+    "halId": "hal-01153024",
     "halAuthorId": [
       "1167161",
       "523032",
@@ -906,7 +906,7 @@
     "isbn": [],
     "pageRange": "997 – 1006",
     "volume": "48",
-    "idHal": "hal-01167197",
+    "halId": "hal-01167197",
     "halAuthorId": [
       "1167161",
       "523032",
