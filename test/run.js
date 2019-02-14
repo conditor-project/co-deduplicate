@@ -102,6 +102,7 @@ describe(pkg.name + '/index.js', function () {
             if (esError) return done(esError);
             if (index !== 7) totalExpected++;
             expect(response.hits.total).to.be.equal(totalExpected);
+            expect(response.hits.hits[0]._source.idConditor).not.to.be.undefined
             done();
           });
         });

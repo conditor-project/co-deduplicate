@@ -59,6 +59,8 @@ function insereNotice (docObject) {
     options.body.source = docObject.source;
     options.body.typeConditor = docObject.typeConditor;
     options.body.idConditor = docObject.idConditor;
+    options.body.sourceId = docObject.sourceId;
+    options.body.sourceUid = docObject.sourceUid;
     options.body.sessionName = docObject.sessionName;
     options.body.ingestBaseName = docObject.ingestBaseName;
     options.body.isDeduplicable = docObject.isDeduplicable;
