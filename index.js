@@ -54,21 +54,14 @@ function insereNotice (docObject) {
     };
 
     insertMetadata(docObject, options);
+    insertCommonOptions(docObject,options);
 
-    options.body.path = docObject.path;
-    options.body.source = docObject.source;
-    options.body.typeConditor = docObject.typeConditor;
-    options.body.idConditor = docObject.idConditor;
-    options.body.sourceId = docObject.sourceId;
-    options.body.sourceUid = docObject.sourceUid;
-    options.body.sessionName = docObject.sessionName;
-    options.body.ingestBaseName = docObject.ingestBaseName;
-    options.body.isDeduplicable = docObject.isDeduplicable;
     options.body.idChain = docObject.source + ':' + docObject.idConditor + '!';
     docObject.duplicates = [];
     docObject.isDuplicate = false;
     options.body.duplicates = docObject.duplicates;
     options.body.isDuplicate = docObject.isDuplicate;
+  
     return esClient.index(options);
   });
 }
@@ -115,24 +108,31 @@ function aggregeNotice (docObject, data) {
     };
 
     insertMetadata(docObject, options);
+    insertCommonOptions(docObject, options);
 
-    options.body.path = docObject.path;
-    options.body.source = docObject.source;
     options.body.duplicates = duplicates;
-    options.body.duplicateRules = allMergedRules;
+    options.body.duplicateRules = allMergedRules; 
     options.body.isDuplicate = (allMergedRules.length > 0);
-    options.body.typeConditor = docObject.typeConditor;
-    options.body.idConditor = docObject.idConditor;
-    options.body.sessionName = docObject.sessionName;
-    options.body.ingestBaseName = docObject.ingestBaseName;
-    options.body.isDeduplicable = docObject.isDeduplicable;
-
     docObject.arrayIdConditor = arrayIdConditor;
     options.body.idChain = _.join(idchain, '');
     docObject.idChain = options.body.idChain;
+  
     return esClient.index(options);
   });
 }
+
+function insertCommonOptions(docObject,options) {
+  options.body.path = docObject.path;
+  options.body.source = docObject.source;
+  options.body.typeConditor = docObject.typeConditor;
+  options.body.idConditor = docObject.idConditor;
+  options.body.sourceId = docObject.sourceId;
+  options.body.sourceUid = docObject.sourceUid;
+  options.body.sessionName = docObject.sessionName;
+  options.body.ingestBaseName = docObject.ingestBaseName;
+  options.body.isDeduplicable = docObject.isDeduplicable;
+}
+
 
 function propagate (docObject, data, result) {
   let options;

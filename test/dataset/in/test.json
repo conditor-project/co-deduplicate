@@ -81,7 +81,9 @@
     ,
     "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-1.xml",
-    "source":"TU1"
+    "source":"TU1",
+    "sourceId":"id1",
+    "sourceUid":"TU1$id1"
   }
 ,
   {
@@ -150,7 +152,9 @@
     ,
     "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-2.xml",
-    "source":"TU2"
+    "source":"TU2",
+    "sourceId":"id2",
+    "sourceUid":"TU2$id2"
   }
 ,
   {
@@ -234,7 +238,9 @@
     ,
     "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
-    "source":"TU3"
+    "source":"TU3",
+    "sourceId":"id3",
+    "sourceUid":"TU3$id3"
   }
 ,
   {
@@ -318,7 +324,9 @@
     ,
     "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
-    "source":"TU4"
+    "source":"TU4",
+    "sourceId":"id4",
+    "sourceUid":"TU4$id4"
   }
 ,
   {
@@ -403,7 +411,9 @@
     ,
     "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
-    "source":"TU5"
+    "source":"TU5",
+    "sourceId":"id5",
+    "sourceUid":"TU5$id5"
   }
 ,
   {
@@ -487,7 +497,9 @@
     ,
     "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
-    "source":"TU6"
+    "source":"TU6",
+    "sourceId":"id6",
+    "sourceUid":"TU6$id6"
   }
 ,
   {
@@ -575,7 +587,9 @@
     ,
     "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-7.xml",
-    "source":"hal"
+    "source":"hal",
+    "sourceId":"id1",
+    "sourceUid":"hal$12-345/678:9"
   }
   ,
   {
@@ -664,7 +678,9 @@
     ,
     "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-7.xml",
-    "source":"hal"
+    "source":"hal",
+    "sourceId":"12-345/678:9",
+    "sourceUid":"hal$12-345/678:9"
   },
   {
     "_comment": " === Notice 9",
@@ -795,7 +811,9 @@
     "path": "/applis/conditor/home/input/hal/HAL_2018-06-11_1/FICHIERS_TEI/hal-01153024.xml",
     "source": "hal",
     "typeConditor": "Article",
-    "sessionName": "HAL_2018-06-11_1"
+    "sessionName": "HAL_2018-06-11_1",
+    "sourceId":"hal-01153024",
+    "sourceUid":"hal$hal-01153024"
   },
   {
     "_comment": " === Notice X",
@@ -927,7 +945,9 @@
     "path": "/applis/conditor/home/input/hal/HAL_2018-06-11_1/FICHIERS_TEI/hal-01167197.xml",
     "source": "hal",
     "typeConditor": "Article",
-    "sessionName": "HAL_2018-06-11_1"
+    "sessionName": "HAL_2018-06-11_1",
+    "sourceId":"hal-01167197",
+    "sourceUid":"hal$hal-01167197"
     
   },
   {
@@ -1066,6 +1086,8 @@
     "path": "/applis/conditor/home/input/wos/WOS_2018-06-11_1/FICHIERS_TEI/000345410700113.xml",
     "source": "wos",
     "typeConditor": "Article",
-    "sessionName": "WOS_2018-06-11_1"
+    "sessionName": "WOS_2018-06-11_1",
+    "sourceId":"000345410700113",
+    "sourceUid":"wos$000345410700113"
   }
 ]
