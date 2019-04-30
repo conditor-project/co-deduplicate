@@ -84,6 +84,10 @@ describe(pkg.name + '/index.js', function () {
     it('Le constructeur de requête devrait pour la notice remonter 15 règles', function (done) {
       docObject = testData[0];
       request = business.__get__('buildQuery')(docObject, request);
+      const arxivQuery = _.find(request.query.bool.should, (clause)=> {
+        return clause.bool._name.indexOf(' : 1ID:arxiv+doi') > 0;
+      });
+      expect(arxivQuery.bool.must[0].bool.should[0].match).to.have.key('arxiv.normalized');
       expect(request.query.bool.should.length).to.be.equal(15);
       done();
     });

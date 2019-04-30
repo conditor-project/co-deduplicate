@@ -39,7 +39,7 @@
     "doi": "10.1093/bioinformatics/btu019ut=WOS:000336095100034"
     ,
     "hasDoi":true,
-    "arxiv": "12-345/678:9"
+    "arxiv": ["12-345/678:9"]
     ,
     "pubmedId": "12-345/678:9"
     ,
