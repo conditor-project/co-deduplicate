@@ -380,7 +380,7 @@ function interprete (docObject, rule, type) {
       bool.bool.should = _.map(_.get(docObject, _.values(value.match)[0]), (testValue) => {
         let shouldMatch;
         shouldMatch = { 'match': {} };
-        shouldMatch.match[_.values(value.match)[0]] = unidecode(testValue);
+        shouldMatch.match[_.keys(value.match)[0]] = unidecode(testValue);
         return shouldMatch;
       });
       bool.bool.minimum_should_match = 1;
@@ -390,7 +390,7 @@ function interprete (docObject, rule, type) {
       bool.bool.should = _.map(_.get(docObject, _.values(value.term)[0]), (testValue) => {
         let shouldMatch;
         shouldMatch = { 'term': {} };
-        shouldMatch.match[_.values(value.term)[0]] = unidecode(testValue);
+        shouldMatch.match[_.keys(value.term)[0]] = unidecode(testValue);
         return shouldMatch;
       });
       bool.bool.minimum_should_match = 1;
