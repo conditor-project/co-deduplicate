@@ -1,4 +1,5 @@
 /* eslint-env mocha */
+/* eslint-disable no-unused-expressions */
 'use strict';
 
 const rewire = require('rewire');
@@ -84,7 +85,7 @@ describe(pkg.name + '/index.js', function () {
     it('Le constructeur de requête devrait pour la notice remonter 15 règles', function (done) {
       docObject = testData[0];
       request = business.__get__('buildQuery')(docObject, request);
-      const arxivQuery = _.find(request.query.bool.should, (clause)=> {
+      const arxivQuery = _.find(request.query.bool.should, (clause) => {
         return clause.bool._name.indexOf(' : 1ID:arxiv+doi') > 0;
       });
       expect(arxivQuery.bool.must[0].bool.should[0].match).to.have.key('arxiv.normalized');
@@ -223,31 +224,14 @@ describe(pkg.name + '/index.js', function () {
   describe('#appel à finalJob qui va appeler forcemerge sur l\'indice', function () {
     it('la commande forcemerge est exécutée sans erreur.', function (done) {
       business.finalJob({}, (err) => {
+        if (err) return done(err);
         expect(err).to.be.undefined;
-      });
-
-      done();
-    });
-  });
-
-  describe('#appel à afterAllTheJobs qui va appeler le snapshot sur l\'indice', function () {
-    it('la commande snapshots est exécutée sans erreur.', function (done) {
-      business.afterAllTheJobs((err) => {
-        expect(err).to.be.undefined;
-      });
-
-      done();
-    });
-  });
-
-  // Méthode finale sensée faire du nettoyage après les tests
-
-  after(function (done) {
-    esClient.indices.delete({ index: esConf.index }).then(
-      function () {
-        console.log('nettoyage index de test OK');
         done();
       });
-    done();
+    });
+  });
+
+  after(function () {
+    return esClient.indices.delete({ index: esConf.index });
   });
 });
