@@ -31,6 +31,50 @@ const esClient = new es.Client({
 
 const business = {};
 
+business.beforeAnyJob = function (cbBefore) {
+  let options = {
+    processLogs: [],
+    errLogs: []
+  };
+
+  let conditorSession = process.env.CONDITOR_SESSION || esConf.index;
+  createIndex(conditorSession, options, function (err) {
+    options.errLogs.push('callback createIndex, err=' + err);
+    return cbBefore(err, options);
+  });
+};
+
+business.doTheJob = function (docObject, cb) {
+  let error;
+
+  getByIdSource(docObject)
+    .then(erase.bind(this, docObject))
+    .then(existNotice.bind(this, docObject))
+    .then(function (result) {
+      if (result && result._id && !docObject.idElasticsearch) { docObject.idElasticsearch = result._id; }
+      return cb();
+    }).catch(function (e) {
+      error = {
+        errCode: 3,
+        errMessage: 'erreur de dédoublonnage : ' + e
+      };
+      docObject.error = error;
+      cb(error);
+    });
+};
+
+business.finalJob = function (docObject, cbFinal) {
+  esClient.indices.forcemerge()
+    .catch(err => {
+      cbFinal(err);
+    })
+    .then(() => {
+      cbFinal();
+    });
+};
+
+module.exports = business;
+
 function insertMetadata (docObject, options) {
   _.each(metadata, (metadatum) => {
     if (metadatum.indexed === undefined || metadatum.indexed === true) {
@@ -54,14 +98,14 @@ function insereNotice (docObject) {
     };
 
     insertMetadata(docObject, options);
-    insertCommonOptions(docObject,options);
+    insertCommonOptions(docObject, options);
 
     options.body.idChain = docObject.source + ':' + docObject.idConditor + '!';
     docObject.duplicates = [];
     docObject.isDuplicate = false;
     options.body.duplicates = docObject.duplicates;
     options.body.isDuplicate = docObject.isDuplicate;
-  
+
     return esClient.index(options);
   });
 }
@@ -111,17 +155,17 @@ function aggregeNotice (docObject, data) {
     insertCommonOptions(docObject, options);
 
     options.body.duplicates = duplicates;
-    options.body.duplicateRules = allMergedRules; 
+    options.body.duplicateRules = allMergedRules;
     options.body.isDuplicate = (allMergedRules.length > 0);
     docObject.arrayIdConditor = arrayIdConditor;
     options.body.idChain = _.join(idchain, '');
     docObject.idChain = options.body.idChain;
-  
+
     return esClient.index(options);
   });
 }
 
-function insertCommonOptions(docObject,options) {
+function insertCommonOptions (docObject, options) {
   options.body.path = docObject.path;
   options.body.source = docObject.source;
   options.body.typeConditor = docObject.typeConditor;
@@ -132,7 +176,6 @@ function insertCommonOptions(docObject,options) {
   options.body.ingestBaseName = docObject.ingestBaseName;
   options.body.isDeduplicable = docObject.isDeduplicable;
 }
-
 
 function propagate (docObject, data, result) {
   let options;
@@ -148,19 +191,19 @@ function propagate (docObject, data, result) {
       if (hitTarget._source.idConditor !== hitSource._source.idConditor) {
         update = {
           script:
-                    {
-                      lang: 'painless',
-                      source: scriptList.addEmptyDuplicate,
-                      params: {
-                        duplicates: [{
-                          idConditor: hitSource._source.idConditor,
-                          rules: [],
-                          sessionName: hitSource._source.sessionName,
-                          source: hitSource._source.source
-                        }],
-                        idConditor: hitSource._source.idConditor
-                      }
-                    },
+          {
+            lang: 'painless',
+            source: scriptList.addEmptyDuplicate,
+            params: {
+              duplicates: [{
+                idConditor: hitSource._source.idConditor,
+                rules: [],
+                sessionName: hitSource._source.sessionName,
+                source: hitSource._source.source
+              }],
+              idConditor: hitSource._source.idConditor
+            }
+          },
           refresh: true
 
         };
@@ -182,11 +225,11 @@ function propagate (docObject, data, result) {
 
     update = {
       script:
-            {
-              lang: 'painless',
-              source: scriptList.removeDuplicate,
-              params: { idConditor: docObject.idConditor }
-            },
+      {
+        lang: 'painless',
+        source: scriptList.removeDuplicate,
+        params: { idConditor: docObject.idConditor }
+      },
       refresh: true
     };
 
@@ -196,18 +239,18 @@ function propagate (docObject, data, result) {
     if (hit._source.idConditor !== docObject.idConditor) {
       update = {
         script:
-                {
-                  lang: 'painless',
-                  source: scriptList.addDuplicate,
-                  params: {
-                    duplicates: [{
-                      idConditor: docObject.idConditor,
-                      rules: matchedQueries,
-                      sessionName: docObject.sessionName,
-                      source: docObject.source
-                    }]
-                  }
-                },
+        {
+          lang: 'painless',
+          source: scriptList.addDuplicate,
+          params: {
+            duplicates: [{
+              idConditor: docObject.idConditor,
+              rules: matchedQueries,
+              sessionName: docObject.sessionName,
+              source: docObject.source
+            }]
+          }
+        },
         refresh: true
       };
       body.push(options);
@@ -216,11 +259,11 @@ function propagate (docObject, data, result) {
 
     update = {
       script:
-            {
-              lang: 'painless',
-              source: scriptList.setIdChain,
-              params: { idChain: docObject.idChain }
-            },
+      {
+        lang: 'painless',
+        source: scriptList.setIdChain,
+        params: { idChain: docObject.idChain }
+      },
       refresh: true
     };
 
@@ -229,10 +272,10 @@ function propagate (docObject, data, result) {
 
     update = {
       script:
-            {
-              lang: 'painless',
-              source: scriptList.setIsDuplicate
-            },
+      {
+        lang: 'painless',
+        source: scriptList.setIsDuplicate
+      },
       refresh: true
     };
 
@@ -241,10 +284,10 @@ function propagate (docObject, data, result) {
 
     update = {
       script:
-            {
-              lang: 'painless',
-              source: scriptList.setDuplicateRules
-            },
+      {
+        lang: 'painless',
+        source: scriptList.setDuplicateRules
+      },
       refresh: true
     };
 
@@ -253,10 +296,10 @@ function propagate (docObject, data, result) {
 
     update = {
       script:
-            {
-              lang: 'painless',
-              source: scriptList.setHasTransDuplicate
-            },
+      {
+        lang: 'painless',
+        source: scriptList.setHasTransDuplicate
+      },
       refresh: true
     };
 
@@ -267,10 +310,10 @@ function propagate (docObject, data, result) {
   options = { update: { _index: esConf.index, _type: esConf.type, _id: docObject.idElasticsearch, retry_on_conflict: 3 } };
   update = {
     script:
-        {
-          lang: 'painless',
-          source: scriptList.setHasTransDuplicate
-        },
+    {
+      lang: 'painless',
+      source: scriptList.setHasTransDuplicate
+    },
     refresh: true
   };
 
@@ -314,7 +357,6 @@ function dispatch (docObject, data) {
       return aggregeNotice(docObject, data)
         .then(getDuplicateByIdConditor.bind(null, docObject, data))
         .then(propagate.bind(null, docObject, data))
-      // .then(inspectResult)
         .catch((err) => {
           if (err) { throw new Error('Erreur d aggregation de notice: ' + err); }
         });
@@ -328,15 +370,15 @@ function testParameter (docObject, rules) {
   let bool = true;
   _.each(arrayParameter, function (parameter) {
     if (_.get(docObject, parameter) === undefined ||
-            (_.isArray(_.get(docObject, parameter)) && _.get(docObject, parameter).length === 0) ||
-            (_.isString(_.get(docObject, parameter)) && _.get(docObject, parameter).trim() === '')) { bool = false; }
+      (_.isArray(_.get(docObject, parameter)) && _.get(docObject, parameter).length === 0) ||
+      (_.isString(_.get(docObject, parameter)) && _.get(docObject, parameter).trim() === '')) { bool = false; }
   });
 
   _.each(arrayNonParameter, function (nonparameter) {
     if (_.get(docObject, nonparameter) !== undefined &&
-            ((_.isArray(_.get(docObject, nonparameter)) && _.get(docObject, nonparameter).length > 0) ||
-                (_.isString(_.get(docObject, nonparameter)) && _.get(docObject, nonparameter).trim() !== '')
-            )) { bool = false; }
+      ((_.isArray(_.get(docObject, nonparameter)) && _.get(docObject, nonparameter).length > 0) ||
+        (_.isString(_.get(docObject, nonparameter)) && _.get(docObject, nonparameter).trim() !== '')
+      )) { bool = false; }
   });
 
   return bool;
@@ -502,11 +544,11 @@ function propagateDelete (docObject, data, result) {
 
       update = {
         script:
-                {
-                  lang: 'painless',
-                  source: scriptList.removeDuplicate,
-                  params: { idConditor: docObject.idConditor }
-                },
+        {
+          lang: 'painless',
+          source: scriptList.removeDuplicate,
+          params: { idConditor: docObject.idConditor }
+        },
         refresh: true
       };
 
@@ -515,10 +557,10 @@ function propagateDelete (docObject, data, result) {
 
       update = {
         script:
-                {
-                  lang: 'painless',
-                  source: scriptList.setIdChain
-                },
+        {
+          lang: 'painless',
+          source: scriptList.setIdChain
+        },
         refresh: true
       };
 
@@ -527,10 +569,10 @@ function propagateDelete (docObject, data, result) {
 
       update = {
         script:
-                {
-                  lang: 'painless',
-                  source: scriptList.setIsDuplicate
-                },
+        {
+          lang: 'painless',
+          source: scriptList.setIsDuplicate
+        },
         refresh: true
       };
 
@@ -539,10 +581,10 @@ function propagateDelete (docObject, data, result) {
 
       update = {
         script:
-                {
-                  lang: 'painless',
-                  source: scriptList.setDuplicateRules
-                },
+        {
+          lang: 'painless',
+          source: scriptList.setDuplicateRules
+        },
         refresh: true
       };
 
@@ -605,25 +647,6 @@ function getByIdSource (docObject) {
     });
   }
 }
-
-business.doTheJob = function (docObject, cb) {
-  let error;
-
-  getByIdSource(docObject)
-    .then(erase.bind(this, docObject))
-    .then(existNotice.bind(this, docObject))
-    .then(function (result) {
-      if (result && result._id && !docObject.idElasticsearch) { docObject.idElasticsearch = result._id; }
-      return cb();
-    }).catch(function (e) {
-      error = {
-        errCode: 3,
-        errMessage: 'erreur de dédoublonnage : ' + e
-      };
-      docObject.error = error;
-      cb(error);
-    });
-};
 
 // Fonction d'ajout de l'alias si nécessaire
 function createAlias (aliasArgs, options, aliasCallback) {
@@ -718,70 +741,6 @@ function createIndex (conditorSession, options, indexCallback) {
   });
 }
 
-business.beforeAnyJob = function (cbBefore) {
-  let options = {
-    processLogs: [],
-    errLogs: []
-  };
-
-  let conditorSession = process.env.CONDITOR_SESSION || esConf.index;
-  createIndex(conditorSession, options, function (err) {
-    options.errLogs.push('callback createIndex, err=' + err);
-    return cbBefore(err, options);
-  });
-};
-
-business.finalJob = function (docObject, cbFinal) {
-  esClient.indices.forcemerge()
-    .catch(err => {
-      cbFinal(err);
-    })
-    .then(() => {
-      cbFinal();
-    });
-};
-
-function createSnapshot () {
-  return esClient.snapshot.create({
-    'repository': esConf.index,
-    'snapshot': 'backup_' + esConf.index + new Date().toLocaleString().replace(' ', '_').replace(/\..+/, ''),
-    'body': {
-      'type': 'fs',
-      'settings': {
-        'location': path.join(esConf.backup_path, esConf.index)
-      }
-    }
-  });
-}
-
-function getRepository () {
-  return esClient.snapshot.getRepository({
-    'repository': esConf.index,
-    'ignore': [404]
-  });
-}
-
-function createRepository (response) {
-  if (response.status === 404) {
-    return esClient.snapshot.createRepository({
-      'repository': esConf.index,
-      'body': {
-        'type': 'fs',
-        'settings': {
-          'location': path.join(esConf.backup_path, esConf.index)
-        }
-      }
-    })
-      .catch(err => {
-        throw new Error('Erreur en creation de repository: ' + err);
-      });
-  } else {
-    Promise.try(() => {
-      return true;
-    });
-  }
-}
-
 function loadPainlessScripts () {
   const slist = {};
   const scriptDir = path.join(__dirname, 'painless');
@@ -796,20 +755,3 @@ function loadPainlessScripts () {
   }
   return slist;
 }
-
-business.afterAllTheJobs = function (cbAfterAll) {
-  getRepository()
-    .then(createRepository)
-    .catch(err => {
-      cbAfterAll(err);
-    })
-    .then(createSnapshot)
-    .catch(err => {
-      cbAfterAll(err);
-    })
-    .then((response) => {
-      cbAfterAll();
-    });
-};
-
-module.exports = business;
