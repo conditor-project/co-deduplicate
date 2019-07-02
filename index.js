@@ -6,7 +6,6 @@ const debug = require('debug')('co-deduplicate');
 
 const Promise = require('bluebird');
 const generate = require('nanoid/generate');
-const unidecode = require('unidecode');
 const fse = require('fs-extra');
 const path = require('path');
 const esConf = require('co-config/es.js');
@@ -408,13 +407,13 @@ function interprete (docObject, rule, type) {
     if (value.match && _.isString(_.get(docObject, _.values(value.match)[0]))) {
       match = { 'match': null };
       match.match = _.mapValues(value.match, (pattern) => {
-        return unidecode(_.get(docObject, pattern));
+        return _.get(docObject, pattern);
       });
       return match;
     } else if (value.term && _.isString(_.get(docObject, _.values(value.term)[0]))) {
       term = { 'term': null };
       term.term = _.mapValues(value.term, (pattern) => {
-        return unidecode(_.get(docObject, pattern));
+        return _.get(docObject, pattern);
       });
       return term;
     } else if (value.match && _.isArray(_.get(docObject, _.values(value.match)[0]))) {
@@ -422,7 +421,7 @@ function interprete (docObject, rule, type) {
       bool.bool.should = _.map(_.get(docObject, _.values(value.match)[0]), (testValue) => {
         let shouldMatch;
         shouldMatch = { 'match': {} };
-        shouldMatch.match[_.keys(value.match)[0]] = unidecode(testValue);
+        shouldMatch.match[_.keys(value.match)[0]] = testValue;
         return shouldMatch;
       });
       bool.bool.minimum_should_match = 1;
@@ -432,7 +431,7 @@ function interprete (docObject, rule, type) {
       bool.bool.should = _.map(_.get(docObject, _.values(value.term)[0]), (testValue) => {
         let shouldMatch;
         shouldMatch = { 'term': {} };
-        shouldMatch.match[_.keys(value.term)[0]] = unidecode(testValue);
+        shouldMatch.match[_.keys(value.term)[0]] = testValue;
         return shouldMatch;
       });
       bool.bool.minimum_should_match = 1;
@@ -444,13 +443,13 @@ function interprete (docObject, rule, type) {
         if (shouldCond.match && _.isString(_.get(docObject, _.values(shouldCond.match)[0]))) {
           shouldMatch = { 'match': null };
           shouldMatch.match = _.mapValues(shouldCond.match, (pattern) => {
-            return unidecode(_.get(docObject, pattern));
+            return _.get(docObject, pattern);
           });
           return shouldMatch;
         } else if (shouldCond.term && _.isString(_.get(docObject, _.values(shouldCond.term)[0]))) {
           shouldTerm = { 'term': null };
           shouldTerm.term = _.mapValues(shouldCond.term, (pattern) => {
-            return unidecode(_.get(docObject, pattern));
+            return _.get(docObject, pattern);
           });
           return shouldTerm;
         }

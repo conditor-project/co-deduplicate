@@ -89,7 +89,7 @@ describe(pkg.name + '/index.js', function () {
         return clause.bool._name.indexOf(' : 1ID:arxiv+doi') > 0;
       });
       expect(arxivQuery.bool.must[0].bool.should[0].match).to.have.key('arxiv.normalized');
-      expect(request.query.bool.should.length).to.be.equal(15);
+      expect(request.query.bool.should.length).to.be.gte(15);
       done();
     });
   });
@@ -97,7 +97,6 @@ describe(pkg.name + '/index.js', function () {
   describe('#insert notice 1', function () {
     let totalExpected = 0;
     testData.map((data, index) => {
-      // console.log(data.title)
       it(data._comment, function (done) {
         business.doTheJob(data, function (err) {
           if (err) return done(err.errMessage);
@@ -105,10 +104,21 @@ describe(pkg.name + '/index.js', function () {
             index: esConf.index
           }, function (esError, response) {
             if (esError) return done(esError);
-            if (index !== 7) totalExpected++;
+            if (index !== 7) totalExpected++; // erreur normale sur le 7ème doc
             expect(response.hits.total).to.be.equal(totalExpected);
             expect(response.hits.hits[0]._source.idConditor).not.to.be.undefined;
             expect(response.hits.hits[0]._source.sourceUid).not.to.be.undefined;
+            response.hits.hits.forEach(hit => {
+              const doc = hit._source;
+              if (doc.sourceUid === 'crossref$10.1021/jz502360c') {
+                expect(doc.isDuplicate,"isDuplicate doit valoir true").to.be.equal(true);
+                expect(doc.duplicates.length, "le tableau duplicates doit contenir au moins un élément").to.be.gte(1);
+                expect(doc.duplicates.length).to.be.gte(1);
+                expect(doc.duplicates[0].idConditor==='Qd74UnItx6nGYLwrBc2MDZF8k');
+                expect(doc.duplicates[0].rules[0].indexOf('2Collation'),
+                "doit matcher avec la règle 2Collation...").to.be.gte(0);
+              }
+            });
             done();
           });
         });

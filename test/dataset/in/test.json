@@ -49,7 +49,8 @@
     ,
     "utKey":  "12-345/678:9"
     ,
-    "issn":"1367-4803"
+    "issn":"1367-4803",
+    "xissn":"1367-4803"
     ,
     "eissn":"1367-4803"
     ,
@@ -77,7 +78,8 @@
     "typeDocumentFlat": [
       "ART"
     ],
-    "publicationDate":"2014"
+    "publicationDate":"2014",
+    "xPublicationDate":["2014"]
     ,
     "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-1.xml",
@@ -112,7 +114,8 @@
     ,
     "utKey": "12-345/678:9"
     ,
-    "issn":"1367-4804"
+    "issn":"1367-4804",
+    "xissn":"1367-4804"
     ,
     "eissn":"1367-4803"
     ,
@@ -150,6 +153,9 @@
     "publicationDate":
       "2014"
     ,
+    "xPublicationDate":[
+      "2014"
+    ],
     "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-2.xml",
     "source":"TU2",
@@ -195,6 +201,8 @@
        "12-345/678:9"
     ,
     "issn":
+      "1367-4803",
+    "xissn":
       "1367-4803"
     ,
     "eissn":
@@ -234,8 +242,11 @@
       "ART"
     ],
     "publicationDate":
-      "2014"
+    "2014"
     ,
+    "xPublicationDate":[
+      "2014"
+    ],
     "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
     "source":"TU3",
@@ -281,6 +292,8 @@
        "12-345/678:9"
     ,
     "issn":
+      "1367-480",
+    "xissn":
       "1367-480"
     ,
     "eissn":
@@ -322,6 +335,9 @@
     "publicationDate":
       "2014"
     ,
+    "xPublicationDate":[
+      "2014"
+    ],
     "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
     "source":"TU4",
@@ -367,6 +383,8 @@
        "12-345/678:9"
     ,
     "issn":
+      "1367-4803",
+    "xissn":
       "1367-4803"
     ,
     "eissn":
@@ -407,8 +425,10 @@
     ],
     "publicationDate":
       "2014"
-
     ,
+    "xPublicationDate":[
+      "2014"
+    ],
     "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
     "source":"TU5",
@@ -454,6 +474,8 @@
        "12-345/678:9"
     ,
     "issn":
+      "1367-4803",
+    "xissn":
       "1367-4803"
     ,
     "eissn":
@@ -495,6 +517,9 @@
     "publicationDate":
       "2014"
     ,
+    "xPublicationDate":[
+      "2014"
+    ],
     "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-3.xml",
     "source":"TU6",
@@ -540,6 +565,8 @@
        "12-345/678:9"
     ,
     "issn":
+      "1367-4804",
+    "xissn":
       "1367-4804"
     ,
     "eissn":
@@ -585,6 +612,9 @@
     "publicationDate":
       "2014"
     ,
+    "xPublicationDate":[
+      "2014"
+    ],
     "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-7.xml",
     "source":"hal",
@@ -631,6 +661,8 @@
        "12-345/678:9"
     ,
     "issn":
+      "1367-4804",
+    "xissn":
       "1367-4804"
     ,
     "eissn":
@@ -676,6 +708,9 @@
     "publicationDate":
       "2014"
     ,
+    "xPublicationDate":[
+      "2014"
+    ],
     "typeConditor":"Article",
     "path":"/applis/istex/li/corpus-resources-conditor/notice-7.xml",
     "source":"hal",
@@ -804,6 +839,9 @@
     "researcherId": [],
     "viaf": [],
     "publicationDate": "2014",
+    "xPublicationDate":[
+      "2014"
+    ],
     "documentType": [
       "ART"
     ],
@@ -937,6 +975,9 @@
     "researcherId": [],
     "viaf": [],
     "publicationDate": "2014",
+    "xPublicationDate":[
+      "2014"
+    ],
     "abstract": "The present paper studies the sensitivity analysis of the new PISTACHE tool’s prediction performance and its input parameters. This work is a part of the R&D project MeGaPICS (Method towards Guarantee of Solar Cooling and Heating application – funded by the French National Research Agency). In fact, the PISTACHE tool was developed to provide professionals with a practical tool to design and to estimate the performances of different solar heating and cooling systems. After a short description of the PISTACHE tool, its validation is performed followed by a sensitivity analysis which is conducted using the method of Fourier Amplitude Sensitivity Test (FAST). The obtained results will be displayed and discussed at the end of this paper.",
     "documentType": [
       "ART"
@@ -1078,6 +1119,9 @@
     "researcherId": [],
     "viaf": [],
     "publicationDate": "2014",
+    "xPublicationDate":[
+      "2014"
+    ],
     "abstract": "The present paper studies the sensitivity analysis of the new PISTACHE tool's prediction performance and its input parameters. This work is a part of the R&D project MeGaPICS (Method towards Guarantee of Solar Cooling and Heating application funded by the French National Research Agency). In fact, the PISTACHE tool was developed to provide professionals with a practical tool to design and to estimate the performances of different solar heating and cooling systems. After a short description of the PISTACHE tool, its validation is performed followed by a sensitivity analysis which is conducted using the method of Fourier Amplitude Sensitivity Test (FAST). The obtained results will be displayed and discussed at the end of this paper. (C) 2014 The Authors. Published by Elsevier Ltd",
     "documentType": [
       "Proceedings Paper"
@@ -1089,5 +1133,384 @@
     "sessionName": "WOS_2018-06-11_1",
     "sourceId":"000345410700113",
     "sourceUid":"wos$000345410700113"
-  }
+  },
+  {
+    "_comment": "Notice A1, sensée matchée avec notice A2 sur les champs title.default, volume, issue, pageRange, xPublicationDate et xissn",
+    "creationDate": "2019-05-21 15:37:13",
+    "title": {
+      "default": "Electroosmosis through α-Hemolysin That Depends on Alkali Cation Type",
+      "fr": "",
+      "en": "Electroosmosis through α-Hemolysin That Depends on Alkali Cation Type",
+      "monography": "",
+      "journal": "Journal of Physical Chemistry Letters",
+      "meeting": ""
+    },
+    "first3AuthorNames": "Piguet Fabien Discala Francoise Breton Marie-France",
+    "authorNames": "Piguet Fabien Discala Francoise Breton Marie-France Pelta Juan Bacri Laurent Oukhaled Abdelghani",
+    "first3AuthorNamesWithInitials": "Piguet F Discala F Breton M-F",
+    "authors": [
+      {
+        "forename": "Fabien",
+        "isni": [],
+        "surname": "Piguet",
+        "researcherId": "",
+        "halAuthorId": "1178795",
+        "affiliations": [
+          {
+            "ref": "struct-161",
+            "address": "UMR8089, Université de Cergy Pontoise UCP, UMR8089, Centre National de la Recherche Scientifique CNRS, Laboratoire de Physique Théorique et Modélisation LPTM, Université de Cergy-Pontoise 2 avenue Adolphe Chauvin, Pontoise 95302 Cergy-Pontoise cedex, FR",
+            "isni": [
+              "0000000122597504"
+            ],
+            "idRef": [
+              "132096854",
+              "03463486X",
+              "203111508",
+              "02636817X"
+            ],
+            "rnsr": [
+              "200212748C"
+            ]
+          }
+        ],
+        "orcId": [],
+        "idHal": "",
+        "idRef": [],
+        "viaf": []
+      },
+      {
+        "forename": "Francoise",
+        "isni": [],
+        "surname": "Discala",
+        "researcherId": "",
+        "halAuthorId": "11395751",
+        "affiliations": [],
+        "orcId": [],
+        "idHal": "",
+        "idRef": [],
+        "viaf": []
+      },
+      {
+        "forename": "Marie-France",
+        "isni": [],
+        "surname": "Breton",
+        "researcherId": "",
+        "halAuthorId": "11395752",
+        "affiliations": [],
+        "orcId": [],
+        "idHal": "",
+        "idRef": [],
+        "viaf": []
+      },
+      {
+        "forename": "Juan",
+        "isni": [],
+        "surname": "Pelta",
+        "researcherId": "",
+        "halAuthorId": "1466651",
+        "affiliations": [
+          {
+            "ref": "struct-13902",
+            "address": "DEN/DPC, Commissariat à l'énergie atomique et aux énergies alternatives CEA, Université de Cergy Pontoise UCP, Université d'Évry-Val-d'Essonne UEVE, Université Paris-Saclay, UMR8587, Centre National de la Recherche Scientifique CNRS, Laboratoire Analyse et Modélisation pour la Biologie et l'Environnement LAMBE - UMR 8587, Bât. Mapertuis 1° étage bd François Mitterrand 91025 EVRY CEDEX, FR",
+            "isni": [
+              "0000000122597504"
+            ],
+            "idRef": [
+              "157566064",
+              "03463486X",
+              "203111508",
+              "02636817X"
+            ],
+            "rnsr": [
+              "201019014D"
+            ]
+          }
+        ],
+        "orcId": [],
+        "idHal": "",
+        "idRef": [],
+        "viaf": []
+      },
+      {
+        "forename": "Laurent",
+        "isni": [],
+        "surname": "Bacri",
+        "researcherId": "",
+        "halAuthorId": "1697181",
+        "affiliations": [
+          {
+            "ref": "struct-13902",
+            "address": "DEN/DPC, Commissariat à l'énergie atomique et aux énergies alternatives CEA, Université de Cergy Pontoise UCP, Université d'Évry-Val-d'Essonne UEVE, Université Paris-Saclay, UMR8587, Centre National de la Recherche Scientifique CNRS, Laboratoire Analyse et Modélisation pour la Biologie et l'Environnement LAMBE - UMR 8587, Bât. Mapertuis 1° étage bd François Mitterrand 91025 EVRY CEDEX, FR",
+            "isni": [
+              "0000000122597504"
+            ],
+            "idRef": [
+              "157566064",
+              "03463486X",
+              "203111508",
+              "02636817X"
+            ],
+            "rnsr": [
+              "201019014D"
+            ]
+          }
+        ],
+        "orcId": [
+          "https://orcid.org/0000-0002-1763-2456"
+        ],
+        "idHal": "172248",
+        "idRef": [],
+        "viaf": []
+      },
+      {
+        "forename": "Abdelghani",
+        "isni": [],
+        "surname": "Oukhaled",
+        "researcherId": "",
+        "halAuthorId": "11291713",
+        "affiliations": [
+          {
+            "ref": "struct-13902",
+            "address": "DEN/DPC, Commissariat à l'énergie atomique et aux énergies alternatives CEA, Université de Cergy Pontoise UCP, Université d'Évry-Val-d'Essonne UEVE, Université Paris-Saclay, UMR8587, Centre National de la Recherche Scientifique CNRS, Laboratoire Analyse et Modélisation pour la Biologie et l'Environnement LAMBE - UMR 8587, Bât. Mapertuis 1° étage bd François Mitterrand 91025 EVRY CEDEX, FR",
+            "isni": [
+              "0000000122597504"
+            ],
+            "idRef": [
+              "157566064",
+              "03463486X",
+              "203111508",
+              "02636817X"
+            ],
+            "rnsr": [
+              "201019014D"
+            ]
+          }
+        ],
+        "orcId": [],
+        "idHal": "",
+        "idRef": [],
+        "viaf": []
+      }
+    ],
+    "issn": [],
+    "eissn": [
+      "1948-7185"
+    ],
+    "xissn": [
+      "1948-7185"
+    ],
+    "isbn": [],
+    "hasDoi": false,
+    "issue": "24",
+    "pageRange": "4362-4367",
+    "volume": "5",
+    "halId": "hal-02006492",
+    "idHal": "172248",
+    "halAuthorId": [
+      "1178795",
+      "11395751",
+      "11395752",
+      "1466651",
+      "1697181",
+      "11291713"
+    ],
+    "orcId": [
+      "https://orcid.org/0000-0002-1763-2456"
+    ],
+    "researcherId": [],
+    "viaf": [],
+    "publicationDate": "2014-11-26",
+    "xPublicationDate":[
+      "2014"
+    ],
+    "documentType": [
+      "ART"
+    ],
+    "isni": [],
+    "rnsr": [
+      "200212748C",
+      "201019014D"
+    ],
+    "path": "/applis/conditor/home/input/hal/HAL_2019-05-21_ANNEE_2014/tei-conditor-20190521/2014/hal-02006492.xml",
+    "source": "hal",
+    "typeConditor": "Article",
+    "idConditor": "Qd74UnItx6nGYLwrBc2MDZF8k",
+    "sourceId": "hal-02006492",
+    "sourceUid": "hal$hal-02006492",
+    "sessionName": "HAL_2019-05-21_ANNEE_2014",
+    "isDeduplicable": true,
+    "idChain": "hal:Qd74UnItx6nGYLwrBc2MDZF8k!"
+  },
+  {
+    "_comment": "Notice A2, sensée matchée avec notice A1 sur les champs title.default, volume, issue, pageRange, xPublicationDate et xissn",
+    "creationDate": "2019-05-27 09:33:18",
+    "title": {
+      "default": "Electroosmosis through α-Hemolysin That Depends on Alkali Cation Type",
+      "fr": "",
+      "en": "",
+      "monography": "",
+      "journal": "The Journal of Physical Chemistry Letters",
+      "meeting": ""
+    },
+    "first3AuthorNames": "Piguet Fabien Discala Francoise Breton Marie-France",
+    "authorNames": "Piguet Fabien Discala Francoise Breton Marie-France Pelta Juan Bacri Laurent Oukhaled Abdelghani",
+    "first3AuthorNamesWithInitials": "Piguet F Discala F Breton M-F",
+    "authors": [
+      {
+        "forename": "Fabien",
+        "isni": [],
+        "surname": "Piguet",
+        "researcherId": "",
+        "halAuthorId": "",
+        "affiliations": [
+          {
+            "ref": "",
+            "address": "LAMBE UMR 8587 CNRS, Cergy University, 33 Boulevard du Port, 95000 Cergy-Pontoise, France",
+            "isni": [],
+            "idRef": [],
+            "rnsr": []
+          }
+        ],
+        "orcId": [],
+        "idHal": "",
+        "idRef": [],
+        "viaf": []
+      },
+      {
+        "forename": "Francoise",
+        "isni": [],
+        "surname": "Discala",
+        "researcherId": "",
+        "halAuthorId": "",
+        "affiliations": [
+          {
+            "ref": "",
+            "address": "LAMBE UMR 8587 CNRS, Cergy University, 33 Boulevard du Port, 95000 Cergy-Pontoise, France",
+            "isni": [],
+            "idRef": [],
+            "rnsr": []
+          }
+        ],
+        "orcId": [],
+        "idHal": "",
+        "idRef": [],
+        "viaf": []
+      },
+      {
+        "forename": "Marie-France",
+        "isni": [],
+        "surname": "Breton",
+        "researcherId": "",
+        "halAuthorId": "",
+        "affiliations": [
+          {
+            "ref": "",
+            "address": "LAMBE UMR 8587 CNRS, Cergy University, 33 Boulevard du Port, 95000 Cergy-Pontoise, France",
+            "isni": [],
+            "idRef": [],
+            "rnsr": []
+          }
+        ],
+        "orcId": [],
+        "idHal": "",
+        "idRef": [],
+        "viaf": []
+      },
+      {
+        "forename": "Juan",
+        "isni": [],
+        "surname": "Pelta",
+        "researcherId": "",
+        "halAuthorId": "",
+        "affiliations": [
+          {
+            "ref": "",
+            "address": "LAMBE UMR 8587 CNRS, Évry University, Boulevard François Mitterrand, 91000 Évry, France",
+            "isni": [],
+            "idRef": [],
+            "rnsr": []
+          }
+        ],
+        "orcId": [],
+        "idHal": "",
+        "idRef": [],
+        "viaf": []
+      },
+      {
+        "forename": "Laurent",
+        "isni": [],
+        "surname": "Bacri",
+        "researcherId": "",
+        "halAuthorId": "",
+        "affiliations": [
+          {
+            "ref": "",
+            "address": "LAMBE UMR 8587 CNRS, Évry University, Boulevard François Mitterrand, 91000 Évry, France",
+            "isni": [],
+            "idRef": [],
+            "rnsr": []
+          }
+        ],
+        "orcId": [],
+        "idHal": "",
+        "idRef": [],
+        "viaf": []
+      },
+      {
+        "forename": "Abdelghani",
+        "isni": [],
+        "surname": "Oukhaled",
+        "researcherId": "",
+        "halAuthorId": "",
+        "affiliations": [
+          {
+            "ref": "",
+            "address": "LAMBE UMR 8587 CNRS, Cergy University, 33 Boulevard du Port, 95000 Cergy-Pontoise, France",
+            "isni": [],
+            "idRef": [],
+            "rnsr": []
+          }
+        ],
+        "orcId": [],
+        "idHal": "",
+        "idRef": [],
+        "viaf": []
+      }
+    ],
+    "issn": [
+      "1948-7185"
+    ],
+    "eissn": [],
+    "xissn": [
+      "1948-7185"
+    ],
+    "isbn": [],
+    "doi": "10.1021/jz502360c",
+    "hasDoi": true,
+    "issue": "24",
+    "pageRange": "4362-4367",
+    "volume": "5",
+    "halAuthorId": [],
+    "orcId": [],
+    "researcherId": [],
+    "viaf": [],
+    "publicationDate": "2014",
+    "xPublicationDate":[
+      "2014"
+    ],
+    "documentType": [
+      "Journal article"
+    ],
+    "isni": [],
+    "rnsr": [],
+    "path": "/applis/conditor/home/input/crossref/CROSSREF_2019-05-27_ANNEE_2014/FICHIERS_TEI_CROSSREF_ARTICLES_2014/10_1021_jz502360c.xml",
+    "source": "crossref",
+    "typeConditor": "Article",
+    "idConditor": "gcs18usIEgQga5cgOkdcNWpzs",
+    "sourceId": "10.1021/jz502360c",
+    "sourceUid": "crossref$10.1021/jz502360c",
+    "sessionName": "CROSSREF_2019-05-27_ANNEE_2014",
+    "isDeduplicable": true,
+    "idChain": "crossref:gcs18usIEgQga5cgOkdcNWpzs!"
+    }
 ]
