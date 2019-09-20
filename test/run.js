@@ -14,8 +14,9 @@ const _ = require('lodash');
 const es = require('elasticsearch');
 
 var esConf = require('co-config/es.js');
-esConf.index = 'tests-deduplicate';
-business.__set__('esConf.index', 'tests-deduplicate');
+const esMapping = require('co-config/mapping.json');
+esConf.index = `tests-deduplicate-${Date.now()}`;
+business.__set__('esConf.index', esConf.index);
 
 const esClient = new es.Client({
   host: esConf.host,
@@ -25,45 +26,12 @@ const esClient = new es.Client({
   }
 });
 
-// fonction de vérification et suppression de l'index pour les tests
-let checkAndDeleteIndex = function (cbCheck) {
-  esClient.indices.exists({ index: esConf.index }, function (errorExists, exists) {
-    if (errorExists) {
-      console.error(`Problème dans la vérification de l'index ${esConf.index}\n${errorExists.message}`);
-      process.exit(1);
-    }
-    if (!exists) { return cbCheck(); }
-    esClient.indices.delete({ index: esConf.index }, function (errorDelete, responseDelete) {
-      if (errorDelete) {
-        console.error(`Problème dans la suppression de l'index ${esConf.index}\n${errorDelete.message}`);
-        process.exit(1);
-      }
-      return cbCheck();
-    });
-  });
-};
-
 describe(pkg.name + '/index.js', function () {
   this.timeout(10000);
 
   // Méthde d'initialisation s'exécutant en tout premier
-  before(function (done) {
-    checkAndDeleteIndex(function (errCheck) {
-      if (errCheck) {
-        console.log('Erreur checkAndDelete() : ' + errCheck.errMessage);
-        process.exit(1);
-      }
-
-      business.beforeAnyJob(function (errBeforeAnyJob) {
-        if (errBeforeAnyJob) {
-          console.log('Erreur beforeAnyJob(), code ' + errBeforeAnyJob.errCode);
-          console.log(errBeforeAnyJob.errMessage);
-          process.exit(1);
-        }
-        console.log('before OK');
-        done();
-      });
-    });
+  before(function () {
+    return esClient.indices.create({ index: esConf.index, body: esMapping });
   });
 
   describe('#fonction loadScripts', function () {

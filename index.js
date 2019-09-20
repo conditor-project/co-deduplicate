@@ -9,8 +9,6 @@ const generate = require('nanoid/generate');
 const fse = require('fs-extra');
 const path = require('path');
 const esConf = require('co-config/es.js');
-let esMapping = require('co-config/mapping.json');
-
 const scenario = require('co-config/scenario.json');
 const rules = require('co-config/rules_certain.json');
 const baseRequest = require('co-config/base_request.json');
@@ -29,19 +27,6 @@ const esClient = new es.Client({
 });
 
 const business = {};
-
-business.beforeAnyJob = function (cbBefore) {
-  let options = {
-    processLogs: [],
-    errLogs: []
-  };
-
-  let conditorSession = process.env.CONDITOR_SESSION || esConf.index;
-  createIndex(conditorSession, options, function (err) {
-    options.errLogs.push('callback createIndex, err=' + err);
-    return cbBefore(err, options);
-  });
-};
 
 business.doTheJob = function (docObject, cb) {
   let error;
@@ -645,99 +630,6 @@ function getByIdSource (docObject) {
       body: request
     });
   }
-}
-
-// Fonction d'ajout de l'alias si nécessaire
-function createAlias (aliasArgs, options, aliasCallback) {
-  let error;
-
-  // Vérification de l'existance de l'alias, création si nécessaire, ajout de l'index nouvellement créé à l'alias
-  esClient.indices.existsAlias(aliasArgs, function (err, response, status) {
-    if (err) console.log(err);
-    if (status !== '200') {
-      esClient.indices.putAlias(aliasArgs, function (err, response, status) {
-        if (!err) {
-          options.processLogs.push('Création d\'un nouvel alias OK. Status : ' + status + '\n');
-        } else {
-          options.errLogs.push('Erreur création d\'alias. Status : ' + status + '\n');
-          error = {
-            errCode: 1703,
-            errMessage: 'Erreur lors de la création de l\'alias : ' + err
-          };
-        }
-        aliasCallback(error);
-      });
-    } else {
-      esClient.indices.updateAliases({
-        'actions': [{
-          'add': aliasArgs
-        }]
-
-      }, function (err, response, status) {
-        if (!err) {
-          options.processLogs.push('Update d\'alias OK. Status : ' + status + '\n');
-        } else {
-          options.errLogs.push('Erreur update d\'alias. Status : ' + status + '\n');
-          error = {
-            errCode: 1704,
-            errMessage: 'Erreur lors de la création de l\'alias : ' + err
-          };
-        }
-        aliasCallback(error);
-      });
-    }
-  });
-}
-
-// fonction préalable de création d'index si celui-ci absent.
-// appelé dans beforeAnyJob
-
-function createIndex (conditorSession, options, indexCallback) {
-  let reqParams = {
-    index: conditorSession
-  };
-
-  let mappingExists = true;
-  let error;
-
-  esClient.indices.exists(reqParams, function (err, response, status) {
-    if (err) console.log(err);
-    if (status !== 200) {
-      options.processLogs.push('... Mapping et index introuvables, on les créé\n');
-      mappingExists = false;
-    } else {
-      options.processLogs.push('... Mapping et index déjà existants\n');
-    }
-
-    if (!mappingExists) {
-      esMapping.settings.index = {
-        'number_of_replicas': 0
-      };
-
-      reqParams.body = esMapping;
-
-      esClient.indices.create(reqParams, function (err, response, status) {
-        if (status !== 200) {
-          options.errLogs.push('... Erreur lors de la création de l\'index :\n' + err);
-          error = {
-            errCode: '001',
-            errMessage: 'Erreur lors de la création de l\'index : ' + err
-          };
-          return indexCallback(error);
-        }
-
-        createAlias({
-          index: esConf.index,
-          name: 'integration',
-          body: { 'actions': { 'add': { 'index': esConf.index, 'alias': 'integration' } } }
-        }, options, function (err) {
-          indexCallback(err);
-        });
-      });
-    } else {
-      indexCallback();
-    }
-  });
 }
 
 function loadPainlessScripts () {
