@@ -1,8 +1,10 @@
 language: node_js
 dist: bionic
 sudo: true
-jdk:
-  - openjdk9
+addons:
+  apt:
+    packages:
+      - openjdk-8-jdk
 before_script:
   - sleep 10
 node_js:
