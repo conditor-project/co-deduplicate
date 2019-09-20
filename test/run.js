@@ -111,12 +111,11 @@ describe(pkg.name + '/index.js', function () {
             response.hits.hits.forEach(hit => {
               const doc = hit._source;
               if (doc.sourceUid === 'crossref$10.1021/jz502360c') {
-                expect(doc.isDuplicate,"isDuplicate doit valoir true").to.be.equal(true);
-                expect(doc.duplicates.length, "le tableau duplicates doit contenir au moins un élément").to.be.gte(1);
+                expect(doc.isDuplicate, 'isDuplicate doit valoir true').to.be.equal(true);
+                expect(doc.duplicates.length, 'le tableau duplicates doit contenir au moins un élément').to.be.gte(1);
                 expect(doc.duplicates.length).to.be.gte(1);
-                expect(doc.duplicates[0].idConditor==='Qd74UnItx6nGYLwrBc2MDZF8k');
-                expect(doc.duplicates[0].rules[0].indexOf('2Collation'),
-                "doit matcher avec la règle 2Collation...").to.be.gte(0);
+                expect(doc.duplicates[0].idConditor === 'Qd74UnItx6nGYLwrBc2MDZF8k');
+                expect(doc.duplicates[0].rules[0].indexOf('2Collation'), 'doit matcher avec la règle 2Collation...').to.be.gte(0);
               }
             });
             done();
