@@ -2,7 +2,7 @@ language: node_js
 dist: bionic
 sudo: true
 before_script:
-  - sleep 20
+  - sleep 10
 node_js:
   - "10"
 before_install:
