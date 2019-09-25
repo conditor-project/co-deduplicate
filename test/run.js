@@ -3,8 +3,9 @@
 'use strict';
 
 const rewire = require('rewire');
+const Promise = require('bluebird');
 const pkg = require('../package.json');
-const business = rewire('../index.js');
+const coDeduplicate = rewire('../index.js');
 const testData = require('./dataset/in/test.json');
 const baseRequest = require('co-config/base_request.json');
 const chai = require('chai');
@@ -16,7 +17,7 @@ const es = require('elasticsearch');
 var esConf = require('co-config/es.js');
 const esMapping = require('co-config/mapping.json');
 esConf.index = `tests-deduplicate-${Date.now()}`;
-business.__set__('esConf.index', esConf.index);
+coDeduplicate.__set__('esConf.index', esConf.index);
 
 const esClient = new es.Client({
   host: esConf.host,
@@ -27,16 +28,30 @@ const esClient = new es.Client({
 });
 
 describe(pkg.name + '/index.js', function () {
-  this.timeout(10000);
+  this.timeout(0);
 
-  // Méthde d'initialisation s'exécutant en tout premier
-  before(function () {
-    return esClient.indices.create({ index: esConf.index, body: esMapping });
+  before(function (done) {
+    const docs = [];
+    const options = {
+      index: {
+        _index: esConf.index,
+        _type: esConf.type
+      }
+    };
+    testData.map(data => {
+      docs.push(options);
+      docs.push(data);
+    });
+    esClient.indices.create({ index: esConf.index, body: esMapping })
+      .then(() => esClient.bulk({ body: docs }))
+      .then(() => Promise.delay(2000))
+      .then(() => done())
+      .catch(error => done(error));
   });
 
   describe('#fonction loadScripts', function () {
     it('devrait lire les fichiers de script et reconstituer l\'objet scriptList', (done) => {
-      const scriptList = business.__get__('loadPainlessScripts')();
+      const scriptList = coDeduplicate.__get__('loadPainlessScripts')();
       debug(Object.keys(scriptList));
       expect(Object.keys(scriptList).length, 'il devrait y avoir au moins 7 scripts painless dans la liste').to.be.gte(7);
       const expectedScripts = ['addDuplicate', 'addEmptyDuplicate', 'removeDuplicate', 'setDuplicateRules', 'setHasTransDuplicate', 'setIdChain', 'setIsDuplicate'];
@@ -45,14 +60,13 @@ describe(pkg.name + '/index.js', function () {
     });
   });
 
-  // test sur la création de règle
   describe('#fonction buildQuery', function () {
     let docObject;
     let request = _.cloneDeep(baseRequest);
 
     it('Le constructeur de requête devrait pour la notice remonter 15 règles', function (done) {
       docObject = testData[0];
-      request = business.__get__('buildQuery')(docObject, request);
+      request = coDeduplicate.__get__('buildQuery')(docObject, request);
       const arxivQuery = _.find(request.query.bool.should, (clause) => {
         return clause.bool._name.indexOf(' : 1ID:arxiv+doi') > 0;
       });
@@ -61,35 +75,44 @@ describe(pkg.name + '/index.js', function () {
       done();
     });
   });
-  // test sur l'insertion d'une 1ere notice
-  describe('#insert notice 1', function () {
-    let totalExpected = 0;
-    testData.map((data, index) => {
-      it(data._comment, function (done) {
-        business.doTheJob(data, function (err) {
-          if (err) return done(err.errMessage);
-          esClient.search({
-            index: esConf.index
-          }, function (esError, response) {
-            if (esError) return done(esError);
-            if (index !== 7) totalExpected++; // erreur normale sur le 7ème doc
-            expect(response.hits.total).to.be.equal(totalExpected);
-            expect(response.hits.hits[0]._source.idConditor).not.to.be.undefined;
-            expect(response.hits.hits[0]._source.sourceUid).not.to.be.undefined;
-            response.hits.hits.forEach(hit => {
-              const doc = hit._source;
-              if (doc.sourceUid === 'crossref$10.1021/jz502360c') {
-                expect(doc.isDuplicate, 'isDuplicate doit valoir true').to.be.equal(true);
-                expect(doc.duplicates.length, 'le tableau duplicates doit contenir au moins un élément').to.be.gte(1);
-                expect(doc.duplicates.length).to.be.gte(1);
-                expect(doc.duplicates[0].idConditor === 'Qd74UnItx6nGYLwrBc2MDZF8k');
-                expect(doc.duplicates[0].rules[0].indexOf('2Collation'), 'doit matcher avec la règle 2Collation...').to.be.gte(0);
-              }
-            });
-            done();
+
+  describe('#doTheJob', function () {
+    testData.map((doc, index) => {
+      it(`Notice ${index + 1}`, function (done) {
+        coDeduplicate.doTheJob(doc, function (err) {
+          if (err) return done(err);
+          expect(doc.isDuplicate).to.be.true;
+          expect(doc.duplicates).to.be.an('Array');
+          expect(doc.duplicates.length).to.be.gte(1);
+          doc.duplicates.map(duplicate => {
+            expect(duplicate.rules).to.be.an('Array');
+            expect(duplicate.rules.length).to.be.gte(1);
           });
+          if (doc.sourceUid === 'crossref$10.1021/jz502360c') {
+            expect(doc.duplicates[0].idConditor === 'Qd74UnItx6nGYLwrBc2MDZF8k');
+            expect(doc.duplicates[0].rules[0].indexOf('2Collation'), 'doit matcher avec la règle 2Collation...').to.be.gte(0);
+          }
+          done();
         });
       });
+    });
+
+    it('should update data in elasticsearch', function () {
+      return Promise.delay(2000)
+        .then(() => esClient.search({ index: esConf.index, size: 20 }))
+        .then(response => {
+          response.hits.hits.forEach(hit => {
+            const doc = hit._source;
+            expect(doc.isDuplicate).to.be.true;
+            expect(doc.duplicates).to.be.an('Array');
+            expect(doc.duplicates.length).to.be.gte(1);
+            if (doc.sourceUid === 'crossref$10.1021/jz502360c') {
+              expect(doc.duplicates[0].idConditor === 'Qd74UnItx6nGYLwrBc2MDZF8k');
+              expect(doc.duplicates[0].rules[0].indexOf('2Collation'), 'doit matcher avec la règle 2Collation...').to.be.gte(0);
+            }
+          });
+        })
+      ;
     });
   });
 
@@ -193,16 +216,6 @@ describe(pkg.name + '/index.js', function () {
         expect(esError).to.be.undefined;
         expect(response).to.not.be.undefined;
         expect(response.tokens[0].token).to.be.equal('2012');
-        done();
-      });
-    });
-  });
-
-  describe('#appel à finalJob qui va appeler forcemerge sur l\'indice', function () {
-    it('la commande forcemerge est exécutée sans erreur.', function (done) {
-      business.finalJob({}, (err) => {
-        if (err) return done(err);
-        expect(err).to.be.undefined;
         done();
       });
     });
