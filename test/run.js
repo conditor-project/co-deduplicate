@@ -88,10 +88,6 @@ describe(pkg.name + '/index.js', function () {
             expect(duplicate.rules).to.be.an('Array');
             expect(duplicate.rules.length).to.be.gte(1);
           });
-          if (doc.sourceUid === 'crossref$10.1021/jz502360c') {
-            expect(doc.duplicates[0].idConditor === 'Qd74UnItx6nGYLwrBc2MDZF8k');
-            expect(doc.duplicates[0].rules[0].indexOf('2Collation'), 'doit matcher avec la règle 2Collation...').to.be.gte(0);
-          }
           done();
         });
       });
@@ -106,10 +102,9 @@ describe(pkg.name + '/index.js', function () {
             expect(doc.isDuplicate).to.be.true;
             expect(doc.duplicates).to.be.an('Array');
             expect(doc.duplicates.length).to.be.gte(1);
-            if (doc.sourceUid === 'crossref$10.1021/jz502360c') {
-              expect(doc.duplicates[0].idConditor === 'Qd74UnItx6nGYLwrBc2MDZF8k');
-              expect(doc.duplicates[0].rules[0].indexOf('2Collation'), 'doit matcher avec la règle 2Collation...').to.be.gte(0);
-            }
+            doc.duplicates.map(duplicate => {
+              expect(duplicate.rules).to.be.an('Array');
+            });
           });
         })
       ;
