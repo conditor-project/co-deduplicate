@@ -91,9 +91,11 @@
     ],
     "typeConditor": "Article",
     "path": "/applis/istex/li/corpus-resources-conditor/notice-1.xml",
+    "sessionName": "test",
     "source": "TU1",
     "sourceId": "id1",
-    "sourceUid": "TU1$id1"
+    "sourceUid": "TU1$id1",
+    "idConditor": "Qd74UnItx6nGYLwrBc2MDZF01"
   },
   {
     "_comment": " === Notice 2, sensée matcher avec titre + doi (REGLE 1) ===",
@@ -135,9 +137,11 @@
     ],
     "typeConditor": "Article",
     "path": "/applis/istex/li/corpus-resources-conditor/notice-2.xml",
+    "sessionName": "test",
     "source": "TU2",
     "sourceId": "id2",
-    "sourceUid": "TU2$id2"
+    "sourceUid": "TU2$id2",
+    "idConditor": "Qd74UnItx6nGYLwrBc2MDZF02"
   },
   {
     "_comment": " === Notice 3, sensée matcher avec titre+volume+issue+issn (REGLE 2) ===",
@@ -179,9 +183,11 @@
     ],
     "typeConditor": "Article",
     "path": "/applis/istex/li/corpus-resources-conditor/notice-3.xml",
+    "sessionName": "test",
     "source": "TU3",
     "sourceId": "id3",
-    "sourceUid": "TU3$id3"
+    "sourceUid": "TU3$id3",
+    "idConditor": "Qd74UnItx6nGYLwrBc2MDZF03"
   },
   {
     "_comment": " === Notice 4, sensée matcher avec DOI seul (REGLE 3) ===",
@@ -223,9 +229,11 @@
     ],
     "typeConditor": "Article",
     "path": "/applis/istex/li/corpus-resources-conditor/notice-3.xml",
+    "sessionName": "test",
     "source": "TU4",
     "sourceId": "id4",
-    "sourceUid": "TU4$id4"
+    "sourceUid": "TU4$id4",
+    "idConditor": "Qd74UnItx6nGYLwrBc2MDZF04"
   },
   {
     "_comment": " === Notice 5, sensée matcher avec titre+auteur+issn seul (REGLE 4) ===",
@@ -267,9 +275,11 @@
     ],
     "typeConditor": "Article",
     "path": "/applis/istex/li/corpus-resources-conditor/notice-3.xml",
+    "sessionName": "test",
     "source": "TU5",
     "sourceId": "id5",
-    "sourceUid": "TU5$id5"
+    "sourceUid": "TU5$id5",
+    "idConditor": "Qd74UnItx6nGYLwrBc2MDZF05"
   },
   {
     "_comment": " === Notice 6, sensée matcher avec titre+auteurInit+issn seul (REGLE 5) ===",
@@ -311,9 +321,11 @@
     ],
     "typeConditor": "Article",
     "path": "/applis/istex/li/corpus-resources-conditor/notice-3.xml",
+    "sessionName": "test",
     "source": "TU6",
     "sourceId": "id6",
-    "sourceUid": "TU6$id6"
+    "sourceUid": "TU6$id6",
+    "idConditor": "Qd74UnItx6nGYLwrBc2MDZF06"
   },
   {
     "_comment": " === Notice 7, sensée ne pas matcher => PAS UN DOUBLON ===",
@@ -358,9 +370,11 @@
     ],
     "typeConditor": "Article",
     "path": "/applis/istex/li/corpus-resources-conditor/notice-7.xml",
+    "sessionName": "test",
     "source": "hal",
     "sourceId": "id1",
-    "sourceUid": "hal$12-345/678:9"
+    "sourceUid": "hal$12-345/678:9",
+    "idConditor": "Qd74UnItx6nGYLwrBc2MDZF07"
   },
   {
     "_comment": " === Notice 8, sensée matcher avec notice 7 et même la remplacer => UN DOUBLON ===",
@@ -406,8 +420,10 @@
     "typeConditor": "Article",
     "path": "/applis/istex/li/corpus-resources-conditor/notice-7.xml",
     "source": "hal",
+    "sessionName": "test",
     "sourceId": "12-345/678:9",
-    "sourceUid": "hal$12-345/678:9"
+    "sourceUid": "hal$12-345/678:9",
+    "idConditor": "Qd74UnItx6nGYLwrBc2MDZF08"
   },
   {
     "_comment": " === Notice 9",
@@ -543,7 +559,8 @@
     "typeConditor": "Article",
     "sessionName": "HAL_2018-06-11_1",
     "sourceId": "hal-01153024",
-    "sourceUid": "hal$hal-01153024"
+    "sourceUid": "hal$hal-01153024",
+    "idConditor": "Qd74UnItx6nGYLwrBc2MDZF09"
   },
   {
     "_comment": " === Notice X",
@@ -680,7 +697,8 @@
     "typeConditor": "Article",
     "sessionName": "HAL_2018-06-11_1",
     "sourceId": "hal-01167197",
-    "sourceUid": "hal$hal-01167197"
+    "sourceUid": "hal$hal-01167197",
+    "idConditor": "Qd74UnItx6nGYLwrBc2MDZF10"
   },
   {
     "_comment": " === Notice X2",
@@ -823,7 +841,8 @@
     "typeConditor": "Article",
     "sessionName": "WOS_2018-06-11_1",
     "sourceId": "000345410700113",
-    "sourceUid": "wos$000345410700113"
+    "sourceUid": "wos$000345410700113",
+    "idConditor": "Qd74UnItx6nGYLwrBc2MDZF11"
   },
   {
     "_comment": "Notice A1, sensée matchée avec notice A2 sur les champs title.default, volume, issue, pageRange, xPublicationDate et xissn",
@@ -1031,6 +1050,7 @@
     "sessionName": "HAL_2019-05-21_ANNEE_2014",
     "isDeduplicable": true,
     "idChain": "hal:Qd74UnItx6nGYLwrBc2MDZF8k!"
+
   },
   {
     "_comment": "Notice A2, sensée matchée avec notice A1 sur les champs title.default, volume, issue, pageRange, xPublicationDate et xissn",
