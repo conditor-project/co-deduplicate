@@ -98,7 +98,8 @@ describe(pkg.name + '/index.js', function () {
     });
 
     it('should update data in elasticsearch', function () {
-      return Promise.delay(2000)
+      return esClient.indices.forcemerge({ index: esConf.index })
+        .then(() => Promise.delay(2000))
         .then(() => esClient.search({ index: esConf.index, size: 20 }))
         .then(response => {
           response.hits.hits.forEach(hit => {
