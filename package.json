@@ -19,7 +19,7 @@
   "author": "Genicot JB",
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
-    "bluebird": "^3.5.5",
+    "bluebird": "^3.7.0",
     "co-config": "git+https://github.com/conditor-project/co-config.git",
     "debug": "^4.1.1",
     "elasticsearch": "^14.2.1",
@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "mocha": "^6.2.0",
+    "mocha": "^6.2.1",
     "nyc": "^14.1.1"
   }
 }
