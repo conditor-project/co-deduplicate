@@ -202,6 +202,42 @@ describe(pkg.name + '/index.js', function () {
       });
     });
 
+    it('should find a duplicate with same default title, journal title, volume, issue, pageRange and xPublicationDate (rule 239)', function () {
+      const docOne = generateFakeDoc();
+      const docTwo = generateFakeDoc();
+      docTwo.title.default = docOne.title.default;
+      docTwo.title.journal = docOne.title.journal;
+      docTwo.volume = docOne.volume;
+      docTwo.issue = docOne.issue;
+      docTwo.pageRange = docOne.pageRange;
+      docTwo.xPublicationDate = docOne.xPublicationDate;
+      return esClient.bulk({
+        body: [
+          { index: { _index: esConf.index, _type: esConf.type, _id: docOne.idConditor } },
+          docOne,
+          { index: { _index: esConf.index, _type: esConf.type, _id: docTwo.idConditor } },
+          docTwo
+        ],
+        refresh: true
+      }).then(() => {
+        return new Promise((resolve, reject) => {
+          coDeduplicate.doTheJob(docOne, function (err) {
+            if (err) return reject(err);
+            expect(docOne.isDuplicate).to.be.true;
+            expect(docOne.duplicates).to.be.an('Array');
+            expect(docOne.duplicates).to.have.lengthOf(1);
+            const duplicate = docOne.duplicates[0];
+            expect(duplicate.source).to.be.equal(docTwo.source);
+            expect(duplicate.idConditor).to.be.equal(docTwo.idConditor);
+            expect(duplicate.rules).to.be.an('Array');
+            expect(duplicate.rules.length).to.be.gte(1);
+            expect(duplicate.rules).to.include('Article : 2Collation:TiC+Ti_Source+volume+issue+page+annee');
+            resolve();
+          });
+        });
+      });
+    });
+
     afterEach(function () {
       return esClient.deleteByQuery({
         index: esConf.index,
