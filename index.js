@@ -2,20 +2,11 @@
 
 const es = require('elasticsearch');
 const _ = require('lodash');
-const debug = require('debug')('co-deduplicate');
-
 const Promise = require('bluebird');
-const generate = require('nanoid/generate');
-const fse = require('fs-extra');
-const path = require('path');
 const esConf = require('co-config/es.js');
 const scenario = require('co-config/scenario.json');
 const rules = require('co-config/rules_certain.json');
 const baseRequest = require('co-config/base_request.json');
-const metadata = require('co-config/metadata-xpaths.json');
-const idAlphabet = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_';
-
-const scriptList = loadPainlessScripts();
 
 const esClient = new es.Client({
   host: esConf.host,
@@ -27,315 +18,53 @@ const esClient = new es.Client({
 
 const coDeduplicate = {};
 coDeduplicate.doTheJob = function (docObject, next) {
-  const cloneBaseRequest = _.cloneDeep(baseRequest);
-  const request = buildQuery(docObject, cloneBaseRequest);
-  Promise.resolve()
-    .then(() => {
-      if (request.query.bool.should.length === 0) {
-        docObject.isDeduplicable = false;
-        const data = { 'hits': { 'total': 0 } };
-        return dispatch(docObject, data);
-      } else {
-        docObject.isDeduplicable = true;
-        return esClient.search({
-          index: esConf.index,
-          body: request
-        }).then(data => dispatch(docObject, data));
-      }
-    })
-    .then(() => next())
-    .catch(error => next(error));
+  Promise.resolve().then(() => {
+    const cloneBaseRequest = _.cloneDeep(baseRequest);
+    const request = buildQuery(docObject, cloneBaseRequest);
+    if (request.query.bool.should.length === 0) {
+      docObject.isDeduplicable = false;
+      docObject.idChain = `${docObject.source}:${docObject.idConditor}!`;
+      docObject.duplicates = [];
+      docObject.isDuplicate = false;
+      return next();
+    }
+    docObject.isDeduplicable = true;
+    esClient.search({
+      index: esConf.index,
+      body: request
+    }).then(data => {
+      let duplicates = [];
+      let allMergedRules = [];
+      let idchain = [];
+
+      _.each(data.hits.hits, (hit) => {
+        if (hit._source.idConditor !== docObject.idConditor) {
+          duplicates.push({
+            rules: hit.matched_queries,
+            source: hit._source.source,
+            sessionName: hit._source.sessionName,
+            idConditor: hit._source.idConditor
+          });
+          if (hit._source.hasOwnProperty('idChain')) idchain = _.union(idchain, hit._source.idChain.split('!'));
+          allMergedRules = _.union(hit.matched_queries, allMergedRules);
+        }
+      });
+
+      _.compact(idchain);
+      idchain = _.map(idchain, (idConditor) => idConditor + '!');
+      idchain.push(docObject.source + ':' + docObject.idConditor + '!');
+      idchain.sort();
+      docObject.idChain = _.join(idchain, '');
+
+      docObject.duplicates = duplicates;
+      docObject.duplicateRules = _.sortBy(allMergedRules);
+      docObject.isDuplicate = (allMergedRules.length > 0);
+      next();
+    });
+  }).catch(error => next(error));
 };
 
 module.exports = coDeduplicate;
-
-function insertMetadata (docObject, options) {
-  _.each(metadata, (metadatum) => {
-    if (metadatum.indexed === undefined || metadatum.indexed === true) {
-      if (_.isArray(docObject[metadatum.name])) {
-        options.body[metadatum.name] = docObject[metadatum.name];
-      } else if (_.isBoolean(docObject[metadatum.name]) || !_.isEmpty(docObject[metadatum.name])) {
-        options.body[metadatum.name] = docObject[metadatum.name];
-      }
-    }
-  });
-}
-
-function insereNotice (docObject) {
-  return Promise.try(() => {
-    let options = { index: esConf.index, type: esConf.type, refresh: true };
-
-    debug(esConf);
-
-    options.body = {
-      'creationDate': new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
-    };
-
-    insertMetadata(docObject, options);
-    insertCommonOptions(docObject, options);
-
-    options.body.idChain = docObject.source + ':' + docObject.idConditor + '!';
-    docObject.duplicates = [];
-    docObject.isDuplicate = false;
-    options.body.duplicates = docObject.duplicates;
-    options.body.isDuplicate = docObject.isDuplicate;
-
-    return esClient.index(options);
-  });
-}
-
-function aggregeNotice (docObject, data) {
-  return Promise.try(() => {
-    let duplicates = [];
-    let allMergedRules = [];
-    let idchain = [];
-    let arrayIdConditor = [];
-    let regexp = new RegExp('.*:(.*)', 'g');
-
-    _.each(data.hits.hits, (hit) => {
-      if (hit._source.idConditor !== docObject.idConditor) {
-        duplicates.push({ rules: hit.matched_queries, source: hit._source.source, sessionName: hit._source.sessionName, idConditor: hit._source.idConditor });
-        if (hit._source.hasOwnProperty('idChain')) idchain = _.union(idchain, hit._source.idChain.split('!'));
-        allMergedRules = _.union(hit.matched_queries, allMergedRules);
-      }
-    });
-
-    _.compact(idchain);
-
-    arrayIdConditor = _.map(idchain, (idConditor) => {
-      return idConditor.replace(regexp, '$1');
-    });
-
-    idchain = _.map(idchain, (idConditor) => {
-      return idConditor + '!';
-    });
-
-    idchain.push(docObject.source + ':' + docObject.idConditor + '!');
-    idchain.sort();
-
-    docObject.duplicates = duplicates;
-    docObject.duplicateRules = _.sortBy(allMergedRules);
-    docObject.isDuplicate = (allMergedRules.length > 0);
-
-    let options = { index: esConf.index, type: esConf.type, refresh: true };
-
-    debug(esConf);
-
-    options.body = {
-      'creationDate': new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
-    };
-
-    insertMetadata(docObject, options);
-    insertCommonOptions(docObject, options);
-
-    options.body.duplicates = duplicates;
-    options.body.duplicateRules = allMergedRules;
-    options.body.isDuplicate = (allMergedRules.length > 0);
-    docObject.arrayIdConditor = arrayIdConditor;
-    options.body.idChain = _.join(idchain, '');
-    docObject.idChain = options.body.idChain;
-
-    return esClient.index(options);
-  });
-}
-
-function insertCommonOptions (docObject, options) {
-  options.body.path = docObject.path;
-  options.body.source = docObject.source;
-  options.body.typeConditor = docObject.typeConditor;
-  options.body.idConditor = docObject.idConditor;
-  options.body.sourceId = docObject.sourceId;
-  options.body.sourceUid = docObject.sourceUid;
-  options.body.sessionName = docObject.sessionName;
-  options.body.ingestBaseName = docObject.ingestBaseName;
-  options.body.isDeduplicable = docObject.isDeduplicable;
-}
-
-function propagate (docObject, data, result) {
-  let options;
-  let update;
-  let body = [];
-  let option;
-  let matchedQueries;
-
-  // On crée une liaison par défaut entre tous les duplicats trouvés
-  _.each(result.hits.hits, (hitTarget) => {
-    options = { update: { _index: esConf.index, _type: esConf.type, _id: hitTarget._id }, retry_on_conflict: 3 };
-    _.each(result.hits.hits, (hitSource) => {
-      if (hitTarget._source.idConditor !== hitSource._source.idConditor) {
-        update = {
-          script:
-          {
-            lang: 'painless',
-            source: scriptList.addEmptyDuplicate,
-            params: {
-              duplicates: [{
-                idConditor: hitSource._source.idConditor,
-                rules: [],
-                sessionName: hitSource._source.sessionName,
-                source: hitSource._source.source
-              }],
-              idConditor: hitSource._source.idConditor
-            }
-          },
-          refresh: true
-
-        };
-
-        body.push(options);
-        body.push(update);
-      }
-    });
-  });
-
-  _.each(result.hits.hits, (hit) => {
-    matchedQueries = [];
-
-    _.each(docObject.duplicates, (directDuplicate) => {
-      if (directDuplicate.idConditor === hit._source.idConditor) { matchedQueries = directDuplicate.rules; }
-    });
-
-    options = { update: { _index: esConf.index, _type: esConf.type, _id: hit._id, retry_on_conflict: 3 } };
-
-    update = {
-      script:
-      {
-        lang: 'painless',
-        source: scriptList.removeDuplicate,
-        params: { idConditor: docObject.idConditor }
-      },
-      refresh: true
-    };
-
-    body.push(options);
-    body.push(update);
-
-    if (hit._source.idConditor !== docObject.idConditor) {
-      update = {
-        script:
-        {
-          lang: 'painless',
-          source: scriptList.addDuplicate,
-          params: {
-            duplicates: [{
-              idConditor: docObject.idConditor,
-              rules: matchedQueries,
-              sessionName: docObject.sessionName,
-              source: docObject.source
-            }]
-          }
-        },
-        refresh: true
-      };
-      body.push(options);
-      body.push(update);
-    }
-
-    update = {
-      script:
-      {
-        lang: 'painless',
-        source: scriptList.setIdChain,
-        params: { idChain: docObject.idChain }
-      },
-      refresh: true
-    };
-
-    body.push(options);
-    body.push(update);
-
-    update = {
-      script:
-      {
-        lang: 'painless',
-        source: scriptList.setIsDuplicate
-      },
-      refresh: true
-    };
-
-    body.push(options);
-    body.push(update);
-
-    update = {
-      script:
-      {
-        lang: 'painless',
-        source: scriptList.setDuplicateRules
-      },
-      refresh: true
-    };
-
-    body.push(options);
-    body.push(update);
-
-    update = {
-      script:
-      {
-        lang: 'painless',
-        source: scriptList.setHasTransDuplicate
-      },
-      refresh: true
-    };
-
-    body.push(options);
-    body.push(update);
-  });
-
-  options = { update: { _index: esConf.index, _type: esConf.type, _id: docObject.idElasticsearch, retry_on_conflict: 3 } };
-  update = {
-    script:
-    {
-      lang: 'painless',
-      source: scriptList.setHasTransDuplicate
-    },
-    refresh: true
-  };
-
-  body.push(options);
-  body.push(update);
-
-  option = { body };
-
-  return esClient.bulk(option);
-}
-
-function getDuplicateByIdConditor (docObject, data, result) {
-  docObject.idElasticsearch = result._id;
-  let request = _.cloneDeep(baseRequest);
-  _.each(docObject.arrayIdConditor, (idConditor) => {
-    if (idConditor.trim() !== '') {
-      request.query.bool.should.push({ 'bool': { 'must': [{ 'term': { 'idConditor': idConditor } }] } });
-    }
-  });
-
-  _.unset(docObject, 'arrayIdConditor');
-
-  request.query.bool.minimum_should_match = 1;
-
-  return esClient.search({
-    index: esConf.index,
-    body: request
-  });
-}
-
-function dispatch (docObject, data) {
-  return Promise.try(() => {
-    if (docObject.idConditor === undefined) { docObject.idConditor = generate(idAlphabet, 25); }
-
-    if (data.hits.total === 0) {
-      return insereNotice(docObject).catch(function (err) {
-        if (err) { throw new Error('Erreur d insertion de notice: ' + err); }
-      });
-    } else {
-      return aggregeNotice(docObject, data)
-        .then(getDuplicateByIdConditor.bind(null, docObject, data))
-        .then(propagate.bind(null, docObject, data))
-        .catch((err) => {
-          if (err) { throw new Error('Erreur d aggregation de notice: ' + err); }
-        });
-    }
-  });
-}
 
 function testParameter (docObject, rules) {
   let arrayParameter = (rules.non_empty !== undefined) ? rules.non_empty : [];
@@ -454,19 +183,4 @@ function buildQuery (docObject, request) {
     });
   }
   return request;
-}
-
-function loadPainlessScripts () {
-  const slist = {};
-  const scriptDir = path.join(__dirname, 'painless');
-  const scriptFiles = fse.readdirSync(scriptDir);
-  for (let scriptFileName of scriptFiles) {
-    if (scriptFileName.endsWith('.painless')) {
-      const scriptName = scriptFileName.replace('.painless', '');
-      const scriptPath = path.join(__dirname, 'painless', scriptFileName);
-      const scriptContent = fse.readFileSync(scriptPath, { encoding: 'utf8' }).replace(/\r?\n|\r/g, '').trim();
-      slist[scriptName] = scriptContent;
-    }
-  }
-  return slist;
 }

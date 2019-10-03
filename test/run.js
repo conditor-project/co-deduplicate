@@ -9,10 +9,11 @@ const coDeduplicate = rewire('../index.js');
 const testData = require('./dataset/in/test.json');
 const baseRequest = require('co-config/base_request.json');
 const chai = require('chai');
-const debug = require('debug')('test');
+// const debug = require('debug')('test');
 const expect = chai.expect;
 const _ = require('lodash');
 const es = require('elasticsearch');
+const generateFakeDoc = require('./dataset/generate-fake-doc.js');
 
 var esConf = require('co-config/es.js');
 const esMapping = require('co-config/mapping.json');
@@ -28,36 +29,10 @@ const esClient = new es.Client({
 });
 
 describe(pkg.name + '/index.js', function () {
-  this.timeout(0);
+  this.timeout(5000);
 
-  before(function (done) {
-    const docs = [];
-    const options = {
-      index: {
-        _index: esConf.index,
-        _type: esConf.type
-      }
-    };
-    testData.map(data => {
-      docs.push(options);
-      docs.push(data);
-    });
-    esClient.indices.create({ index: esConf.index, body: esMapping })
-      .then(() => esClient.bulk({ body: docs }))
-      .then(() => Promise.delay(2000))
-      .then(() => done())
-      .catch(error => done(error));
-  });
-
-  describe('#fonction loadScripts', function () {
-    it('devrait lire les fichiers de script et reconstituer l\'objet scriptList', (done) => {
-      const scriptList = coDeduplicate.__get__('loadPainlessScripts')();
-      debug(Object.keys(scriptList));
-      expect(Object.keys(scriptList).length, 'il devrait y avoir au moins 7 scripts painless dans la liste').to.be.gte(7);
-      const expectedScripts = ['addDuplicate', 'addEmptyDuplicate', 'removeDuplicate', 'setDuplicateRules', 'setHasTransDuplicate', 'setIdChain', 'setIsDuplicate'];
-      expect(_.intersection(expectedScripts, Object.keys(scriptList)).length, 'Les au moins 7 scripts painless doivent avoir le bon nom').to.be.gte(7);
-      done();
-    });
+  before(function () {
+    return esClient.indices.create({ index: esConf.index, body: esMapping });
   });
 
   describe('#fonction buildQuery', function () {
@@ -77,37 +52,167 @@ describe(pkg.name + '/index.js', function () {
   });
 
   describe('#doTheJob', function () {
-    testData.map((doc, index) => {
-      it(`Notice ${index + 1}`, function (done) {
-        coDeduplicate.doTheJob(doc, function (err) {
-          if (err) return done(err);
-          expect(doc.isDuplicate).to.be.true;
-          expect(doc.duplicates).to.be.an('Array');
-          expect(doc.duplicates.length).to.be.gte(1);
-          doc.duplicates.map(duplicate => {
-            expect(duplicate.rules).to.be.an('Array');
-            expect(duplicate.rules.length).to.be.gte(1);
+    it('shouldn\'t find any duplicate', function () {
+      const docOne = generateFakeDoc();
+      const docTwo = generateFakeDoc();
+      return esClient.bulk({
+        body: [
+          { index: { _index: esConf.index, _type: esConf.type, _id: docOne.idConditor } },
+          docOne,
+          { index: { _index: esConf.index, _type: esConf.type, _id: docTwo.idConditor } },
+          docTwo
+        ],
+        refresh: true
+      }).then(() => {
+        return new Promise((resolve, reject) => {
+          coDeduplicate.doTheJob(docOne, function (err) {
+            if (err) return reject(err);
+            expect(docOne.isDeduplicable).to.be.true;
+            expect(docOne.isDuplicate).to.be.false;
+            expect(docOne.duplicates).to.be.an('Array').that.is.empty;
+            expect(docOne.duplicateRules).to.be.an('Array').that.is.empty;
+            expect(docOne.idChain).to.be.a('string');
+            expect(docOne.idChain).to.equal(`${docOne.source}:${docOne.idConditor}!`);
+            resolve();
           });
-          done();
         });
       });
     });
 
-    it('should update data in elasticsearch', function () {
-      return Promise.delay(2000)
-        .then(() => esClient.search({ index: esConf.index, size: 20 }))
-        .then(response => {
-          response.hits.hits.forEach(hit => {
-            const doc = hit._source;
-            expect(doc.isDuplicate).to.be.true;
-            expect(doc.duplicates).to.be.an('Array');
-            expect(doc.duplicates.length).to.be.gte(1);
-            doc.duplicates.map(duplicate => {
-              expect(duplicate.rules).to.be.an('Array');
-            });
+    it('should find a duplicate with same doi and title.default (rule 0)', function () {
+      const docOne = generateFakeDoc();
+      const docTwo = generateFakeDoc();
+      docTwo.doi = docOne.doi;
+      docTwo.title.default = docOne.title.default;
+      return esClient.bulk({
+        body: [
+          { index: { _index: esConf.index, _type: esConf.type, _id: docOne.idConditor } },
+          docOne,
+          { index: { _index: esConf.index, _type: esConf.type, _id: docTwo.idConditor } },
+          docTwo
+        ],
+        refresh: true
+      }).then(() => {
+        return new Promise((resolve, reject) => {
+          coDeduplicate.doTheJob(docOne, function (err) {
+            if (err) return reject(err);
+            expect(docOne.isDuplicate).to.be.true;
+            expect(docOne.duplicates).to.be.an('Array');
+            expect(docOne.duplicates).to.have.lengthOf(1);
+            const duplicate = docOne.duplicates[0];
+            expect(duplicate.source).to.be.equal(docTwo.source);
+            expect(duplicate.idConditor).to.be.equal(docTwo.idConditor);
+            expect(duplicate.rules).to.be.an('Array');
+            expect(duplicate.rules.length).to.be.gte(1);
+            expect(duplicate.rules).to.include('Article : 1ID:doi+TiC');
+            resolve();
           });
-        })
-      ;
+        });
+      });
+    });
+
+    it('should find a duplicate with same pmId and title.default (rule 2)', function () {
+      const docOne = generateFakeDoc();
+      const docTwo = generateFakeDoc();
+      docTwo.pmId = docOne.pmId;
+      docTwo.title.default = docOne.title.default;
+      return esClient.bulk({
+        body: [
+          { index: { _index: esConf.index, _type: esConf.type, _id: docOne.idConditor } },
+          docOne,
+          { index: { _index: esConf.index, _type: esConf.type, _id: docTwo.idConditor } },
+          docTwo
+        ],
+        refresh: true
+      }).then(() => {
+        return new Promise((resolve, reject) => {
+          coDeduplicate.doTheJob(docOne, function (err) {
+            if (err) return reject(err);
+            expect(docOne.isDuplicate).to.be.true;
+            expect(docOne.duplicates).to.be.an('Array');
+            expect(docOne.duplicates).to.have.lengthOf(1);
+            const duplicate = docOne.duplicates[0];
+            expect(duplicate.source).to.be.equal(docTwo.source);
+            expect(duplicate.idConditor).to.be.equal(docTwo.idConditor);
+            expect(duplicate.rules).to.be.an('Array');
+            expect(duplicate.rules.length).to.be.gte(1);
+            expect(duplicate.rules).to.include('Article : 1ID:pmid+TiC');
+            resolve();
+          });
+        });
+      });
+    });
+
+    it('should find a duplicate with same halId and title.default (rule 3)', function () {
+      const docOne = generateFakeDoc();
+      const docTwo = generateFakeDoc();
+      docTwo.halId = docOne.halId;
+      docTwo.title.default = docOne.title.default;
+      return esClient.bulk({
+        body: [
+          { index: { _index: esConf.index, _type: esConf.type, _id: docOne.idConditor } },
+          docOne,
+          { index: { _index: esConf.index, _type: esConf.type, _id: docTwo.idConditor } },
+          docTwo
+        ],
+        refresh: true
+      }).then(() => {
+        return new Promise((resolve, reject) => {
+          coDeduplicate.doTheJob(docOne, function (err) {
+            if (err) return reject(err);
+            expect(docOne.isDuplicate).to.be.true;
+            expect(docOne.duplicates).to.be.an('Array');
+            expect(docOne.duplicates).to.have.lengthOf(1);
+            const duplicate = docOne.duplicates[0];
+            expect(duplicate.source).to.be.equal(docTwo.source);
+            expect(duplicate.idConditor).to.be.equal(docTwo.idConditor);
+            expect(duplicate.rules).to.be.an('Array');
+            expect(duplicate.rules.length).to.be.gte(1);
+            expect(duplicate.rules).to.include('Article : 1ID:halId+TiC');
+            resolve();
+          });
+        });
+      });
+    });
+
+    it('should find a duplicate with same pmId and doi (rule 5)', function () {
+      const docOne = generateFakeDoc();
+      const docTwo = generateFakeDoc();
+      docTwo.pmId = docOne.pmId;
+      docTwo.doi = docOne.doi;
+      return esClient.bulk({
+        body: [
+          { index: { _index: esConf.index, _type: esConf.type, _id: docOne.idConditor } },
+          docOne,
+          { index: { _index: esConf.index, _type: esConf.type, _id: docTwo.idConditor } },
+          docTwo
+        ],
+        refresh: true
+      }).then(() => {
+        return new Promise((resolve, reject) => {
+          coDeduplicate.doTheJob(docOne, function (err) {
+            if (err) return reject(err);
+            expect(docOne.isDuplicate).to.be.true;
+            expect(docOne.duplicates).to.be.an('Array');
+            expect(docOne.duplicates).to.have.lengthOf(1);
+            const duplicate = docOne.duplicates[0];
+            expect(duplicate.source).to.be.equal(docTwo.source);
+            expect(duplicate.idConditor).to.be.equal(docTwo.idConditor);
+            expect(duplicate.rules).to.be.an('Array');
+            expect(duplicate.rules.length).to.be.gte(1);
+            expect(duplicate.rules).to.include('Article : 1ID:doi+pmid');
+            resolve();
+          });
+        });
+      });
+    });
+
+    afterEach(function () {
+      return esClient.deleteByQuery({
+        index: esConf.index,
+        q: '*',
+        refresh: true
+      });
     });
   });
 
