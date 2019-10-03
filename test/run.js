@@ -6,10 +6,8 @@ const rewire = require('rewire');
 const Promise = require('bluebird');
 const pkg = require('../package.json');
 const coDeduplicate = rewire('../index.js');
-const testData = require('./dataset/in/test.json');
 const baseRequest = require('co-config/base_request.json');
 const chai = require('chai');
-// const debug = require('debug')('test');
 const expect = chai.expect;
 const _ = require('lodash');
 const es = require('elasticsearch');
@@ -36,18 +34,15 @@ describe(pkg.name + '/index.js', function () {
   });
 
   describe('#fonction buildQuery', function () {
-    let docObject;
-    let request = _.cloneDeep(baseRequest);
-
-    it('Le constructeur de requête devrait pour la notice remonter 15 règles', function (done) {
-      docObject = testData[0];
-      request = coDeduplicate.__get__('buildQuery')(docObject, request);
-      const arxivQuery = _.find(request.query.bool.should, (clause) => {
-        return clause.bool._name.indexOf(' : 1ID:arxiv+doi') > 0;
+    it('should build my request for deduplicate purpose', function () {
+      const cloneBaseRequest = _.cloneDeep(baseRequest);
+      const docObject = generateFakeDoc();
+      const request = coDeduplicate.__get__('buildQuery')(docObject, cloneBaseRequest);
+      expect(request.query.bool.should).to.be.an('Array');
+      request.query.bool.should.map(rule => {
+        expect(rule.bool._name).to.be.a('string');
+        expect(rule.bool.must).to.be.an('Array');
       });
-      expect(arxivQuery.bool.must[0].bool.should[0].match).to.have.key('arxiv.normalized');
-      expect(request.query.bool.should.length).to.be.gte(15);
-      done();
     });
   });
 
