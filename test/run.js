@@ -231,16 +231,6 @@ describe(pkg.name + '/index.js', function () {
     });
   });
 
-  describe('#appel à finalJob qui va appeler forcemerge sur l\'indice', function () {
-    it('la commande forcemerge est exécutée sans erreur.', function (done) {
-      business.finalJob({}, (err) => {
-        if (err) return done(err);
-        expect(err).to.be.undefined;
-        done();
-      });
-    });
-  });
-
   after(function () {
     return esClient.indices.delete({ index: esConf.index });
   });
