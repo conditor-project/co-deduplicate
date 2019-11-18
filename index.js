@@ -62,16 +62,6 @@ business.doTheJob = function (docObject, cb) {
     });
 };
 
-business.finalJob = function (docObject, cbFinal) {
-  esClient.indices.forcemerge()
-    .catch(err => {
-      cbFinal(err);
-    })
-    .then(() => {
-      cbFinal();
-    });
-};
-
 module.exports = business;
 
 function insertMetadata (docObject, options) {
