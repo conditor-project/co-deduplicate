@@ -109,7 +109,7 @@ function aggregeNotice (docObject, data) {
 
     _.each(data.hits.hits, (hit) => {
       if (hit._source.idConditor !== docObject.idConditor) {
-        duplicates.push({ rules: hit.matched_queries, source: hit._source.source, sessionName: hit._source.sessionName, idConditor: hit._source.idConditor });
+        duplicates.push({ rules: hit.matched_queries, source: hit._source.source, sessionName: hit._source.sessionName, idConditor: hit._source.idConditor, sourceUid: hit._source.sourceUid });
         idchain = _.union(idchain, hit._source.idChain.split('!'));
         allMergedRules = _.union(hit.matched_queries, allMergedRules);
       }
