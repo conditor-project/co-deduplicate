@@ -186,6 +186,7 @@ function propagate (docObject, data, result) {
             params: {
               duplicates: [{
                 idConditor: hitSource._source.idConditor,
+                sourceUid: hitSource._source.sourceUid,
                 rules: [],
                 sessionName: hitSource._source.sessionName,
                 source: hitSource._source.source
@@ -234,6 +235,7 @@ function propagate (docObject, data, result) {
           params: {
             duplicates: [{
               idConditor: docObject.idConditor,
+              sourceUid: docObject.sourceUid,
               rules: matchedQueries,
               sessionName: docObject.sessionName,
               source: docObject.source
