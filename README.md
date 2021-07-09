@@ -59,7 +59,7 @@ POST /records/_analyze
 
 #### Règles de dédoublonnage
 
-Ces règles sont numérotées, nommées et externalisées dans le fichier de configuration [rules_certain.json](./rules_certain.json). Ces règles sont ensuite exécuté selon des [scénarios prédéfinis](./scenario.json) en fonction du type de document.
+Ces règles sont numérotées, nommées et externalisées dans le fichier de configuration [rules_certain.json](https://github.com/conditor-project/co-config/blob/master/rules_certain.json). Ces règles sont ensuite exécuté selon des [scénarios prédéfinis](https://github.com/conditor-project/co-config/blob/master/scenario.json) en fonction du type de document.
 
 :warning: à l'avenir, ces règles seront probablement pondérées, de manière à pouvoir identifier des doublons probables, mais qui demandent une validation manuelle.
 
