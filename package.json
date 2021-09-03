@@ -20,9 +20,9 @@
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "bluebird": "^3.5.4",
-    "co-config": "git+https://github.com/conditor-project/co-config.git",
+    "co-config": "git+https://github.com/conditor-project/co-config.git#es7",
     "debug": "^4.1.1",
-    "elasticsearch": "^14.2.1",
+    "elasticsearch": "^16.7.2",
     "fs-extra": "^7.0.1",
     "lodash": "^4.17.15",
     "nanoid": "^2.0.1",
