@@ -22,6 +22,7 @@ const scriptList = loadPainlessScripts();
 
 const esClient = new es.Client({
   host: esConf.host,
+  httpAuth:esConf.httpAuth,
   log: {
     type: 'file',
     level: ['error']
