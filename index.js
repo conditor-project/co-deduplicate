@@ -704,7 +704,8 @@ function createIndex (conditorSession, options, indexCallback) {
 
     if (!mappingExists) {
       esMapping.settings.index = {
-        'number_of_replicas': 0
+        'number_of_replicas': 0,
+        'number_of_shards': 5
       };
 
       reqParams.body = esMapping;
