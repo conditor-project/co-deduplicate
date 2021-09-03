@@ -14,11 +14,14 @@ const _ = require('lodash');
 const es = require('elasticsearch');
 
 var esConf = require('co-config/es.js');
-esConf.index = 'tests-deduplicate';
-business.__set__('esConf.index', 'tests-deduplicate');
+
+business.__set__('esConf.index', esConf.index);
+business.__set__('esConf.httpAuth', esConf.httpAuth);
+business.__set__('esConf.host', esConf.host);
 
 const esClient = new es.Client({
   host: esConf.host,
+  httpAuth: esConf.httpAuth,
   log: {
     type: 'file',
     level: ['error']
@@ -105,7 +108,7 @@ describe(pkg.name + '/index.js', function () {
           }, function (esError, response) {
             if (esError) return done(esError);
             if (index !== 7) totalExpected++; // erreur normale sur le 7ème doc
-            expect(response.hits.total).to.be.equal(totalExpected);
+            expect(response.hits.total.value).to.be.equal(totalExpected);
             expect(response.hits.hits[0]._source.idConditor).not.to.be.undefined;
             expect(response.hits.hits[0]._source.sourceUid).not.to.be.undefined;
             response.hits.hits.forEach(hit => {
