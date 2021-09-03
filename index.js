@@ -79,7 +79,7 @@ function insertMetadata (docObject, options) {
 
 function insereNotice (docObject) {
   return Promise.try(() => {
-    let options = { index: esConf.index, type: esConf.type, refresh: true };
+    let options = { index: esConf.index, refresh: "true" };
 
     debug(esConf);
 
@@ -133,7 +133,7 @@ function aggregeNotice (docObject, data) {
     docObject.duplicateRules = _.sortBy(allMergedRules);
     docObject.isDuplicate = (allMergedRules.length > 0);
 
-    let options = { index: esConf.index, type: esConf.type, refresh: true };
+    let options = { index: esConf.index, refresh: "true" };
 
     debug(esConf);
 
@@ -176,7 +176,7 @@ function propagate (docObject, data, result) {
 
   // On crée une liaison par défaut entre tous les duplicats trouvés
   _.each(result.hits.hits, (hitTarget) => {
-    options = { update: { _index: esConf.index, _type: esConf.type, _id: hitTarget._id }, retry_on_conflict: 3 };
+    options = { update: { _index: esConf.index, _id: hitTarget._id }, retry_on_conflict: 3 };
     _.each(result.hits.hits, (hitSource) => {
       if (hitTarget._source.idConditor !== hitSource._source.idConditor) {
         update = {
@@ -212,7 +212,7 @@ function propagate (docObject, data, result) {
       if (directDuplicate.idConditor === hit._source.idConditor) { matchedQueries = directDuplicate.rules; }
     });
 
-    options = { update: { _index: esConf.index, _type: esConf.type, _id: hit._id, retry_on_conflict: 3 } };
+    options = { update: { _index: esConf.index, _id: hit._id, retry_on_conflict: 3 } };
 
     update = {
       script:
@@ -532,7 +532,7 @@ function propagateDelete (docObject, data, result) {
   let option;
   if (result.hits.total > 0) {
     _.each(result.hits.hits, (hit) => {
-      options = { update: { _index: esConf.index, _type: esConf.type, _id: hit._id, retry_on_conflict: 3 } };
+      options = { update: { _index: esConf.index, _id: hit._id, retry_on_conflict: 3 } };
 
       update = {
         script:
