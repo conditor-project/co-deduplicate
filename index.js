@@ -717,15 +717,9 @@ function createIndex (conditorSession, options, indexCallback) {
             errMessage: 'Erreur lors de la création de l\'index : ' + err
           };
           return indexCallback(error);
-        }
-
-        createAlias({
-          index: esConf.index,
-          name: 'integration',
-          body: { 'actions': { 'add': { 'index': esConf.index, 'alias': 'integration' } } }
-        }, options, function (err) {
-          indexCallback(err);
-        });
+        } else {
+          indexCallback();
+        };
       });
     } else {
       indexCallback();
