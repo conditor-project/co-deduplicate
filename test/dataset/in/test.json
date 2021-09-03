@@ -978,7 +978,9 @@
     "xPublicationDate":[
       "2014"
     ],
-    "abstract": "The present paper studies the sensitivity analysis of the new PISTACHE tool’s prediction performance and its input parameters. This work is a part of the R&D project MeGaPICS (Method towards Guarantee of Solar Cooling and Heating application – funded by the French National Research Agency). In fact, the PISTACHE tool was developed to provide professionals with a practical tool to design and to estimate the performances of different solar heating and cooling systems. After a short description of the PISTACHE tool, its validation is performed followed by a sensitivity analysis which is conducted using the method of Fourier Amplitude Sensitivity Test (FAST). The obtained results will be displayed and discussed at the end of this paper.",
+    "abstract": {
+      "en": "The present paper studies the sensitivity analysis of the new PISTACHE tool’s prediction performance and its input parameters. This work is a part of the R&D project MeGaPICS (Method towards Guarantee of Solar Cooling and Heating application – funded by the French National Research Agency). In fact, the PISTACHE tool was developed to provide professionals with a practical tool to design and to estimate the performances of different solar heating and cooling systems. After a short description of the PISTACHE tool, its validation is performed followed by a sensitivity analysis which is conducted using the method of Fourier Amplitude Sensitivity Test (FAST). The obtained results will be displayed and discussed at the end of this paper."
+    },
     "documentType": [
       "ART"
     ],
@@ -1122,7 +1124,9 @@
     "xPublicationDate":[
       "2014"
     ],
-    "abstract": "The present paper studies the sensitivity analysis of the new PISTACHE tool's prediction performance and its input parameters. This work is a part of the R&D project MeGaPICS (Method towards Guarantee of Solar Cooling and Heating application funded by the French National Research Agency). In fact, the PISTACHE tool was developed to provide professionals with a practical tool to design and to estimate the performances of different solar heating and cooling systems. After a short description of the PISTACHE tool, its validation is performed followed by a sensitivity analysis which is conducted using the method of Fourier Amplitude Sensitivity Test (FAST). The obtained results will be displayed and discussed at the end of this paper. (C) 2014 The Authors. Published by Elsevier Ltd",
+    "abstract": {
+      "en": "The present paper studies the sensitivity analysis of the new PISTACHE tool's prediction performance and its input parameters. This work is a part of the R&D project MeGaPICS (Method towards Guarantee of Solar Cooling and Heating application funded by the French National Research Agency). In fact, the PISTACHE tool was developed to provide professionals with a practical tool to design and to estimate the performances of different solar heating and cooling systems. After a short description of the PISTACHE tool, its validation is performed followed by a sensitivity analysis which is conducted using the method of Fourier Amplitude Sensitivity Test (FAST). The obtained results will be displayed and discussed at the end of this paper. (C) 2014 The Authors. Published by Elsevier Ltd"
+    },
     "documentType": [
       "Proceedings Paper"
     ],
@@ -1135,7 +1139,7 @@
     "sourceUid":"wos$000345410700113"
   },
   {
-    "_comment": "Notice A1, sensée matchée avec notice A2 sur les champs title.default, volume, issue, pageRange, xPublicationDate et xissn",
+    "_comment": "Notice A1, sensée matcher avec notice A2 sur les champs title.default, volume, issue, pageRange, xPublicationDate et xissn",
     "creationDate": "2019-05-21 15:37:13",
     "title": {
       "default": "Electroosmosis through α-Hemolysin That Depends on Alkali Cation Type",
@@ -1342,7 +1346,7 @@
     "idChain": "hal:Qd74UnItx6nGYLwrBc2MDZF8k!"
   },
   {
-    "_comment": "Notice A2, sensée matchée avec notice A1 sur les champs title.default, volume, issue, pageRange, xPublicationDate et xissn",
+    "_comment": "Notice A2, sensée matcher avec notice A1 sur les champs title.default, volume, issue, pageRange, xPublicationDate et xissn",
     "creationDate": "2019-05-27 09:33:18",
     "title": {
       "default": "Electroosmosis through α-Hemolysin That Depends on Alkali Cation Type",
