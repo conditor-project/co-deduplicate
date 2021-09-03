@@ -193,10 +193,8 @@ function propagate (docObject, data, result) {
                 source: hitSource._source.source
               }],
               idConditor: hitSource._source.idConditor
-            }
-          },
-          refresh: true
-
+            } 
+          }
         };
 
         body.push(options);
@@ -220,8 +218,8 @@ function propagate (docObject, data, result) {
         lang: 'painless',
         source: scriptList.removeDuplicate,
         params: { idConditor: docObject.idConditor }
-      },
-      refresh: true
+      }
+     
     };
 
     body.push(options);
@@ -242,8 +240,8 @@ function propagate (docObject, data, result) {
               source: docObject.source
             }]
           }
-        },
-        refresh: true
+        }
+        
       };
       body.push(options);
       body.push(update);
@@ -255,8 +253,8 @@ function propagate (docObject, data, result) {
         lang: 'painless',
         source: scriptList.setIdChain,
         params: { idChain: docObject.idChain }
-      },
-      refresh: true
+      }
+      
     };
 
     body.push(options);
@@ -267,8 +265,8 @@ function propagate (docObject, data, result) {
       {
         lang: 'painless',
         source: scriptList.setIsDuplicate
-      },
-      refresh: true
+      }
+      
     };
 
     body.push(options);
@@ -279,8 +277,8 @@ function propagate (docObject, data, result) {
       {
         lang: 'painless',
         source: scriptList.setDuplicateRules
-      },
-      refresh: true
+      }
+      
     };
 
     body.push(options);
@@ -291,29 +289,27 @@ function propagate (docObject, data, result) {
       {
         lang: 'painless',
         source: scriptList.setHasTransDuplicate
-      },
-      refresh: true
+      }
+      
     };
 
     body.push(options);
     body.push(update);
   });
 
-  options = { update: { _index: esConf.index, _type: esConf.type, _id: docObject.idElasticsearch, retry_on_conflict: 3 } };
+  options = { update: { _index: esConf.index, _id: docObject.idElasticsearch, retry_on_conflict: 3 } };
   update = {
     script:
     {
       lang: 'painless',
       source: scriptList.setHasTransDuplicate
-    },
-    refresh: true
+    }
   };
 
   body.push(options);
   body.push(update);
 
-  option = { body: body };
-
+  option = { body: body, refresh: "true" };
   return esClient.bulk(option);
 }
 
@@ -503,7 +499,7 @@ function deleteNotice (docObject, data) {
     index: esConf.index,
     type: esConf.type,
     id: data.hits.hits[0]._id,
-    refresh: true
+    refresh: "true"
   });
 }
 
@@ -540,8 +536,7 @@ function propagateDelete (docObject, data, result) {
           lang: 'painless',
           source: scriptList.removeDuplicate,
           params: { idConditor: docObject.idConditor }
-        },
-        refresh: true
+        }
       };
 
       body.push(options);
@@ -552,8 +547,7 @@ function propagateDelete (docObject, data, result) {
         {
           lang: 'painless',
           source: scriptList.setIdChain
-        },
-        refresh: true
+        }
       };
 
       body.push(options);
@@ -564,8 +558,7 @@ function propagateDelete (docObject, data, result) {
         {
           lang: 'painless',
           source: scriptList.setIsDuplicate
-        },
-        refresh: true
+        }
       };
 
       body.push(options);
@@ -576,15 +569,14 @@ function propagateDelete (docObject, data, result) {
         {
           lang: 'painless',
           source: scriptList.setDuplicateRules
-        },
-        refresh: true
+        }
       };
 
       body.push(options);
       body.push(update);
     });
 
-    option = { body: body };
+    option = { body: body, refresh: "true" };
     return esClient.bulk(option);
   }
 }
