@@ -340,7 +340,7 @@ function dispatch (docObject, data) {
     // creation de l'id
     if (docObject.idConditor === undefined) { docObject.idConditor = generate(idAlphabet, 25); }
 
-    if (data.hits.total === 0) {
+    if (data.hits.total.value === 0) {
       return insereNotice(docObject).catch(function (err) {
         if (err) { throw new Error('Erreur d insertion de notice: ' + err); }
       });
@@ -529,7 +529,7 @@ function propagateDelete (docObject, data, result) {
   let update;
   let body = [];
   let option;
-  if (result.hits.total > 0) {
+  if (result.hits.total.value > 0) {
     _.each(result.hits.hits, (hit) => {
       options = { update: { _index: esConf.index, _type: esConf.type, _id: hit._id, retry_on_conflict: 3 } };
 
@@ -590,9 +590,9 @@ function propagateDelete (docObject, data, result) {
 
 function erase (docObject, data) {
   return Promise.try(() => {
-    if (data.hits.total >= 2) {
+    if (data.hits.total.value >= 2) {
       throw new Error('Erreur de mise à jour de notice : ID source présent en plusieurs exemplaires');
-    } else if (data.hits.total === 1) {
+    } else if (data.hits.total.value === 1) {
       return deleteNotice(docObject, data)
         .then(getDuplicateByIdChain.bind(null, docObject, data))
         .then(propagateDelete.bind(null, docObject, data))
