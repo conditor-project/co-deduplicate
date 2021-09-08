@@ -632,48 +632,6 @@ function getByIdSource (docObject) {
   }
 }
 
-// Fonction d'ajout de l'alias si nécessaire
-function createAlias (aliasArgs, options, aliasCallback) {
-  let error;
-
-  // Vérification de l'existance de l'alias, création si nécessaire, ajout de l'index nouvellement créé à l'alias
-  esClient.indices.existsAlias(aliasArgs, function (err, response, status) {
-    if (err) console.log(err);
-    if (status !== '200') {
-      esClient.indices.putAlias(aliasArgs, function (err, response, status) {
-        if (!err) {
-          options.processLogs.push('Création d\'un nouvel alias OK. Status : ' + status + '\n');
-        } else {
-          options.errLogs.push('Erreur création d\'alias. Status : ' + status + '\n');
-          error = {
-            errCode: 1703,
-            errMessage: 'Erreur lors de la création de l\'alias : ' + err
-          };
-        }
-        aliasCallback(error);
-      });
-    } else {
-      esClient.indices.updateAliases({
-        'actions': [{
-          'add': aliasArgs
-        }]
-
-      }, function (err, response, status) {
-        if (!err) {
-          options.processLogs.push('Update d\'alias OK. Status : ' + status + '\n');
-        } else {
-          options.errLogs.push('Erreur update d\'alias. Status : ' + status + '\n');
-          error = {
-            errCode: 1704,
-            errMessage: 'Erreur lors de la création de l\'alias : ' + err
-          };
-        }
-        aliasCallback(error);
-      });
-    }
-  });
-}
-
 // fonction préalable de création d'index si celui-ci absent.
 // appelé dans beforeAnyJob
 
