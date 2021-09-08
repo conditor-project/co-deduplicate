@@ -31,6 +31,10 @@ const esClient = new es.Client({
 
 const business = {};
 
+/**
+ * Create Elasticsearch index if needed (index name and mapping are taken from co-config)
+ * @param {*} cbBefore 
+ */
 business.beforeAnyJob = function (cbBefore) {
   let options = {
     processLogs: [],
@@ -44,6 +48,17 @@ business.beforeAnyJob = function (cbBefore) {
   });
 };
 
+/**
+ * Chain all deduplication steps (search in ES database & ES index update).
+ * Main steps :
+ * 1) getByIdSource(): check if record is already present (record identified by sourceName/sourceId pair)
+ * 2) erase(): remove it if already present (it will be re-create)
+ * 3) existNotice(): add record (with duplicates) in ES, and update each duplicate records in ES
+ * 4) final callback: set idElasticsearch in docObject
+ * 
+ * @param {*} docObject 
+ * @param {*} cb 
+ */
 business.doTheJob = function (docObject, cb) {
   let error;
 
@@ -77,6 +92,12 @@ function insertMetadata (docObject, options) {
   });
 }
 
+/**
+ * Build JSON record (metadata + options + ids + init empty fields)
+ * from docObject and index it in Elasticsearch
+ * @param {*} docObject 
+ * @returns 
+ */
 function insereNotice (docObject) {
   return Promise.try(() => {
     let options = { index: esConf.index, refresh: "true" };
@@ -100,7 +121,15 @@ function insereNotice (docObject) {
   });
 }
 
-function aggregeNotice (docObject, data) {
+/**
+ * Build "consolidated" JSON record.
+ * (The same as "insereNotice()", with duplication info : idChain, isDuplicate, duplicates and duplicateRules)
+ * from docObject and index it in Elasticsearch
+ * @param {*} docObject 
+ * @param {*} data ES hits containing duplicates of docObject
+ * @returns 
+ */
+ function aggregeNotice (docObject, data) {
   return Promise.try(() => {
     let duplicates = [];
     let allMergedRules = [];
@@ -167,6 +196,13 @@ function insertCommonOptions (docObject, options) {
   options.body.isDeduplicable = docObject.isDeduplicable;
 }
 
+/**
+ * Update duplication info for each duplicates record
+ * @param {*} docObject 
+ * @param {*} data 
+ * @param {*} result ES hits containing Duplicates (1 hit = 1 duplicate)
+ * @returns 
+ */
 function propagate (docObject, data, result) {
   let options;
   let update;
@@ -174,7 +210,8 @@ function propagate (docObject, data, result) {
   let option;
   let matchedQueries;
 
-  // On crée une liaison par défaut entre tous les duplicats trouvés
+  // By default, create a link between all duplicates
+  // (for each record of results, init duplicates[] with idConditor, sourcesUid, sessionName and source)
   _.each(result.hits.hits, (hitTarget) => {
     options = { update: { _index: esConf.index, _id: hitTarget._id }, retry_on_conflict: 3 };
     _.each(result.hits.hits, (hitSource) => {
@@ -313,7 +350,15 @@ function propagate (docObject, data, result) {
   return esClient.bulk(option);
 }
 
-function getDuplicateByIdConditor (docObject, data, result) {
+/**
+ * Get full records of Duplicates by querying Elastic (getDuplicatesByConditorIds())
+ * Note : list of idConditor must have been set in `docObject.arrayIdConditor`
+ * @param {*} docObject 
+ * @param {*} data ES hits containing duplicates of docObject
+ * @param {*} result 
+ * @returns 
+ */
+function getDuplicatesByConditorIds (docObject, data, result) {
   docObject.idElasticsearch = result._id;
   let request = _.cloneDeep(baseRequest);
   _.each(docObject.arrayIdConditor, (idConditor) => {
@@ -332,6 +377,18 @@ function getDuplicateByIdConditor (docObject, data, result) {
   });
 }
 
+/**
+ * Add or update record(s) information, with duplicates info if needed.
+ * Job done in several steps :
+ * 1a) if no duplicates previously found :just index docObject record and return
+ * 1b) if duplicates found : build full jsonRecord from docObject and index it (agregeNotice())
+ * 2) get full records of Duplicates by querying Elastic (getDuplicatesByConditorIds())
+ *    (INCLUDING DOCOBJECT RECORD ITSELF !!!)
+ * 3) update duplication info for each duplicate record (propagate()) 
+ * @param {*} docObject 
+ * @param {*} data ES Results of duplicate search
+ * @returns 
+ */
 function dispatch (docObject, data) {
   return Promise.try(() => {
     // creation de l'id
@@ -343,7 +400,7 @@ function dispatch (docObject, data) {
       });
     } else {
       return aggregeNotice(docObject, data)
-        .then(getDuplicateByIdConditor.bind(null, docObject, data))
+        .then(getDuplicatesByConditorIds.bind(null, docObject, data))
         .then(propagate.bind(null, docObject, data))
         .catch((err) => {
           if (err) { throw new Error('Erreur d aggregation de notice: ' + err); }
@@ -372,6 +429,13 @@ function testParameter (docObject, rules) {
   return bool;
 }
 
+/**
+ * Compute a query fragment for a given rule
+ * @param {*} docObject current record, from which field values will be taken
+ * @param {*} rule non-interpreted rule taken from config file
+ * @param {*} type document type (aka "typeConditor")
+ * @returns 
+ */
 function interprete (docObject, rule, type) {
   let isEmpty = (rule.is_empty !== undefined) ? rule.is_empty : [];
   let query = rule.query;
@@ -461,6 +525,16 @@ function interprete (docObject, rule, type) {
   return newQuery;
 }
 
+/**
+ * Build full Elastic query for searching duplicates.
+ * Query is composed by a list of rules.
+ * All existing rules are defined in co-config/rules_certain.json
+ * Rules actually used depends on sourceName. There are listed in co-config/scenario.json
+ * For each rule, the query fragment is computed by calling "interprete()"
+ * @param {*} docObject 
+ * @param {*} request 
+ * @returns 
+ */
 function buildQuery (docObject, request) {
   if (scenario[docObject.typeConditor]) {
     _.each(rules, (rule) => {
@@ -472,19 +546,29 @@ function buildQuery (docObject, request) {
   return request;
 }
 
-// on crée la requete puis on teste si l'entrée existe
+/**
+ * Search duplicates in Elastic index.
+ * First build elastic query by calling "buildQuery()", then execute it,
+ * and finally update Elastic index by calling "dispatch()"
+ * @param {*} docObject 
+ * @returns 
+ */
 function existNotice (docObject) {
   return Promise.try(() => {
     let request = _.cloneDeep(baseRequest);
     let data;
-    // construction des règles par scénarii
+    // build rules query according to scénarii
     request = buildQuery(docObject, request);
     if (request.query.bool.should.length === 0) {
+      // no rule/scenario found => no duplication possible 
+      // => dispatch with fake ES resut with 0 result
+      // => insert new doc without duplicates
       docObject.isDeduplicable = false;
       data = { 'hits': { 'total': 0 } };
       return dispatch(docObject, data);
     } else {
       docObject.isDeduplicable = true;
+      // execute search query and send results to dispatch() function
       return esClient.search({
         index: esConf.index,
         body: request
@@ -493,6 +577,12 @@ function existNotice (docObject) {
   });
 }
 
+/**
+ * Call to Elastic DELETE route, but first get old idConditor to reuse in new docObject (to avoid creation of new idConditor)
+ * @param {*} docObject record which will be inserted in Elasticsearch later
+ * @param {*} data record which has to be deleted
+ * @returns 
+ */
 function deleteNotice (docObject, data) {
   docObject.idConditor = data.hits.hits[0]._source.idConditor;
   return esClient.delete({
@@ -503,7 +593,15 @@ function deleteNotice (docObject, data) {
   });
 }
 
-function getDuplicateByIdChain (docObject, data, result) {
+/**
+ * Get all duplicates of a record, based on "idChain" identifier
+ * (in order to modify each of found records later )
+ * @param {*} docObject record which will be inserted in Elasticsearch later
+ * @param {*} data record which has to be deleted
+ * @param {*} result 
+ * @returns 
+ */
+function getDuplicatesByIdChain (docObject, data, result) {
   if (data.hits.hits[0]._source.isDuplicate) {
     let request = _.cloneDeep(baseRequest);
     request.query.bool.should.push({ 'bool': { 'must': [{ 'match': { 'idChain': data.hits.hits[0]._source.idChain } }] } });
@@ -521,6 +619,14 @@ function getDuplicateByIdChain (docObject, data, result) {
   }
 }
 
+/**
+ * Propagate deletion of "docObject.idConditor" on all duplicates found by getDuplicatesByIdChain
+ * Job done by 4 painless scripts
+ * @param {*} docObject record which will be inserted in Elasticsearch later
+ * @param {*} data record which has to be deleted
+ * @param {*} result duplicates previously found to update
+ * @returns 
+ */
 function propagateDelete (docObject, data, result) {
   let options;
   let update;
@@ -581,13 +687,20 @@ function propagateDelete (docObject, data, result) {
   }
 }
 
+/**
+ * Reomve record from Elasticsearch database, with update of duplicates if needed
+ * Do nothing in case of new document
+ * @param {*} docObject record which will be inserted in Elasticsearch later
+ * @param {*} data record to delete (Elastic result from query ran in "getByIdSource" function)
+ * @returns 
+ */
 function erase (docObject, data) {
   return Promise.try(() => {
     if (data.hits.total.value >= 2) {
       throw new Error('Erreur de mise à jour de notice : ID source présent en plusieurs exemplaires');
     } else if (data.hits.total.value === 1) {
       return deleteNotice(docObject, data)
-        .then(getDuplicateByIdChain.bind(null, docObject, data))
+        .then(getDuplicatesByIdChain.bind(null, docObject, data))
         .then(propagateDelete.bind(null, docObject, data))
         .catch(function (e) {
           throw new Error('Erreur de mise à jour de notice : ' + e);
@@ -596,6 +709,14 @@ function erase (docObject, data) {
   });
 }
 
+/**
+ * According to "rules_provides.json" config file, check if a document 
+ * with the same sourceName/sourceId couple already exists in database.
+ * Note : Config file allow to know in which field is stored sourceId
+ *  
+ * @param {*} docObject 
+ * @returns Elastic results of search query
+ */
 function getByIdSource (docObject) {
   let request = _.cloneDeep(baseRequest);
   let requestSource;
@@ -678,6 +799,10 @@ function createIndex (conditorSession, options, indexCallback) {
   });
 }
 
+/**
+ * Read all painless scripts in `painless` directory and return it
+ * @returns an object where keys are script names, and values script contents (string form)
+ */
 function loadPainlessScripts () {
   const slist = {};
   const scriptDir = path.join(__dirname, 'painless');
