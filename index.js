@@ -4,7 +4,6 @@ const es = require('elasticsearch');
 const _ = require('lodash');
 const debug = require('debug')('co-deduplicate');
 
-const Promise = require('bluebird');
 const generate = require('nanoid/generate');
 const fse = require('fs-extra');
 const path = require('path');
@@ -13,7 +12,6 @@ let esMapping = require('co-config/mapping.json');
 
 const scenario = require('co-config/scenario.json');
 const rules = require('co-config/rules_certain.json');
-const baseRequest = require('co-config/base_request.json');
 const providerRules = require('co-config/rules_provider.json');
 const metadata = require('co-config/metadata-xpaths.json');
 const idAlphabet = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_';
@@ -99,7 +97,7 @@ function insertMetadata (docObject, options) {
  * @returns 
  */
 function insereNotice (docObject) {
-  return Promise.try(() => {
+  return promiseTry(() => {
     let options = { index: esConf.index, refresh: "true" };
 
     debug(esConf);
@@ -130,7 +128,7 @@ function insereNotice (docObject) {
  * @returns 
  */
  function aggregeNotice (docObject, data) {
-  return Promise.try(() => {
+  return promiseTry(() => {
     let duplicates = [];
     let allMergedRules = [];
     let idchain = [];
@@ -203,7 +201,7 @@ function insertCommonOptions (docObject, options) {
  * @param {*} result ES hits containing Duplicates (1 hit = 1 duplicate)
  * @returns 
  */
-function propagate (docObject, data, result) {
+function propagate (docObject, result) {
   let options;
   let update;
   let body = [];
@@ -358,9 +356,9 @@ function propagate (docObject, data, result) {
  * @param {*} result 
  * @returns 
  */
-function getDuplicatesByConditorIds (docObject, data, result) {
+function getDuplicatesByConditorIds (docObject, result) {
   docObject.idElasticsearch = result._id;
-  let request = _.cloneDeep(baseRequest);
+  let request = getBaseRequest();
   _.each(docObject.arrayIdConditor, (idConditor) => {
     if (idConditor.trim() !== '') {
       request.query.bool.should.push({ 'bool': { 'must': [{ 'term': { 'idConditor': idConditor } }] } });
@@ -390,7 +388,7 @@ function getDuplicatesByConditorIds (docObject, data, result) {
  * @returns 
  */
 function dispatch (docObject, data) {
-  return Promise.try(() => {
+  return promiseTry(() => {
     // creation de l'id
     if (docObject.idConditor === undefined) { docObject.idConditor = generate(idAlphabet, 25); }
 
@@ -400,8 +398,8 @@ function dispatch (docObject, data) {
       });
     } else {
       return aggregeNotice(docObject, data)
-        .then(getDuplicatesByConditorIds.bind(null, docObject, data))
-        .then(propagate.bind(null, docObject, data))
+        .then(getDuplicatesByConditorIds.bind(null, docObject))
+        .then(propagate.bind(null, docObject))
         .catch((err) => {
           if (err) { throw new Error('Erreur d aggregation de notice: ' + err); }
         });
@@ -554,8 +552,8 @@ function buildQuery (docObject, request) {
  * @returns 
  */
 function existNotice (docObject) {
-  return Promise.try(() => {
-    let request = _.cloneDeep(baseRequest);
+  return promiseTry(() => {
+    let request = getBaseRequest();
     let data;
     // build rules query according to scénarii
     request = buildQuery(docObject, request);
@@ -564,7 +562,7 @@ function existNotice (docObject) {
       // => dispatch with fake ES resut with 0 result
       // => insert new doc without duplicates
       docObject.isDeduplicable = false;
-      data = { 'hits': { 'total': 0 } };
+      data = { 'hits': { 'total': { 'value':0 } } };
       return dispatch(docObject, data);
     } else {
       docObject.isDeduplicable = true;
@@ -596,14 +594,12 @@ function deleteNotice (docObject, data) {
 /**
  * Get all duplicates of a record, based on "idChain" identifier
  * (in order to modify each of found records later )
- * @param {*} docObject record which will be inserted in Elasticsearch later
  * @param {*} data record which has to be deleted
- * @param {*} result 
  * @returns 
  */
-function getDuplicatesByIdChain (docObject, data, result) {
+function getDuplicatesByIdChain (data) {
   if (data.hits.hits[0]._source.isDuplicate) {
-    let request = _.cloneDeep(baseRequest);
+    let request = getBaseRequest();
     request.query.bool.should.push({ 'bool': { 'must': [{ 'match': { 'idChain': data.hits.hits[0]._source.idChain } }] } });
     request.query.bool.minimum_should_match = 1;
     return esClient.search({
@@ -611,9 +607,9 @@ function getDuplicatesByIdChain (docObject, data, result) {
       body: request
     });
   } else {
-    let answer = { 'hits': { 'total': 0 } };
+    let answer = { 'hits': { 'total': { 'value':0 } } };
 
-    return Promise.try(() => {
+    return promiseTry(() => {
       return answer;
     });
   }
@@ -623,11 +619,10 @@ function getDuplicatesByIdChain (docObject, data, result) {
  * Propagate deletion of "docObject.idConditor" on all duplicates found by getDuplicatesByIdChain
  * Job done by 4 painless scripts
  * @param {*} docObject record which will be inserted in Elasticsearch later
- * @param {*} data record which has to be deleted
  * @param {*} result duplicates previously found to update
  * @returns 
  */
-function propagateDelete (docObject, data, result) {
+function propagateDelete (docObject, result) {
   let options;
   let update;
   let body = [];
@@ -695,13 +690,13 @@ function propagateDelete (docObject, data, result) {
  * @returns 
  */
 function erase (docObject, data) {
-  return Promise.try(() => {
+  return promiseTry(() => {
     if (data.hits.total.value >= 2) {
       throw new Error('Erreur de mise à jour de notice : ID source présent en plusieurs exemplaires');
     } else if (data.hits.total.value === 1) {
       return deleteNotice(docObject, data)
-        .then(getDuplicatesByIdChain.bind(null, docObject, data))
-        .then(propagateDelete.bind(null, docObject, data))
+        .then(getDuplicatesByIdChain.bind(null, data))
+        .then(propagateDelete.bind(null, docObject))
         .catch(function (e) {
           throw new Error('Erreur de mise à jour de notice : ' + e);
         });
@@ -718,7 +713,7 @@ function erase (docObject, data) {
  * @returns Elastic results of search query
  */
 function getByIdSource (docObject) {
-  let request = _.cloneDeep(baseRequest);
+  let request = getBaseRequest();
   let requestSource;
   let data;
 
@@ -740,9 +735,9 @@ function getByIdSource (docObject) {
   });
 
   if (request.query.bool.should.length === 0) {
-    data = { 'hits': { 'total': 0 } };
+    data = { 'hits': { 'total': { 'value':0 } } };
 
-    return Promise.try(() => {
+    return promiseTry(() => {
       return data;
     });
   } else {
@@ -768,12 +763,6 @@ function createIndex (conditorSession, options, indexCallback) {
     if (err) console.log(err);
     if (status !== 200) {
       options.processLogs.push('... Mapping et index introuvables, on les créé\n');
-      mappingExists = false;
-    } else {
-      options.processLogs.push('... Mapping et index déjà existants\n');
-    }
-
-    if (!mappingExists) {
       esMapping.settings.index = {
         'number_of_replicas': 0,
         'number_of_shards': 5
@@ -794,6 +783,7 @@ function createIndex (conditorSession, options, indexCallback) {
         };
       });
     } else {
+      options.processLogs.push('... Mapping et index déjà existants\n');
       indexCallback();
     }
   });
@@ -816,4 +806,24 @@ function loadPainlessScripts () {
     }
   }
   return slist;
+}
+
+
+function getBaseRequest() {
+  return {
+    "query": {
+      "bool": {
+        "should": [
+
+        ],
+        "minimum_should_match": 1
+      }
+    }
+  }
+}
+
+function promiseTry(func) {
+  return new Promise(function(resolve, reject) {
+      resolve(func());
+  })
 }
