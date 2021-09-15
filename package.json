@@ -19,7 +19,6 @@
   "author": "Genicot JB",
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
-    "bluebird": "^3.5.4",
     "co-config": "git+https://github.com/conditor-project/co-config.git#es7",
     "debug": "^4.1.1",
     "elasticsearch": "^16.7.2",
