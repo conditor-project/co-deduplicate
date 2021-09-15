@@ -23,7 +23,7 @@
     "debug": "^4.1.1",
     "elasticsearch": "^16.7.2",
     "fs-extra": "^7.0.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "nanoid": "^2.0.1",
     "rewire": "^4.0.1"
   },
