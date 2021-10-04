@@ -109,7 +109,7 @@ function insereNotice (docObject) {
     insertMetadata(docObject, options);
     insertCommonOptions(docObject, options);
 
-    options.body.idChain = docObject.source + ':' + docObject.idConditor + '!';
+    options.body.sourceUidChain = docObject.source + ':' + docObject.sourceId + '!';
     docObject.duplicates = [];
     docObject.isDuplicate = false;
     options.body.duplicates = docObject.duplicates;
@@ -121,7 +121,7 @@ function insereNotice (docObject) {
 
 /**
  * Build "consolidated" JSON record.
- * (The same as "insereNotice()", with duplication info : idChain, isDuplicate, duplicates and duplicateRules)
+ * (The same as "insereNotice()", with duplication info : sourceUidChain, isDuplicate, duplicates and duplicateRules)
  * from docObject and index it in Elasticsearch
  * @param {*} docObject 
  * @param {*} data ES hits containing duplicates of docObject
@@ -131,30 +131,30 @@ function insereNotice (docObject) {
   return promiseTry(() => {
     let duplicates = [];
     let allMergedRules = [];
-    let idchain = [];
-    let arrayIdConditor = [];
+    let sourceuidchain = [];
+    let arraySourceId = [];
     let regexp = new RegExp('.*:(.*)', 'g');
 
     _.each(data.hits.hits, (hit) => {
-      if (hit._source.idConditor !== docObject.idConditor) {
-        duplicates.push({ rules: hit.matched_queries, source: hit._source.source, sessionName: hit._source.sessionName, idConditor: hit._source.idConditor, sourceUid: hit._source.sourceUid });
-        idchain = _.union(idchain, hit._source.idChain.split('!'));
+      if (hit._source.sourceId !== docObject.sourceId) {
+        duplicates.push({ rules: hit.matched_queries, source: hit._source.source, sessionName: hit._source.sessionName, sourceId: hit._source.sourceId, sourceUid: hit._source.sourceUid });
+        sourceuidchain = _.union(sourceuidchain, hit._source.sourceUidChain.split('!'));
         allMergedRules = _.union(hit.matched_queries, allMergedRules);
       }
     });
 
-    _.compact(idchain);
+    _.compact(sourceuidchain);
 
-    arrayIdConditor = _.map(idchain, (idConditor) => {
-      return idConditor.replace(regexp, '$1');
+    arraySourceId = _.map(sourceuidchain, (sourceId) => {
+      return sourceId.replace(regexp, '$1');
     });
 
-    idchain = _.map(idchain, (idConditor) => {
-      return idConditor + '!';
+    sourceuidchain = _.map(sourceuidchain, (sourceId) => {
+      return sourceId + '!';
     });
 
-    idchain.push(docObject.source + ':' + docObject.idConditor + '!');
-    idchain.sort();
+    sourceuidchain.push(docObject.source + ':' + docObject.sourceId + '!');
+    sourceuidchain.sort();
 
     docObject.duplicates = duplicates;
     docObject.duplicateRules = _.sortBy(allMergedRules);
@@ -174,9 +174,9 @@ function insereNotice (docObject) {
     options.body.duplicates = duplicates;
     options.body.duplicateRules = allMergedRules;
     options.body.isDuplicate = (allMergedRules.length > 0);
-    docObject.arrayIdConditor = arrayIdConditor;
-    options.body.idChain = _.join(idchain, '');
-    docObject.idChain = options.body.idChain;
+    docObject.arraySourceId = arraySourceId;
+    options.body.sourceUidChain = _.join(sourceuidchain, '');
+    docObject.sourceUidChain = options.body.sourceUidChain;
 
     return esClient.index(options);
   });
@@ -209,11 +209,11 @@ function propagate (docObject, result) {
   let matchedQueries;
 
   // By default, create a link between all duplicates
-  // (for each record of results, init duplicates[] with idConditor, sourcesUid, sessionName and source)
+  // (for each record of results, init duplicates[] with sourceId, sourcesUid, sessionName and source)
   _.each(result.hits.hits, (hitTarget) => {
     options = { update: { _index: esConf.index, _id: hitTarget._id }, retry_on_conflict: 3 };
     _.each(result.hits.hits, (hitSource) => {
-      if (hitTarget._source.idConditor !== hitSource._source.idConditor) {
+      if (hitTarget._source.sourceId !== hitSource._source.sourceId) {
         update = {
           script:
           {
@@ -221,13 +221,13 @@ function propagate (docObject, result) {
             source: scriptList.addEmptyDuplicate,
             params: {
               duplicates: [{
-                idConditor: hitSource._source.idConditor,
+                sourceId: hitSource._source.sourceId,
                 sourceUid: hitSource._source.sourceUid,
                 rules: [],
                 sessionName: hitSource._source.sessionName,
                 source: hitSource._source.source
               }],
-              idConditor: hitSource._source.idConditor
+              sourceId: hitSource._source.sourceId
             } 
           }
         };
@@ -242,7 +242,7 @@ function propagate (docObject, result) {
     matchedQueries = [];
 
     _.each(docObject.duplicates, (directDuplicate) => {
-      if (directDuplicate.idConditor === hit._source.idConditor) { matchedQueries = directDuplicate.rules; }
+      if (directDuplicate.sourceId === hit._source.sourceId) { matchedQueries = directDuplicate.rules; }
     });
 
     options = { update: { _index: esConf.index, _id: hit._id, retry_on_conflict: 3 } };
@@ -252,7 +252,7 @@ function propagate (docObject, result) {
       {
         lang: 'painless',
         source: scriptList.removeDuplicate,
-        params: { idConditor: docObject.idConditor }
+        params: { sourceId: docObject.sourceId }
       }
      
     };
@@ -260,7 +260,7 @@ function propagate (docObject, result) {
     body.push(options);
     body.push(update);
 
-    if (hit._source.idConditor !== docObject.idConditor) {
+    if (hit._source.sourceId !== docObject.sourceId) {
       update = {
         script:
         {
@@ -268,7 +268,7 @@ function propagate (docObject, result) {
           source: scriptList.addDuplicate,
           params: {
             duplicates: [{
-              idConditor: docObject.idConditor,
+              sourceId: docObject.sourceId,
               sourceUid: docObject.sourceUid,
               rules: matchedQueries,
               sessionName: docObject.sessionName,
@@ -286,8 +286,8 @@ function propagate (docObject, result) {
       script:
       {
         lang: 'painless',
-        source: scriptList.setIdChain,
-        params: { idChain: docObject.idChain }
+        source: scriptList.setSourceUidChain,
+        params: { sourceUidChain: docObject.sourceUidChain }
       }
       
     };
@@ -350,7 +350,7 @@ function propagate (docObject, result) {
 
 /**
  * Get full records of Duplicates by querying Elastic (getDuplicatesByConditorIds())
- * Note : list of idConditor must have been set in `docObject.arrayIdConditor`
+ * Note : list of sourceId must have been set in `docObject.arraySourceId`
  * @param {*} docObject 
  * @param {*} data ES hits containing duplicates of docObject
  * @param {*} result 
@@ -359,13 +359,13 @@ function propagate (docObject, result) {
 function getDuplicatesByConditorIds (docObject, result) {
   docObject.idElasticsearch = result._id;
   let request = getBaseRequest();
-  _.each(docObject.arrayIdConditor, (idConditor) => {
-    if (idConditor.trim() !== '') {
-      request.query.bool.should.push({ 'bool': { 'must': [{ 'term': { 'idConditor': idConditor } }] } });
+  _.each(docObject.arraySourceId, (sourceId) => {
+    if (sourceId.trim() !== '') {
+      request.query.bool.should.push({ 'bool': { 'must': [{ 'term': { 'sourceId': sourceId } }] } });
     }
   });
 
-  _.unset(docObject, 'arrayIdConditor');
+  _.unset(docObject, 'arraySourceId');
 
   request.query.bool.minimum_should_match = 1;
 
@@ -390,7 +390,7 @@ function getDuplicatesByConditorIds (docObject, result) {
 function dispatch (docObject, data) {
   return promiseTry(() => {
     // creation de l'id
-    if (docObject.idConditor === undefined) { docObject.idConditor = generate(idAlphabet, 25); }
+    if (docObject.sourceId === undefined) { docObject.sourceId = generate(idAlphabet, 25); }
 
     if (data.hits.total.value === 0) {
       return insereNotice(docObject).catch(function (err) {
@@ -557,6 +557,7 @@ function existNotice (docObject) {
     let data;
     // build rules query according to scénarii
     request = buildQuery(docObject, request);
+    
     if (request.query.bool.should.length === 0) {
       // no rule/scenario found => no duplication possible 
       // => dispatch with fake ES resut with 0 result
@@ -576,13 +577,13 @@ function existNotice (docObject) {
 }
 
 /**
- * Call to Elastic DELETE route, but first get old idConditor to reuse in new docObject (to avoid creation of new idConditor)
+ * Call to Elastic DELETE route, but first get old sourceId to reuse in new docObject (to avoid creation of new sourceId)
  * @param {*} docObject record which will be inserted in Elasticsearch later
  * @param {*} data record which has to be deleted
  * @returns 
  */
 function deleteNotice (docObject, data) {
-  docObject.idConditor = data.hits.hits[0]._source.idConditor;
+  docObject.sourceId = data.hits.hits[0]._source.sourceId;
   return esClient.delete({
     index: esConf.index,
     type: esConf.type,
@@ -592,7 +593,7 @@ function deleteNotice (docObject, data) {
 }
 
 /**
- * Get all duplicates of a record, based on "idChain" identifier
+ * Get all duplicates of a record, based on "sourceUidChain" identifier
  * (in order to modify each of found records later )
  * @param {*} data record which has to be deleted
  * @returns 
@@ -600,7 +601,7 @@ function deleteNotice (docObject, data) {
 function getDuplicatesByIdChain (data) {
   if (data.hits.hits[0]._source.isDuplicate) {
     let request = getBaseRequest();
-    request.query.bool.should.push({ 'bool': { 'must': [{ 'match': { 'idChain': data.hits.hits[0]._source.idChain } }] } });
+    request.query.bool.should.push({ 'bool': { 'must': [{ 'match': { 'sourceUidChain': data.hits.hits[0]._source.sourceUidChain } }] } });
     request.query.bool.minimum_should_match = 1;
     return esClient.search({
       index: esConf.index,
@@ -616,7 +617,7 @@ function getDuplicatesByIdChain (data) {
 }
 
 /**
- * Propagate deletion of "docObject.idConditor" on all duplicates found by getDuplicatesByIdChain
+ * Propagate deletion of "docObject.sourceId" on all duplicates found by getDuplicatesByIdChain
  * Job done by 4 painless scripts
  * @param {*} docObject record which will be inserted in Elasticsearch later
  * @param {*} result duplicates previously found to update
@@ -636,7 +637,7 @@ function propagateDelete (docObject, result) {
         {
           lang: 'painless',
           source: scriptList.removeDuplicate,
-          params: { idConditor: docObject.idConditor }
+          params: { sourceId: docObject.sourceId }
         }
       };
 
@@ -647,7 +648,7 @@ function propagateDelete (docObject, result) {
         script:
         {
           lang: 'painless',
-          source: scriptList.setIdChain
+          source: scriptList.setSourceUidChain
         }
       };
 

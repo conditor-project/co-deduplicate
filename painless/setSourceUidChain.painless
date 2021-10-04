@@ -1,8 +1,8 @@
 ArrayList mergedId = new ArrayList();
-mergedId.add(ctx._source.source+':'+ctx._source.idConditor+'!');
+mergedId.add(ctx._source.source+':'+ctx._source.sourceId+'!');
 String idChain ='!';
 for (int i=0;i<ctx._source.duplicates.length;i++){
-    mergedId.add(ctx._source.duplicates[i].source+':'+ctx._source.duplicates[i].idConditor+'!')
+    mergedId.add(ctx._source.duplicates[i].source+':'+ctx._source.duplicates[i].sourceId+'!')
 }
 mergedId.sort(null);
 for (int j = 0; j<mergedId.length ; j++) {

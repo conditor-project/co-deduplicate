@@ -1,6 +1,6 @@
 boolean present=false;
 for (int i=0;i<ctx._source.duplicates.length;i++) {
-    if ( ctx._source.duplicates[i].idConditor == params.idConditor ) {
+    if ( ctx._source.duplicates[i].sourceId == params.sourceId ) {
         present = true
     }
 }
