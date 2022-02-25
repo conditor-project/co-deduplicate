@@ -13,7 +13,7 @@ const expect = chai.expect;
 const _ = require('lodash');
 const es = require('elasticsearch');
 
-var esConf = require('co-config/es.js');
+const esConf = require('co-config/es.js');
 esConf.index = 'tests-deduplicate';
 business.__set__('esConf.index', 'tests-deduplicate');
 
@@ -21,12 +21,12 @@ const esClient = new es.Client({
   host: esConf.host,
   log: {
     type: 'file',
-    level: ['error']
-  }
+    level: ['error'],
+  },
 });
 
 // fonction de vérification et suppression de l'index pour les tests
-let checkAndDeleteIndex = function (cbCheck) {
+const checkAndDeleteIndex = function (cbCheck) {
   esClient.indices.exists({ index: esConf.index }, function (errorExists, exists) {
     if (errorExists) {
       console.error(`Problème dans la vérification de l'index ${esConf.index}\n${errorExists.message}`);
@@ -96,12 +96,12 @@ describe(pkg.name + '/index.js', function () {
   // test sur l'insertion d'une 1ere notice
   describe('#insert notice 1', function () {
     let totalExpected = 0;
-    testData.map((data, index) => {
+    testData.each((data, index) => {
       it(data._comment, function (done) {
         business.doTheJob(data, function (err) {
           if (err) return done(err.errMessage);
           esClient.search({
-            index: esConf.index
+            index: esConf.index,
           }, function (esError, response) {
             if (esError) return done(esError);
             if (index !== 7) totalExpected++; // erreur normale sur le 7ème doc
@@ -111,12 +111,12 @@ describe(pkg.name + '/index.js', function () {
             response.hits.hits.forEach(hit => {
               const doc = hit._source;
               if (doc.sourceUid === 'crossref$10.1021/jz502360c') {
-                expect(doc.isDuplicate,"isDuplicate doit valoir true").to.be.equal(true);
-                expect(doc.duplicates.length, "le tableau duplicates doit contenir au moins un élément").to.be.gte(1);
+                expect(doc.isDuplicate, 'isDuplicate doit valoir true').to.be.equal(true);
+                expect(doc.duplicates.length, 'le tableau duplicates doit contenir au moins un élément').to.be.gte(1);
                 expect(doc.duplicates.length).to.be.gte(1);
-                expect(doc.duplicates[0].idConditor==='Qd74UnItx6nGYLwrBc2MDZF8k');
+                expect(doc.duplicates[0].idConditor === 'Qd74UnItx6nGYLwrBc2MDZF8k');
                 expect(doc.duplicates[0].rules[0].indexOf('2Collation'),
-                "doit matcher avec la règle 2Collation...").to.be.gte(0);
+                  'doit matcher avec la règle 2Collation...').to.be.gte(0);
               }
             });
             done();
@@ -131,9 +131,9 @@ describe(pkg.name + '/index.js', function () {
       esClient.indices.analyze({
         index: esConf.index,
         body: {
-          'field': 'title.default.normalized',
-          'text': 'Voici un test de titre caparaçonner aïoli ! '
-        }
+          field: 'title.default.normalized',
+          text: 'Voici un test de titre caparaçonner aïoli ! ',
+        },
       }, function (esError, response) {
         expect(esError).to.be.undefined;
         expect(response).to.not.be.undefined;
@@ -146,9 +146,9 @@ describe(pkg.name + '/index.js', function () {
       esClient.indices.analyze({
         index: esConf.index,
         body: {
-          'field': 'first3AuthorNames.normalized',
-          'text': 'Gérard Philippe, André Gide'
-        }
+          field: 'first3AuthorNames.normalized',
+          text: 'Gérard Philippe, André Gide',
+        },
       }, function (esError, response) {
         expect(esError).to.be.undefined;
         expect(response).to.not.be.undefined;
@@ -161,9 +161,9 @@ describe(pkg.name + '/index.js', function () {
       esClient.indices.analyze({
         index: esConf.index,
         body: {
-          'field': 'doi.normalized',
-          'text': '1586-544984Efrea'
-        }
+          field: 'doi.normalized',
+          text: '1586-544984Efrea',
+        },
       }, function (esError, response) {
         expect(esError).to.be.undefined;
         expect(response).to.not.be.undefined;
@@ -176,9 +176,9 @@ describe(pkg.name + '/index.js', function () {
       esClient.indices.analyze({
         index: esConf.index,
         body: {
-          'field': 'pageRange.normalized',
-          'text': '158-165'
-        }
+          field: 'pageRange.normalized',
+          text: '158-165',
+        },
       }, function (esError, response) {
         expect(esError).to.be.undefined;
         expect(response).to.not.be.undefined;
@@ -191,9 +191,9 @@ describe(pkg.name + '/index.js', function () {
       esClient.indices.analyze({
         index: esConf.index,
         body: {
-          'field': 'volume.normalized',
-          'text': 'v52'
-        }
+          field: 'volume.normalized',
+          text: 'v52',
+        },
       }, function (esError, response) {
         expect(esError).to.be.undefined;
         expect(response).to.not.be.undefined;
@@ -205,9 +205,9 @@ describe(pkg.name + '/index.js', function () {
       esClient.indices.analyze({
         index: esConf.index,
         body: {
-          'field': 'issue.normalized',
-          'text': 'V14'
-        }
+          field: 'issue.normalized',
+          text: 'V14',
+        },
       }, function (esError, response) {
         expect(esError).to.be.undefined;
         expect(response).to.not.be.undefined;
@@ -219,9 +219,9 @@ describe(pkg.name + '/index.js', function () {
       esClient.indices.analyze({
         index: esConf.index,
         body: {
-          'field': 'publicationDate.normalized',
-          'text': '18-11-2012'
-        }
+          field: 'publicationDate.normalized',
+          text: '18-11-2012',
+        },
       }, function (esError, response) {
         expect(esError).to.be.undefined;
         expect(response).to.not.be.undefined;

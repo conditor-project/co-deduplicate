@@ -9,7 +9,7 @@ const generate = require('nanoid/generate');
 const fse = require('fs-extra');
 const path = require('path');
 const esConf = require('co-config/es.js');
-let esMapping = require('co-config/mapping.json');
+const esMapping = require('co-config/mapping.json');
 
 const scenario = require('co-config/scenario.json');
 const rules = require('co-config/rules_certain.json');
@@ -24,19 +24,19 @@ const esClient = new es.Client({
   host: esConf.host,
   log: {
     type: 'file',
-    level: ['error']
-  }
+    level: ['error'],
+  },
 });
 
 const business = {};
 
 business.beforeAnyJob = function (cbBefore) {
-  let options = {
+  const options = {
     processLogs: [],
-    errLogs: []
+    errLogs: [],
   };
 
-  let conditorSession = process.env.CONDITOR_SESSION || esConf.index;
+  const conditorSession = process.env.CONDITOR_SESSION || esConf.index;
   createIndex(conditorSession, options, function (err) {
     options.errLogs.push('callback createIndex, err=' + err);
     return cbBefore(err, options);
@@ -55,7 +55,7 @@ business.doTheJob = function (docObject, cb) {
     }).catch(function (e) {
       error = {
         errCode: 3,
-        errMessage: 'erreur de dédoublonnage : ' + e
+        errMessage: 'erreur de dédoublonnage : ' + e,
       };
       docObject.error = error;
       cb(error);
@@ -78,12 +78,12 @@ function insertMetadata (docObject, options) {
 
 function insereNotice (docObject) {
   return Promise.try(() => {
-    let options = { index: esConf.index, type: esConf.type, refresh: true };
+    const options = { index: esConf.index, type: esConf.type, refresh: true };
 
     debug(esConf);
 
     options.body = {
-      'creationDate': new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
+      creationDate: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
     };
 
     insertMetadata(docObject, options);
@@ -101,11 +101,11 @@ function insereNotice (docObject) {
 
 function aggregeNotice (docObject, data) {
   return Promise.try(() => {
-    let duplicates = [];
+    const duplicates = [];
     let allMergedRules = [];
     let idchain = [];
     let arrayIdConditor = [];
-    let regexp = new RegExp('.*:(.*)', 'g');
+    const regexp = /.*:(.*)/g;
 
     _.each(data.hits.hits, (hit) => {
       if (hit._source.idConditor !== docObject.idConditor) {
@@ -132,12 +132,12 @@ function aggregeNotice (docObject, data) {
     docObject.duplicateRules = _.sortBy(allMergedRules);
     docObject.isDuplicate = (allMergedRules.length > 0);
 
-    let options = { index: esConf.index, type: esConf.type, refresh: true };
+    const options = { index: esConf.index, type: esConf.type, refresh: true };
 
     debug(esConf);
 
     options.body = {
-      'creationDate': new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
+      creationDate: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
     };
 
     insertMetadata(docObject, options);
@@ -169,7 +169,7 @@ function insertCommonOptions (docObject, options) {
 function propagate (docObject, data, result) {
   let options;
   let update;
-  let body = [];
+  const body = [];
   let option;
   let matchedQueries;
 
@@ -189,12 +189,12 @@ function propagate (docObject, data, result) {
                 sourceUid: hitSource._source.sourceUid,
                 rules: [],
                 sessionName: hitSource._source.sessionName,
-                source: hitSource._source.source
+                source: hitSource._source.source,
               }],
-              idConditor: hitSource._source.idConditor
-            }
+              idConditor: hitSource._source.idConditor,
+            },
           },
-          refresh: true
+          refresh: true,
 
         };
 
@@ -218,9 +218,9 @@ function propagate (docObject, data, result) {
       {
         lang: 'painless',
         source: scriptList.removeDuplicate,
-        params: { idConditor: docObject.idConditor }
+        params: { idConditor: docObject.idConditor },
       },
-      refresh: true
+      refresh: true,
     };
 
     body.push(options);
@@ -238,11 +238,11 @@ function propagate (docObject, data, result) {
               sourceUid: docObject.sourceUid,
               rules: matchedQueries,
               sessionName: docObject.sessionName,
-              source: docObject.source
-            }]
-          }
+              source: docObject.source,
+            }],
+          },
         },
-        refresh: true
+        refresh: true,
       };
       body.push(options);
       body.push(update);
@@ -253,9 +253,9 @@ function propagate (docObject, data, result) {
       {
         lang: 'painless',
         source: scriptList.setIdChain,
-        params: { idChain: docObject.idChain }
+        params: { idChain: docObject.idChain },
       },
-      refresh: true
+      refresh: true,
     };
 
     body.push(options);
@@ -265,9 +265,9 @@ function propagate (docObject, data, result) {
       script:
       {
         lang: 'painless',
-        source: scriptList.setIsDuplicate
+        source: scriptList.setIsDuplicate,
       },
-      refresh: true
+      refresh: true,
     };
 
     body.push(options);
@@ -277,9 +277,9 @@ function propagate (docObject, data, result) {
       script:
       {
         lang: 'painless',
-        source: scriptList.setDuplicateRules
+        source: scriptList.setDuplicateRules,
       },
-      refresh: true
+      refresh: true,
     };
 
     body.push(options);
@@ -289,9 +289,9 @@ function propagate (docObject, data, result) {
       script:
       {
         lang: 'painless',
-        source: scriptList.setHasTransDuplicate
+        source: scriptList.setHasTransDuplicate,
       },
-      refresh: true
+      refresh: true,
     };
 
     body.push(options);
@@ -303,9 +303,9 @@ function propagate (docObject, data, result) {
     script:
     {
       lang: 'painless',
-      source: scriptList.setHasTransDuplicate
+      source: scriptList.setHasTransDuplicate,
     },
-    refresh: true
+    refresh: true,
   };
 
   body.push(options);
@@ -318,10 +318,10 @@ function propagate (docObject, data, result) {
 
 function getDuplicateByIdConditor (docObject, data, result) {
   docObject.idElasticsearch = result._id;
-  let request = _.cloneDeep(baseRequest);
+  const request = _.cloneDeep(baseRequest);
   _.each(docObject.arrayIdConditor, (idConditor) => {
     if (idConditor.trim() !== '') {
-      request.query.bool.should.push({ 'bool': { 'must': [{ 'term': { 'idConditor': idConditor } }] } });
+      request.query.bool.should.push({ bool: { must: [{ term: { idConditor: idConditor } }] } });
     }
   });
 
@@ -331,7 +331,7 @@ function getDuplicateByIdConditor (docObject, data, result) {
 
   return esClient.search({
     index: esConf.index,
-    body: request
+    body: request,
   });
 }
 
@@ -356,8 +356,8 @@ function dispatch (docObject, data) {
 }
 
 function testParameter (docObject, rules) {
-  let arrayParameter = (rules.non_empty !== undefined) ? rules.non_empty : [];
-  let arrayNonParameter = (rules.is_empty !== undefined) ? rules.is_empty : [];
+  const arrayParameter = (rules.non_empty !== undefined) ? rules.non_empty : [];
+  const arrayNonParameter = (rules.is_empty !== undefined) ? rules.is_empty : [];
   let bool = true;
   _.each(arrayParameter, function (parameter) {
     if (_.get(docObject, parameter) === undefined ||
@@ -376,8 +376,8 @@ function testParameter (docObject, rules) {
 }
 
 function interprete (docObject, rule, type) {
-  let isEmpty = (rule.is_empty !== undefined) ? rule.is_empty : [];
-  let query = rule.query;
+  const isEmpty = (rule.is_empty !== undefined) ? rule.is_empty : [];
+  const query = rule.query;
   let rulename;
 
   if (type.trim() !== '') {
@@ -389,57 +389,55 @@ function interprete (docObject, rule, type) {
   const newQuery = {
     bool: {
       must: null,
-      _name: rulename
-    }
+      _name: rulename,
+    },
   };
 
   newQuery.bool.must = _.map(query.bool.must, (value) => {
     let term, match, bool;
 
     if (value.match && _.isString(_.get(docObject, _.values(value.match)[0]))) {
-      match = { 'match': null };
+      match = { match: null };
       match.match = _.mapValues(value.match, (pattern) => {
         return _.get(docObject, pattern);
       });
       return match;
     } else if (value.term && _.isString(_.get(docObject, _.values(value.term)[0]))) {
-      term = { 'term': null };
+      term = { term: null };
       term.term = _.mapValues(value.term, (pattern) => {
         return _.get(docObject, pattern);
       });
       return term;
     } else if (value.match && _.isArray(_.get(docObject, _.values(value.match)[0]))) {
-      bool = { 'bool': {} };
+      bool = { bool: {} };
       bool.bool.should = _.map(_.get(docObject, _.values(value.match)[0]), (testValue) => {
-        let shouldMatch;
-        shouldMatch = { 'match': {} };
+        const shouldMatch = { match: {} };
         shouldMatch.match[_.keys(value.match)[0]] = testValue;
         return shouldMatch;
       });
       bool.bool.minimum_should_match = 1;
       return bool;
     } else if (value.term && _.isArray(_.get(docObject, _.values(value.term)[0]))) {
-      bool = { 'bool': {} };
+      bool = { bool: {} };
       bool.bool.should = _.map(_.get(docObject, _.values(value.term)[0]), (testValue) => {
-        let shouldMatch;
-        shouldMatch = { 'term': {} };
+        const shouldMatch = { term: {} };
         shouldMatch.match[_.keys(value.term)[0]] = testValue;
         return shouldMatch;
       });
       bool.bool.minimum_should_match = 1;
       return bool;
     } else if (value.bool) {
-      bool = { 'bool': {} };
+      bool = { bool: {} };
       bool.bool.should = _.map(value.bool.should, (shouldCond) => {
         let shouldTerm, shouldMatch;
         if (shouldCond.match && _.isString(_.get(docObject, _.values(shouldCond.match)[0]))) {
-          shouldMatch = { 'match': null };
+          shouldMatch = { match: null };
           shouldMatch.match = _.mapValues(shouldCond.match, (pattern) => {
             return _.get(docObject, pattern);
           });
           return shouldMatch;
         } else if (shouldCond.term && _.isString(_.get(docObject, _.values(shouldCond.term)[0]))) {
-          shouldTerm = { 'term': null };
+          shouldTerm = { term: null };
           shouldTerm.term = _.mapValues(shouldCond.term, (pattern) => {
             return _.get(docObject, pattern);
           });
@@ -456,10 +454,10 @@ function interprete (docObject, rule, type) {
   if (isEmpty.length > 0) { newQuery.bool.must_not = []; }
 
   _.each(isEmpty, (field) => {
-    newQuery.bool.must_not.push({ 'exists': { 'field': field + '.normalized' } });
+    newQuery.bool.must_not.push({ exists: { field: field + '.normalized' } });
   });
   if (type !== '') {
-    newQuery.bool.must.push({ 'match': { 'typeConditor.normalized': type } });
+    newQuery.bool.must.push({ match: { 'typeConditor.normalized': type } });
   }
   return newQuery;
 }
@@ -484,13 +482,13 @@ function existNotice (docObject) {
     request = buildQuery(docObject, request);
     if (request.query.bool.should.length === 0) {
       docObject.isDeduplicable = false;
-      data = { 'hits': { 'total': 0 } };
+      data = { hits: { total: 0 } };
       return dispatch(docObject, data);
     } else {
       docObject.isDeduplicable = true;
       return esClient.search({
         index: esConf.index,
-        body: request
+        body: request,
       }).then(dispatch.bind(null, docObject));
     }
   });
@@ -502,21 +500,21 @@ function deleteNotice (docObject, data) {
     index: esConf.index,
     type: esConf.type,
     id: data.hits.hits[0]._id,
-    refresh: true
+    refresh: true,
   });
 }
 
 function getDuplicateByIdChain (docObject, data, result) {
   if (data.hits.hits[0]._source.isDuplicate) {
-    let request = _.cloneDeep(baseRequest);
-    request.query.bool.should.push({ 'bool': { 'must': [{ 'match': { 'idChain': data.hits.hits[0]._source.idChain } }] } });
+    const request = _.cloneDeep(baseRequest);
+    request.query.bool.should.push({ bool: { must: [{ match: { idChain: data.hits.hits[0]._source.idChain } }] } });
     request.query.bool.minimum_should_match = 1;
     return esClient.search({
       index: esConf.index,
-      body: request
+      body: request,
     });
   } else {
-    let answer = { 'hits': { 'total': 0 } };
+    const answer = { hits: { total: 0 } };
 
     return Promise.try(() => {
       return answer;
@@ -527,8 +525,7 @@ function getDuplicateByIdChain (docObject, data, result) {
 function propagateDelete (docObject, data, result) {
   let options;
   let update;
-  let body = [];
-  let option;
+  const body = [];
   if (result.hits.total > 0) {
     _.each(result.hits.hits, (hit) => {
       options = { update: { _index: esConf.index, _type: esConf.type, _id: hit._id, retry_on_conflict: 3 } };
@@ -538,9 +535,9 @@ function propagateDelete (docObject, data, result) {
         {
           lang: 'painless',
           source: scriptList.removeDuplicate,
-          params: { idConditor: docObject.idConditor }
+          params: { idConditor: docObject.idConditor },
         },
-        refresh: true
+        refresh: true,
       };
 
       body.push(options);
@@ -550,9 +547,9 @@ function propagateDelete (docObject, data, result) {
         script:
         {
           lang: 'painless',
-          source: scriptList.setIdChain
+          source: scriptList.setIdChain,
         },
-        refresh: true
+        refresh: true,
       };
 
       body.push(options);
@@ -562,9 +559,9 @@ function propagateDelete (docObject, data, result) {
         script:
         {
           lang: 'painless',
-          source: scriptList.setIsDuplicate
+          source: scriptList.setIsDuplicate,
         },
-        refresh: true
+        refresh: true,
       };
 
       body.push(options);
@@ -574,17 +571,16 @@ function propagateDelete (docObject, data, result) {
         script:
         {
           lang: 'painless',
-          source: scriptList.setDuplicateRules
+          source: scriptList.setDuplicateRules,
         },
-        refresh: true
+        refresh: true,
       };
 
       body.push(options);
       body.push(update);
     });
 
-    option = { body: body };
-    return esClient.bulk(option);
+    return esClient.bulk({ body: body });
   }
 }
 
@@ -604,7 +600,7 @@ function erase (docObject, data) {
 }
 
 function getByIdSource (docObject) {
-  let request = _.cloneDeep(baseRequest);
+  const request = _.cloneDeep(baseRequest);
   let requestSource;
   let data;
 
@@ -612,12 +608,12 @@ function getByIdSource (docObject) {
     if (docObject.source.trim() === providerRule.source.trim() && testParameter(docObject, providerRule)) {
       request.query.bool.should.push(interprete(docObject, providerRule, ''));
       requestSource = {
-        'bool': {
-          'must': [
-            { 'term': { 'source': docObject.source.trim() } }
+        bool: {
+          must: [
+            { term: { source: docObject.source.trim() } },
           ],
-          '_name': 'provider'
-        }
+          _name: 'provider',
+        },
       };
 
       request.query.bool.should.push(requestSource);
@@ -626,7 +622,7 @@ function getByIdSource (docObject) {
   });
 
   if (request.query.bool.should.length === 0) {
-    data = { 'hits': { 'total': 0 } };
+    data = { hits: { total: 0 } };
 
     return Promise.try(() => {
       return data;
@@ -634,7 +630,7 @@ function getByIdSource (docObject) {
   } else {
     return esClient.search({
       index: esConf.index,
-      body: request
+      body: request,
     });
   }
 }
@@ -654,16 +650,16 @@ function createAlias (aliasArgs, options, aliasCallback) {
           options.errLogs.push('Erreur création d\'alias. Status : ' + status + '\n');
           error = {
             errCode: 1703,
-            errMessage: 'Erreur lors de la création de l\'alias : ' + err
+            errMessage: 'Erreur lors de la création de l\'alias : ' + err,
           };
         }
         aliasCallback(error);
       });
     } else {
       esClient.indices.updateAliases({
-        'actions': [{
-          'add': aliasArgs
-        }]
+        actions: [{
+          add: aliasArgs,
+        }],
 
       }, function (err, response, status) {
         if (!err) {
@@ -672,7 +668,7 @@ function createAlias (aliasArgs, options, aliasCallback) {
           options.errLogs.push('Erreur update d\'alias. Status : ' + status + '\n');
           error = {
             errCode: 1704,
-            errMessage: 'Erreur lors de la création de l\'alias : ' + err
+            errMessage: 'Erreur lors de la création de l\'alias : ' + err,
           };
         }
         aliasCallback(error);
@@ -685,8 +681,8 @@ function createAlias (aliasArgs, options, aliasCallback) {
 // appelé dans beforeAnyJob
 
 function createIndex (conditorSession, options, indexCallback) {
-  let reqParams = {
-    index: conditorSession
+  const reqParams = {
+    index: conditorSession,
   };
 
   let mappingExists = true;
@@ -703,7 +699,7 @@ function createIndex (conditorSession, options, indexCallback) {
 
     if (!mappingExists) {
       esMapping.settings.index = {
-        'number_of_replicas': 0
+        number_of_replicas: 0,
       };
 
       reqParams.body = esMapping;
@@ -713,7 +709,7 @@ function createIndex (conditorSession, options, indexCallback) {
           options.errLogs.push('... Erreur lors de la création de l\'index :\n' + err);
           error = {
             errCode: '001',
-            errMessage: 'Erreur lors de la création de l\'index : ' + err
+            errMessage: 'Erreur lors de la création de l\'index : ' + err,
           };
           return indexCallback(error);
         }
@@ -721,7 +717,7 @@ function createIndex (conditorSession, options, indexCallback) {
         createAlias({
           index: esConf.index,
           name: 'integration',
-          body: { 'actions': { 'add': { 'index': esConf.index, 'alias': 'integration' } } }
+          body: { actions: { add: { index: esConf.index, alias: 'integration' } } },
         }, options, function (err) {
           indexCallback(err);
         });
@@ -736,7 +732,7 @@ function loadPainlessScripts () {
   const slist = {};
   const scriptDir = path.join(__dirname, 'painless');
   const scriptFiles = fse.readdirSync(scriptDir);
-  for (let scriptFileName of scriptFiles) {
+  for (const scriptFileName of scriptFiles) {
     if (scriptFileName.endsWith('.painless')) {
       const scriptName = scriptFileName.replace('.painless', '');
       const scriptPath = path.join(__dirname, 'painless', scriptFileName);
