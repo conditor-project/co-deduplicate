@@ -1,0 +1,8 @@
+%YAML 1.2
+---
+imports:
+  - resource: elastic.yml
+  - resource: ../package.json
+    pick:
+      name: app.name
+      version: app.version

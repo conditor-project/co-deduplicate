@@ -1,0 +1,28 @@
+%YAML 1.2
+---
+
+imports:
+  - resource: ../node_modules/corhal-config/index.js
+    pick:
+        elastic.nodes: parameters.nodes
+        elastic.authUsername: parameters.authUsername
+        elastic.authPassword: parameters.authPassword
+        elastic.aliasesMapping.TO_DEDUPLICATE: parameters.toDeduplicate
+        elastic.aliases: elastic.aliases
+
+
+
+elastic:
+  clients:
+    default:
+      nodes: %nodes% # string | string[]
+      auth:
+        username: %authUsername%
+        password: %authPassword%
+      ssl:
+        rejectUnauthorized: false
+      sniffOnStart: true
+  indices:
+    documents:
+         index: ~ # string - The name of the index
+         aliases: %toDeduplicate%

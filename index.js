@@ -1,64 +1,35 @@
-'use strict';
-
-const es = require('elasticsearch');
 const _ = require('lodash');
-const debug = require('debug')('co-deduplicate');
-
-const Promise = require('bluebird');
 const generate = require('nanoid/generate');
 const fse = require('fs-extra');
 const path = require('path');
-const esConf = require('co-config/es.js');
-const esMapping = require('co-config/mapping.json');
 
-const scenario = require('co-config/scenario.json');
-const rules = require('co-config/rules_certain.json');
-const baseRequest = require('co-config/base_request.json');
-const providerRules = require('co-config/rules_provider.json');
+const { deduplicate: { scenario, rules, providerRules } } = require('corhal-config');
 const metadata = require('co-config/metadata-xpaths.json');
 const idAlphabet = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_';
 
 const scriptList = loadPainlessScripts();
 
-const esClient = new es.Client({
-  host: esConf.host,
-  log: {
-    type: 'file',
-    level: ['error'],
-  },
-});
-
+const { elastic: { aliases, indices } } = require('@istex/config-component').get(module);
+const { getBaseRequest } = require('./src/getBaseRequest');
+const esClient = require('./helpers/esHelpers/client').get();
+const { search, deleteById, index, bulk } = require('./src/documentsManager');
 const business = {};
-
-business.beforeAnyJob = function (cbBefore) {
-  const options = {
-    processLogs: [],
-    errLogs: [],
-  };
-
-  const conditorSession = process.env.CONDITOR_SESSION || esConf.index;
-  createIndex(conditorSession, options, function (err) {
-    options.errLogs.push('callback createIndex, err=' + err);
-    return cbBefore(err, options);
-  });
-};
+const FAKE_EMPTY_RESULT = { body: { hits: { total: { value: 0 } } } };
 
 business.doTheJob = function (docObject, cb) {
-  let error;
-
   getByIdSource(docObject)
-    .then(erase.bind(this, docObject))
-    .then(existNotice.bind(this, docObject))
-    .then(function (result) {
-      if (result && result._id && !docObject.idElasticsearch) { docObject.idElasticsearch = result._id; }
+    .then(result => erase(docObject, result))
+    .then(() => deduplicate(docObject))
+    .then(function ({ body }) {
+      if (body?._id && !docObject.idElasticsearch) { docObject.idElasticsearch = body._id; }
       return cb();
-    }).catch(function (e) {
-      error = {
+    }).catch(function (reason) {
+      docObject.error = {
         errCode: 3,
-        errMessage: 'erreur de dédoublonnage : ' + e,
+        errMessage: 'erreur de dédoublonnage: ' + reason,
       };
-      docObject.error = error;
-      cb(error);
+
+      cb(reason);
     });
 };
 
@@ -76,82 +47,80 @@ function insertMetadata (docObject, options) {
   });
 }
 
-function insereNotice (docObject) {
-  return Promise.try(() => {
-    const options = { index: esConf.index, type: esConf.type, refresh: true };
+function insertNotice (docObject) {
+  const options = { refresh: true };
 
-    debug(esConf);
+  options.body = {
+    creationDate: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
+  };
 
-    options.body = {
-      creationDate: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
-    };
+  insertMetadata(docObject, options);
+  insertCommonOptions(docObject, options);
 
-    insertMetadata(docObject, options);
-    insertCommonOptions(docObject, options);
+  options.body.idChain = docObject.source + ':' + docObject.idConditor + '!';
+  docObject.duplicates = [];
+  docObject.isDuplicate = false;
+  options.body.duplicates = docObject.duplicates;
+  options.body.isDuplicate = docObject.isDuplicate;
 
-    options.body.idChain = docObject.source + ':' + docObject.idConditor + '!';
-    docObject.duplicates = [];
-    docObject.isDuplicate = false;
-    options.body.duplicates = docObject.duplicates;
-    options.body.isDuplicate = docObject.isDuplicate;
-
-    return esClient.index(options);
-  });
+  return index(indices.documents.index, options);
 }
 
-function aggregeNotice (docObject, data) {
-  return Promise.try(() => {
-    const duplicates = [];
-    let allMergedRules = [];
-    let idchain = [];
-    let arrayIdConditor = [];
-    const regexp = /.*:(.*)/g;
+function aggregeNotice (docObject, result) {
+  const { body: { hits } } = result;
+  const duplicates = [];
+  let allMergedRules = [];
+  let idchain = [];
+  const regexp = /.*:(.*)/g;
 
-    _.each(data.hits.hits, (hit) => {
-      if (hit._source.idConditor !== docObject.idConditor) {
-        duplicates.push({ rules: hit.matched_queries, source: hit._source.source, sessionName: hit._source.sessionName, idConditor: hit._source.idConditor, sourceUid: hit._source.sourceUid });
-        idchain = _.union(idchain, hit._source.idChain.split('!'));
-        allMergedRules = _.union(hit.matched_queries, allMergedRules);
-      }
-    });
-
-    _.compact(idchain);
-
-    arrayIdConditor = _.map(idchain, (idConditor) => {
-      return idConditor.replace(regexp, '$1');
-    });
-
-    idchain = _.map(idchain, (idConditor) => {
-      return idConditor + '!';
-    });
-
-    idchain.push(docObject.source + ':' + docObject.idConditor + '!');
-    idchain.sort();
-
-    docObject.duplicates = duplicates;
-    docObject.duplicateRules = _.sortBy(allMergedRules);
-    docObject.isDuplicate = (allMergedRules.length > 0);
-
-    const options = { index: esConf.index, type: esConf.type, refresh: true };
-
-    debug(esConf);
-
-    options.body = {
-      creationDate: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
-    };
-
-    insertMetadata(docObject, options);
-    insertCommonOptions(docObject, options);
-
-    options.body.duplicates = duplicates;
-    options.body.duplicateRules = allMergedRules;
-    options.body.isDuplicate = (allMergedRules.length > 0);
-    docObject.arrayIdConditor = arrayIdConditor;
-    options.body.idChain = _.join(idchain, '');
-    docObject.idChain = options.body.idChain;
-
-    return esClient.index(options);
+  _.each(hits.hits, (hit) => {
+    if (hit._source.idConditor !== docObject.idConditor) {
+      duplicates.push({
+        rules: hit.matched_queries,
+        source: hit._source.source,
+        sessionName: hit._source.sessionName,
+        idConditor: hit._source.idConditor,
+        sourceUid: hit._source.sourceUid,
+      });
+      idchain = _.union(idchain, hit._source.idChain.split('!'));
+      allMergedRules = _.union(hit.matched_queries, allMergedRules);
+    }
   });
+
+  _.compact(idchain);
+
+  const arrayIdConditor = _.map(idchain, (idConditor) => {
+    return idConditor.replace(regexp, '$1');
+  });
+
+  idchain = _.map(idchain, (idConditor) => {
+    return idConditor + '!';
+  });
+
+  idchain.push(docObject.source + ':' + docObject.idConditor + '!');
+  idchain.sort();
+
+  docObject.duplicates = duplicates;
+  docObject.duplicateRules = _.sortBy(allMergedRules);
+  docObject.isDuplicate = (allMergedRules.length > 0);
+
+  const options = { index: esConf.index, refresh: true };
+
+  options.body = {
+    creationDate: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
+  };
+
+  insertMetadata(docObject, options);
+  insertCommonOptions(docObject, options);
+
+  options.body.duplicates = duplicates;
+  options.body.duplicateRules = allMergedRules;
+  options.body.isDuplicate = (allMergedRules.length > 0);
+  docObject.arrayIdConditor = arrayIdConditor;
+  options.body.idChain = _.join(idchain, '');
+  docObject.idChain = options.body.idChain;
+
+  return esClient.index(options);
 }
 
 function insertCommonOptions (docObject, options) {
@@ -170,7 +139,6 @@ function propagate (docObject, data, result) {
   let options;
   let update;
   const body = [];
-  let option;
   let matchedQueries;
 
   // On crée une liaison par défaut entre tous les duplicats trouvés
@@ -180,20 +148,20 @@ function propagate (docObject, data, result) {
       if (hitTarget._source.idConditor !== hitSource._source.idConditor) {
         update = {
           script:
-          {
-            lang: 'painless',
-            source: scriptList.addEmptyDuplicate,
-            params: {
-              duplicates: [{
+            {
+              lang: 'painless',
+              source: scriptList.addEmptyDuplicate,
+              params: {
+                duplicates: [{
+                  idConditor: hitSource._source.idConditor,
+                  sourceUid: hitSource._source.sourceUid,
+                  rules: [],
+                  sessionName: hitSource._source.sessionName,
+                  source: hitSource._source.source,
+                }],
                 idConditor: hitSource._source.idConditor,
-                sourceUid: hitSource._source.sourceUid,
-                rules: [],
-                sessionName: hitSource._source.sessionName,
-                source: hitSource._source.source,
-              }],
-              idConditor: hitSource._source.idConditor,
+              },
             },
-          },
           refresh: true,
 
         };
@@ -215,11 +183,11 @@ function propagate (docObject, data, result) {
 
     update = {
       script:
-      {
-        lang: 'painless',
-        source: scriptList.removeDuplicate,
-        params: { idConditor: docObject.idConditor },
-      },
+        {
+          lang: 'painless',
+          source: scriptList.removeDuplicate,
+          params: { idConditor: docObject.idConditor },
+        },
       refresh: true,
     };
 
@@ -229,19 +197,19 @@ function propagate (docObject, data, result) {
     if (hit._source.idConditor !== docObject.idConditor) {
       update = {
         script:
-        {
-          lang: 'painless',
-          source: scriptList.addDuplicate,
-          params: {
-            duplicates: [{
-              idConditor: docObject.idConditor,
-              sourceUid: docObject.sourceUid,
-              rules: matchedQueries,
-              sessionName: docObject.sessionName,
-              source: docObject.source,
-            }],
+          {
+            lang: 'painless',
+            source: scriptList.addDuplicate,
+            params: {
+              duplicates: [{
+                idConditor: docObject.idConditor,
+                sourceUid: docObject.sourceUid,
+                rules: matchedQueries,
+                sessionName: docObject.sessionName,
+                source: docObject.source,
+              }],
+            },
           },
-        },
         refresh: true,
       };
       body.push(options);
@@ -250,11 +218,11 @@ function propagate (docObject, data, result) {
 
     update = {
       script:
-      {
-        lang: 'painless',
-        source: scriptList.setIdChain,
-        params: { idChain: docObject.idChain },
-      },
+        {
+          lang: 'painless',
+          source: scriptList.setIdChain,
+          params: { idChain: docObject.idChain },
+        },
       refresh: true,
     };
 
@@ -263,10 +231,10 @@ function propagate (docObject, data, result) {
 
     update = {
       script:
-      {
-        lang: 'painless',
-        source: scriptList.setIsDuplicate,
-      },
+        {
+          lang: 'painless',
+          source: scriptList.setIsDuplicate,
+        },
       refresh: true,
     };
 
@@ -275,10 +243,10 @@ function propagate (docObject, data, result) {
 
     update = {
       script:
-      {
-        lang: 'painless',
-        source: scriptList.setDuplicateRules,
-      },
+        {
+          lang: 'painless',
+          source: scriptList.setDuplicateRules,
+        },
       refresh: true,
     };
 
@@ -287,10 +255,10 @@ function propagate (docObject, data, result) {
 
     update = {
       script:
-      {
-        lang: 'painless',
-        source: scriptList.setHasTransDuplicate,
-      },
+        {
+          lang: 'painless',
+          source: scriptList.setHasTransDuplicate,
+        },
       refresh: true,
     };
 
@@ -298,27 +266,32 @@ function propagate (docObject, data, result) {
     body.push(update);
   });
 
-  options = { update: { _index: esConf.index, _type: esConf.type, _id: docObject.idElasticsearch, retry_on_conflict: 3 } };
+  options = {
+    update: {
+      _index: esConf.index,
+      _type: esConf.type,
+      _id: docObject.idElasticsearch,
+      retry_on_conflict: 3,
+    },
+  };
   update = {
     script:
-    {
-      lang: 'painless',
-      source: scriptList.setHasTransDuplicate,
-    },
+      {
+        lang: 'painless',
+        source: scriptList.setHasTransDuplicate,
+      },
     refresh: true,
   };
 
   body.push(options);
   body.push(update);
 
-  option = { body: body };
-
-  return esClient.bulk(option);
+  return esClient.bulk({ body: body });
 }
 
 function getDuplicateByIdConditor (docObject, data, result) {
   docObject.idElasticsearch = result._id;
-  const request = _.cloneDeep(baseRequest);
+  const request = getBaseRequest();
   _.each(docObject.arrayIdConditor, (idConditor) => {
     if (idConditor.trim() !== '') {
       request.query.bool.should.push({ bool: { must: [{ term: { idConditor: idConditor } }] } });
@@ -335,19 +308,20 @@ function getDuplicateByIdConditor (docObject, data, result) {
   });
 }
 
-function dispatch (docObject, data) {
-  return Promise.try(() => {
+function dispatch (docObject, result) {
+  return Promise.resolve().then(() => {
+    const { body: { hits } } = result;
     // creation de l'id
-    if (docObject.idConditor === undefined) { docObject.idConditor = generate(idAlphabet, 25); }
+    if (docObject.idConditor == null) { docObject.idConditor = generate(idAlphabet, 25); }
 
-    if (data.hits.total === 0) {
-      return insereNotice(docObject).catch(function (err) {
+    if (hits.total.value === 0) {
+      return insertNotice(docObject).catch(function (err) {
         if (err) { throw new Error('Erreur d insertion de notice: ' + err); }
       });
     } else {
-      return aggregeNotice(docObject, data)
-        .then(getDuplicateByIdConditor.bind(null, docObject, data))
-        .then(propagate.bind(null, docObject, data))
+      return aggregeNotice(docObject, result)
+        .then(getDuplicateByIdConditor.bind(null, docObject, result))
+        .then(propagate.bind(null, docObject, result))
         .catch((err) => {
           if (err) { throw new Error('Erreur d aggregation de notice: ' + err); }
         });
@@ -361,15 +335,15 @@ function testParameter (docObject, rules) {
   let bool = true;
   _.each(arrayParameter, function (parameter) {
     if (_.get(docObject, parameter) === undefined ||
-      (_.isArray(_.get(docObject, parameter)) && _.get(docObject, parameter).length === 0) ||
-      (_.isString(_.get(docObject, parameter)) && _.get(docObject, parameter).trim() === '')) { bool = false; }
+        (_.isArray(_.get(docObject, parameter)) && _.get(docObject, parameter).length === 0) ||
+        (_.isString(_.get(docObject, parameter)) && _.get(docObject, parameter).trim() === '')) { bool = false; }
   });
 
   _.each(arrayNonParameter, function (nonparameter) {
     if (_.get(docObject, nonparameter) !== undefined &&
-      ((_.isArray(_.get(docObject, nonparameter)) && _.get(docObject, nonparameter).length > 0) ||
-        (_.isString(_.get(docObject, nonparameter)) && _.get(docObject, nonparameter).trim() !== '')
-      )) { bool = false; }
+        ((_.isArray(_.get(docObject, nonparameter)) && _.get(docObject, nonparameter).length > 0) ||
+         (_.isString(_.get(docObject, nonparameter)) && _.get(docObject, nonparameter).trim() !== '')
+        )) { bool = false; }
   });
 
   return bool;
@@ -474,69 +448,61 @@ function buildQuery (docObject, request) {
 }
 
 // on crée la requete puis on teste si l'entrée existe
-function existNotice (docObject) {
-  return Promise.try(() => {
-    let request = _.cloneDeep(baseRequest);
-    let data;
-    // construction des règles par scénarii
-    request = buildQuery(docObject, request);
-    if (request.query.bool.should.length === 0) {
-      docObject.isDeduplicable = false;
-      data = { hits: { total: 0 } };
-      return dispatch(docObject, data);
-    } else {
-      docObject.isDeduplicable = true;
-      return esClient.search({
-        index: esConf.index,
-        body: request,
-      }).then(dispatch.bind(null, docObject));
-    }
-  });
+function deduplicate (docObject) {
+  // construction des règles par scénarii
+  const request = buildQuery(docObject, getBaseRequest());
+
+  if (request.query.bool.should.length === 0) {
+    docObject.isDeduplicable = false;
+    return dispatch(docObject, { body: { hits: { total: { value: 0 } } } });
+  } else {
+    docObject.isDeduplicable = true;
+    return search({
+      index: aliases.TO_DEDUPLICATE,
+      body: request,
+    }).then((result) => dispatch(docObject, result));
+  }
 }
 
-function deleteNotice (docObject, data) {
-  docObject.idConditor = data.hits.hits[0]._source.idConditor;
-  return esClient.delete({
-    index: esConf.index,
-    type: esConf.type,
-    id: data.hits.hits[0]._id,
-    refresh: true,
-  });
+function deleteNotice (docObject, result) {
+  const { body: { hits } } = result;
+  docObject.idConditor = hits.hits[0]._source.idConditor;
+  return deleteById(
+    hits.hits[0]._id,
+    hits.hits[0]._index,
+    { refresh: true },
+  );
 }
 
-function getDuplicateByIdChain (docObject, data, result) {
-  if (data.hits.hits[0]._source.isDuplicate) {
-    const request = _.cloneDeep(baseRequest);
-    request.query.bool.should.push({ bool: { must: [{ match: { idChain: data.hits.hits[0]._source.idChain } }] } });
+function getDuplicateByIdChain (docObject, { body: { hits } }) {
+  if (hits.hits[0]._source.isDuplicate) {
+    const request = getBaseRequest();
+    request.query.bool.should.push({ bool: { must: [{ match: { idChain: hits.hits[0]._source.idChain } }] } });
     request.query.bool.minimum_should_match = 1;
-    return esClient.search({
-      index: esConf.index,
+    return search({
+      index: aliases.TO_DEDUPLICATE,
       body: request,
     });
   } else {
-    const answer = { hits: { total: 0 } };
-
-    return Promise.try(() => {
-      return answer;
-    });
+    return FAKE_EMPTY_RESULT;
   }
 }
 
-function propagateDelete (docObject, data, result) {
+function propagateDelete (docObject, { body: { hits } }) {
   let options;
   let update;
   const body = [];
-  if (result.hits.total > 0) {
-    _.each(result.hits.hits, (hit) => {
-      options = { update: { _index: esConf.index, _type: esConf.type, _id: hit._id, retry_on_conflict: 3 } };
+  if (hits.total.value > 0) {
+    _.each(hits.hits, (hit) => {
+      options = { update: { _index: aliases.TO_DEDUPLICATE, _id: hit._id, retry_on_conflict: 3 } };
 
       update = {
         script:
-        {
-          lang: 'painless',
-          source: scriptList.removeDuplicate,
-          params: { idConditor: docObject.idConditor },
-        },
+          {
+            lang: 'painless',
+            source: scriptList.removeDuplicate,
+            params: { idConditor: docObject.idConditor },
+          },
         refresh: true,
       };
 
@@ -545,10 +511,10 @@ function propagateDelete (docObject, data, result) {
 
       update = {
         script:
-        {
-          lang: 'painless',
-          source: scriptList.setIdChain,
-        },
+          {
+            lang: 'painless',
+            source: scriptList.setIdChain,
+          },
         refresh: true,
       };
 
@@ -557,10 +523,10 @@ function propagateDelete (docObject, data, result) {
 
       update = {
         script:
-        {
-          lang: 'painless',
-          source: scriptList.setIsDuplicate,
-        },
+          {
+            lang: 'painless',
+            source: scriptList.setIsDuplicate,
+          },
         refresh: true,
       };
 
@@ -569,10 +535,10 @@ function propagateDelete (docObject, data, result) {
 
       update = {
         script:
-        {
-          lang: 'painless',
-          source: scriptList.setDuplicateRules,
-        },
+          {
+            lang: 'painless',
+            source: scriptList.setDuplicateRules,
+          },
         refresh: true,
       };
 
@@ -580,34 +546,27 @@ function propagateDelete (docObject, data, result) {
       body.push(update);
     });
 
-    return esClient.bulk({ body: body });
+    return bulk({ body });
   }
 }
 
-function erase (docObject, data) {
-  return Promise.try(() => {
-    if (data.hits.total >= 2) {
-      throw new Error('Erreur de mise à jour de notice : ID source présent en plusieurs exemplaires');
-    } else if (data.hits.total === 1) {
-      return deleteNotice(docObject, data)
-        .then(getDuplicateByIdChain.bind(null, docObject, data))
-        .then(propagateDelete.bind(null, docObject, data))
-        .catch(function (e) {
-          throw new Error('Erreur de mise à jour de notice : ' + e);
-        });
-    }
-  });
+function erase (docObject, result) {
+  const { body: { hits } } = result;
+  if (hits.total.value >= 2) {
+    throw new Error('Erreur de mise à jour de notice : ID source présent en plusieurs exemplaires');
+  } else if (hits.total.value === 1) {
+    return deleteNotice(docObject, result)
+      .then(() => getDuplicateByIdChain(docObject, result))
+      .then((duplicateResult) => propagateDelete(docObject, duplicateResult));
+  }
 }
 
 function getByIdSource (docObject) {
-  const request = _.cloneDeep(baseRequest);
-  let requestSource;
-  let data;
+  const body = getBaseRequest();
 
   _.each(providerRules, (providerRule) => {
     if (docObject.source.trim() === providerRule.source.trim() && testParameter(docObject, providerRule)) {
-      request.query.bool.should.push(interprete(docObject, providerRule, ''));
-      requestSource = {
+      const requestSource = {
         bool: {
           must: [
             { term: { source: docObject.source.trim() } },
@@ -616,116 +575,12 @@ function getByIdSource (docObject) {
         },
       };
 
-      request.query.bool.should.push(requestSource);
-      request.query.bool.minimum_should_match = 2;
+      body.query.bool.should.push(requestSource);
+      body.query.bool.should.push(interprete(docObject, providerRule, ''));
+      body.query.bool.minimum_should_match = 2;
     }
   });
-
-  if (request.query.bool.should.length === 0) {
-    data = { hits: { total: 0 } };
-
-    return Promise.try(() => {
-      return data;
-    });
-  } else {
-    return esClient.search({
-      index: esConf.index,
-      body: request,
-    });
-  }
-}
-
-// Fonction d'ajout de l'alias si nécessaire
-function createAlias (aliasArgs, options, aliasCallback) {
-  let error;
-
-  // Vérification de l'existance de l'alias, création si nécessaire, ajout de l'index nouvellement créé à l'alias
-  esClient.indices.existsAlias(aliasArgs, function (err, response, status) {
-    if (err) console.log(err);
-    if (status !== '200') {
-      esClient.indices.putAlias(aliasArgs, function (err, response, status) {
-        if (!err) {
-          options.processLogs.push('Création d\'un nouvel alias OK. Status : ' + status + '\n');
-        } else {
-          options.errLogs.push('Erreur création d\'alias. Status : ' + status + '\n');
-          error = {
-            errCode: 1703,
-            errMessage: 'Erreur lors de la création de l\'alias : ' + err,
-          };
-        }
-        aliasCallback(error);
-      });
-    } else {
-      esClient.indices.updateAliases({
-        actions: [{
-          add: aliasArgs,
-        }],
-
-      }, function (err, response, status) {
-        if (!err) {
-          options.processLogs.push('Update d\'alias OK. Status : ' + status + '\n');
-        } else {
-          options.errLogs.push('Erreur update d\'alias. Status : ' + status + '\n');
-          error = {
-            errCode: 1704,
-            errMessage: 'Erreur lors de la création de l\'alias : ' + err,
-          };
-        }
-        aliasCallback(error);
-      });
-    }
-  });
-}
-
-// fonction préalable de création d'index si celui-ci absent.
-// appelé dans beforeAnyJob
-
-function createIndex (conditorSession, options, indexCallback) {
-  const reqParams = {
-    index: conditorSession,
-  };
-
-  let mappingExists = true;
-  let error;
-
-  esClient.indices.exists(reqParams, function (err, response, status) {
-    if (err) console.log(err);
-    if (status !== 200) {
-      options.processLogs.push('... Mapping et index introuvables, on les créé\n');
-      mappingExists = false;
-    } else {
-      options.processLogs.push('... Mapping et index déjà existants\n');
-    }
-
-    if (!mappingExists) {
-      esMapping.settings.index = {
-        number_of_replicas: 0,
-      };
-
-      reqParams.body = esMapping;
-
-      esClient.indices.create(reqParams, function (err, response, status) {
-        if (status !== 200) {
-          options.errLogs.push('... Erreur lors de la création de l\'index :\n' + err);
-          error = {
-            errCode: '001',
-            errMessage: 'Erreur lors de la création de l\'index : ' + err,
-          };
-          return indexCallback(error);
-        }
-
-        createAlias({
-          index: esConf.index,
-          name: 'integration',
-          body: { actions: { add: { index: esConf.index, alias: 'integration' } } },
-        }, options, function (err) {
-          indexCallback(err);
-        });
-      });
-    } else {
-      indexCallback();
-    }
-  });
+  return search({ body, indice: aliases.TO_DEDUPLICATE });
 }
 
 function loadPainlessScripts () {
@@ -736,8 +591,7 @@ function loadPainlessScripts () {
     if (scriptFileName.endsWith('.painless')) {
       const scriptName = scriptFileName.replace('.painless', '');
       const scriptPath = path.join(__dirname, 'painless', scriptFileName);
-      const scriptContent = fse.readFileSync(scriptPath, { encoding: 'utf8' }).replace(/\r?\n|\r/g, '').trim();
-      slist[scriptName] = scriptContent;
+      slist[scriptName] = fse.readFileSync(scriptPath, { encoding: 'utf8' }).replace(/\r?\n|\r/g, '').trim();
     }
   }
   return slist;

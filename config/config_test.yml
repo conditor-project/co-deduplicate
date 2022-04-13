@@ -1,0 +1,9 @@
+%YAML 1.2
+---
+imports:
+  - resource: config.yml
+
+elastic:
+  indices:
+    documents:
+         index: co-deduplicate-integration-test # string
