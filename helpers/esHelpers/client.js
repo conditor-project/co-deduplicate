@@ -1,6 +1,6 @@
 const config = require('@istex/config-component').get(module);
 const { Client } = require('@elastic/elasticsearch');
-const { logError } = require('../logger');
+const { logError, logInfo } = require('../logger');
 
 module.exports = (function () {
   let instance;
@@ -8,8 +8,10 @@ module.exports = (function () {
   function createInstance () {
     const client = new Client(config.elastic.clients.default);
     client.on('response', (err, result) => {
-      //console.dir(result)
+      //console.dir(result.meta.request)
+      //console.dir(result.body);
       if (err) {
+        console.dir(err.meta.body.error)
         logError(err);
       }
     });

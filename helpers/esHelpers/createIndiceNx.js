@@ -11,7 +11,7 @@ module.exports = function createIndiceNx (indiceName, indiceConfig = {}) {
         .create(
           {
             index: indiceName,
-            body: indiceConfig,
+            body: indiceConfig
           },
         );
     });

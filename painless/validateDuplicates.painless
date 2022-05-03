@@ -1,10 +1,4 @@
-if (ctx._source.duplicates == null || ctx._source.duplicates.length == 0 ) {
-    ctx._source.isDuplicate = false
-} else {
-    ctx._source.isDuplicate = true
-}
-
-  Object findDuplicate(def duplicates, def predicateDuplicate){
+Object findDuplicate(def duplicates, def predicateDuplicate){
       for(def duplicate:duplicates){
         if(duplicate.sourceUid == predicateDuplicate.sourceUid){return duplicate}
       }
@@ -20,22 +14,13 @@ if (ctx._source.duplicates == null || ctx._source.duplicates.length == 0 ) {
     }
 
 
-    int removeIx(ArrayList duplicates, def duplicate){
-      for(int i = 0; i < duplicates.size(); i++ ){
-       if(duplicates[i].sourceUid == duplicate.sourceUid){duplicates.remove(i);}
-      }
-
-      return  duplicates.size();
-    }
-
-
     if(ctx._source.business.duplicates == null){
       ctx._source.business.duplicates = new ArrayList();
     }
 
 
-    if(params.duplicatesChain == null){
-      params.duplicatesChain = new ArrayList();
+    if(params.duplicates == null){
+      params.duplicates = new ArrayList();
     }
 
 
@@ -43,10 +28,10 @@ if (ctx._source.duplicates == null || ctx._source.duplicates.length == 0 ) {
       if(duplicate.sourceUid == ctx._source.sourceUid){
         continue;
       }
-      addNx(ctx._source.duplicates, duplicate);
+      addNx(ctx._source.business.duplicates, duplicate);
     }
 
-    ctx._source.isDuplicate = ctx._source.duplicates.size() > 0 ? true: false;
+    ctx._source.business.isDuplicate = ctx._source.business.duplicates.size() > 0 ? true: false;
 
 
     if(params.sourceUidChain != null){
