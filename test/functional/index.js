@@ -1,7 +1,7 @@
 const should = require('should');
 const deleteIndiceIx = require('../../helpers/esHelpers/deleteIndiceIx');
 const createIndiceNx = require('../../helpers/esHelpers/createIndiceNx');
-const putCreationAndModificationDatePipeline = require('../../helpers/esHelpers/putCreationAndModificationDatePipeline');
+const { putCreationAndModificationDatePipeline, deleteCreationAndModificationDatePipeline } = require('../../helpers/esHelpers/putCreationAndModificationDatePipeline');
 const { elastic: { indices } } = require('@istex/config-component').get(module);
 const { elastic: { mapping } } = require('corhal-config');
 const business = require('../../index');
@@ -22,9 +22,11 @@ before(function () {
     .then(() => bulkCreate(duplicatesFixtures, indices.documents.index, { refresh: true }));
 });
 
-// after(function () {
-//  return deleteIndiceIx('co-deduplicate-integration-test');
-// });
+after(function () {
+  return deleteIndiceIx(indices.documents.index)
+    .then(() => deleteCreationAndModificationDatePipeline());
+});
+
 business.on('info', (message) => console.log(message));
 
 describe('doTheJob', function () {

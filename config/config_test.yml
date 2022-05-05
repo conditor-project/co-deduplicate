@@ -6,4 +6,8 @@ imports:
 elastic:
   indices:
     documents:
-         index: co-deduplicate-integration-test # string
+         index: co-deduplicate-integration-test
+         aliases: %toDeduplicateMapping%
+
+deduplicate:
+  target: co-deduplicate-integration-test

@@ -14,7 +14,6 @@ if(ctx.business == null){
     ctx.business= new HashMap();
 }
 
-
 if(ctx.business.sourceUidChain == null){
     ctx.business.put("sourceUidChain", "!" + ctx.sourceUid + "!");
 }

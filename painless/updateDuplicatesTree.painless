@@ -1,0 +1,84 @@
+    Object findDuplicate(def duplicates, def predicateDuplicate){
+      for(def duplicate:duplicates){
+        if(duplicate.sourceUid == predicateDuplicate.sourceUid){return duplicate}
+      }
+      return null;
+    }
+
+    int addNx(ArrayList duplicates, def duplicate){
+      if(findDuplicate(duplicates, duplicate) == null){
+        duplicates.add(duplicate);
+      }
+
+      return duplicates.size();
+    }
+
+    int findDuplicateIndex(def duplicates, def predicateDuplicate){
+      for(def duplicate:duplicates){
+        if(duplicate.sourceUid == predicateDuplicate.sourceUid){return duplicates.indexOf(duplicate)}
+      }
+      return -1;
+    }
+
+    int replaceIxOrAddNx(ArrayList duplicates, def duplicate){
+      int duplicateIndex = findDuplicateIndex(duplicates, duplicate);
+
+      if( duplicateIndex == -1 ){
+        duplicates.add(duplicate);
+      } else {
+        duplicates.set(duplicateIndex, duplicate);
+      }
+
+      return duplicates.size();
+    }
+
+    boolean hasTransDuplicate(ArrayList duplicates){
+          for(def duplicate:duplicates){
+            if(duplicate.rules == null){return true}
+          }
+          return false;
+    }
+
+    if(ctx._source.business == null){
+        ctx._source.business= new HashMap();
+    }
+
+    if(ctx._source.business.duplicates == null){
+      ctx._source.business.duplicates = new ArrayList();
+    }
+
+    if(params.duplicates == null){
+      params.duplicates = new ArrayList();
+    }
+
+    for(def duplicate:params.duplicates){
+      if(duplicate.sourceUid == ctx._source.sourceUid){
+        continue;
+      }
+      if(params.initialSourceUid == ctx._source.sourceUid){
+        replaceIxOrAddNx(ctx._source.business.duplicates, duplicate);
+        continue;
+      }
+      addNx(ctx._source.business.duplicates, duplicate);
+    }
+
+    ctx._source.business.isDuplicate = ctx._source.business.duplicates.size() > 0 ? true: false;
+
+    ctx._source.business.hasTransDuplicate = hasTransDuplicate(ctx._source.business.duplicates);
+
+    ctx._source.business.sources = params.sources;
+
+    if(params.initialSourceUid == ctx._source.sourceUid){
+       ctx._source.business.duplicateRules = params.duplicateRules;
+    }
+
+    if(params.sourceUidChain != null){
+        ctx._source.business.sourceUidChain = params.sourceUidChain;
+    }
+
+    if(ctx._source.technical == null){
+        ctx._source.technical = new HashMap();
+    }
+
+    Date date = new Date();
+    ctx._source.technical.put("modificationDate", date.getTime());

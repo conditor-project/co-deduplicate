@@ -1,15 +1,10 @@
 const { has, pick, _ } = require('lodash');
-const fs = require('fs-extra');
-const path = require('path');
 
 const { deduplicate: { scenario, rules } } = require('corhal-config');
 
-const scriptList = loadPainlessScripts();
-
-const { elastic: { aliases, indices } } = require('@istex/config-component').get(module);
+const { deduplicate: { target } } = require('@istex/config-component').get(module);
 const { getBaseRequest } = require('./src/getBaseRequest');
-const esClient = require('./helpers/esHelpers/client').get();
-const { search, bulk, update, aggregate, updateDuplicatesTree } = require('./src/documentsManager');
+const { search, update, updateDuplicatesTree } = require('./src/documentsManager');
 const EventEmitter = require('events');
 
 class Business extends EventEmitter {
@@ -32,11 +27,10 @@ function deduplicate (docObject) {
       }
 
       const request = buildQuery(docObject);
-
       if (request.query.bool.should.length === 0) {
         business.emit('info', `Not deduplicable {docObject}, internalId: ${docObject.technical.internalId}`);
         docObject.business.isDeduplicable = false;
-        return update(aliases.TO_DEDUPLICATE,
+        return update(target,
           docObject.technical.internalId,
           { doc: { business: { isDeduplicable: false } } });
       }
@@ -44,7 +38,7 @@ function deduplicate (docObject) {
       docObject.business.isDeduplicable = true;
 
       return search({
-        index: aliases.TO_DEDUPLICATE,
+        index: target,
         body: request,
         size: 1000, // This means, 1000 duplicates found max.
       }).then((result) => {
@@ -55,12 +49,12 @@ function deduplicate (docObject) {
 
           docObject.business.isDuplicate = false;
 
-          return update(indices.documents.index,
+          return update(target,
             docObject.technical.internalId,
             { doc: pick(docObject, ['business.isDeduplicable', 'business.isDuplicate']) });
         }
+
         return updateDuplicatesTree(docObject, hits.hits);
-         //return dispatchDuplicatesTree(docObject, result);
       });
     },
   );
@@ -88,185 +82,9 @@ function buildQuery (docObject) {
   return request;
 }
 
-function dispatchDuplicatesTree (docObject, result) {
-  return Promise.resolve().then(() => {
-    const { body: { hits: { hits = [] } } } = result;
-
-    return aggregate(docObject, hits)
-      .then(() => getDuplicatesBySourceUid(docObject))
-      .then((result) => propagate(docObject, result));
-  });
-}
-
-function getDuplicatesBySourceUid (docObject) {
-  const request = getBaseRequest();
-  _.each(docObject.business.duplicates, (duplicate) => {
-    request.query.bool.should.push({ bool: { must: [{ term: { sourceUid: duplicate.sourceUid } }] } });
-  });
-
-  request.query.bool.minimum_should_match = 1;
-
-  return search({
-    index: indices.documents.index,
-    body: request,
-  });
-}
-
-function propagate (docObject, result) {
-  let options;
-  let update;
-  const body = [];
-  let matchedQueries;
-
-  // On crée une liaison par défaut entre tous les duplicats trouvés
-  _.each(result.hits.hits, (targetDocument) => {
-    options = { update: { _index: indices.documents.index, _id: targetDocument._id }, retry_on_conflict: 3 };
-    _.each(result.hits.hits, (duplicateDocument) => {
-      update = {
-        script:
-            {
-              lang: 'painless',
-              source: scriptList.addEmptyDuplicate,
-              params: {
-                duplicates: [{
-                  internalId: duplicateDocument._source.technical.internalId,
-                  sourceUid: duplicateDocument._source.sourceUid,
-                  rules: [],
-                  sessionName: duplicateDocument._source.technical.sessionName,
-                  source: duplicateDocument._source.source,
-                }],
-                idConditor: hitSource._source.idConditor,
-              },
-            },
-        refresh: true,
-
-      };
-
-      body.push(options);
-      body.push(update);
-    });
-  });
-
-  _.each(result.hits.hits, (hit) => {
-    matchedQueries = [];
-
-    _.each(docObject.duplicates, (directDuplicate) => {
-      if (directDuplicate.idConditor === hit._source.idConditor) { matchedQueries = directDuplicate.rules; }
-    });
-
-    options = { update: { _index: esConf.index, _type: esConf.type, _id: hit._id, retry_on_conflict: 3 } };
-
-    update = {
-      script:
-        {
-          lang: 'painless',
-          source: scriptList.removeDuplicate,
-          params: { idConditor: docObject.idConditor },
-        },
-      refresh: true,
-    };
-
-    body.push(options);
-    body.push(update);
-
-    if (hit._source.idConditor !== docObject.idConditor) {
-      update = {
-        script:
-          {
-            lang: 'painless',
-            source: scriptList.addDuplicate,
-            params: {
-              duplicates: [{
-                idConditor: docObject.idConditor,
-                sourceUid: docObject.sourceUid,
-                rules: matchedQueries,
-                sessionName: docObject.sessionName,
-                source: docObject.source,
-              }],
-            },
-          },
-        refresh: true,
-      };
-      body.push(options);
-      body.push(update);
-    }
-
-    update = {
-      script:
-        {
-          lang: 'painless',
-          source: scriptList.setIdChain,
-          params: { idChain: docObject.idChain },
-        },
-      refresh: true,
-    };
-
-    body.push(options);
-    body.push(update);
-
-    update = {
-      script:
-        {
-          lang: 'painless',
-          source: scriptList.setIsDuplicate,
-        },
-      refresh: true,
-    };
-
-    body.push(options);
-    body.push(update);
-
-    update = {
-      script:
-        {
-          lang: 'painless',
-          source: scriptList.setDuplicateRules,
-        },
-      refresh: true,
-    };
-
-    body.push(options);
-    body.push(update);
-
-    update = {
-      script:
-        {
-          lang: 'painless',
-          source: scriptList.setHasTransDuplicate,
-        },
-      refresh: true,
-    };
-
-    body.push(options);
-    body.push(update);
-  });
-
-  options = {
-    update: {
-      _index: esConf.index,
-      _type: esConf.type,
-      _id: docObject.idElasticsearch,
-      retry_on_conflict: 3,
-    },
-  };
-  update = {
-    script:
-      {
-        lang: 'painless',
-        source: scriptList.setHasTransDuplicate,
-      },
-    refresh: true,
-  };
-
-  body.push(options);
-  body.push(update);
-
-  return esClient.bulk({ body: body });
-}
-
-function validateRequiredAndForbiddenParameters (docObject, rules) {
+function validateRequiredAndForbiddenParameters (docObject, rule) {
   let isAllParametersValid = true;
-  _.each(rules.non_empty, function (requiredParameter) {
+  _.each(rule.non_empty, function (requiredParameter) {
     if (_.get(docObject, requiredParameter) == null ||
         (_.isArray(_.get(docObject, requiredParameter)) && _.get(docObject, requiredParameter).length === 0) ||
         (_.isString(_.get(docObject, requiredParameter)) && _.get(docObject, requiredParameter)
@@ -279,6 +97,10 @@ function validateRequiredAndForbiddenParameters (docObject, rules) {
          (_.isString(_.get(docObject, forbiddenParameter)) && _.get(docObject, forbiddenParameter).trim() !== '')
         )) { isAllParametersValid = false; }
   });
+
+  //_.each(rule.is_empty, function (forbiddenParameter) {
+  //  if (!['', [], {}, undefined, null].includes(_.get(docObject, forbiddenParameter))) { isAllParametersValid = false; }
+  //});
 
   return isAllParametersValid;
 }
@@ -373,80 +195,4 @@ function buildQueryFromRule (docObject, rule, type = null) {
     });
   }
   return newQuery;
-}
-
-function propagateDelete (docObject, { body: { hits } }) {
-  let options;
-  let update;
-  const body = [];
-  if (hits.total.value > 0) {
-    _.each(hits.hits, (hit) => {
-      options = { update: { _index: aliases.TO_DEDUPLICATE, _id: hit._id, retry_on_conflict: 3 } };
-
-      update = {
-        script:
-          {
-            lang: 'painless',
-            source: scriptList.removeDuplicate,
-            params: { idConditor: docObject.idConditor },
-          },
-        refresh: true,
-      };
-
-      body.push(options);
-      body.push(update);
-
-      update = {
-        script:
-          {
-            lang: 'painless',
-            source: scriptList.setIdChain,
-          },
-        refresh: true,
-      };
-
-      body.push(options);
-      body.push(update);
-
-      update = {
-        script:
-          {
-            lang: 'painless',
-            source: scriptList.setIsDuplicate,
-          },
-        refresh: true,
-      };
-
-      body.push(options);
-      body.push(update);
-
-      update = {
-        script:
-          {
-            lang: 'painless',
-            source: scriptList.setDuplicateRules,
-          },
-        refresh: true,
-      };
-
-      body.push(options);
-      body.push(update);
-    });
-
-    return bulk({ body });
-  }
-}
-
-function loadPainlessScripts () {
-  const slist = {};
-  const scriptDir = path.join(__dirname, 'painless');
-  const scriptFiles = fs.readdirSync(scriptDir);
-  for (const scriptFileName of scriptFiles) {
-    if (scriptFileName.endsWith('.painless')) {
-      const scriptName = scriptFileName.replace('.painless', '');
-      const scriptPath = path.join(__dirname, 'painless', scriptFileName);
-      slist[scriptName] = fs.readFileSync(scriptPath, { encoding: 'utf8' }).replace(/\r?\n|\r/g, '').trim();
-    }
-  }
-  return slist;
 }

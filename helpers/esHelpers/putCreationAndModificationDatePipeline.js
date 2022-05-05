@@ -3,7 +3,15 @@ const { readFileSync } = require('fs-extra');
 const path = require('path');
 const setCreationAndModificationDate = readFileSync(path.join(__dirname, './painless/setCreationAndModificationDate.painless'), 'utf8');
 
-module.exports = function putCreationAndModificationDatePipeline () {
+module.exports = { putCreationAndModificationDatePipeline, deleteCreationAndModificationDatePipeline };
+
+function deleteCreationAndModificationDatePipeline () {
+  return esClient
+    .ingest
+    .deletePipeline({ id: 'set_creation_and_modification_date' });
+}
+
+function putCreationAndModificationDatePipeline () {
   return esClient
     .ingest
     .putPipeline({
@@ -19,4 +27,4 @@ module.exports = function putCreationAndModificationDatePipeline () {
         ],
       },
     });
-};
+}

@@ -7,8 +7,8 @@ imports:
         elastic.nodes: parameters.nodes
         elastic.authUsername: parameters.authUsername
         elastic.authPassword: parameters.authPassword
-        elastic.aliasesMapping.TO_DEDUPLICATE: parameters.toDeduplicate
-        elastic.aliases: elastic.aliases
+        elastic.aliasesMapping.TO_DEDUPLICATE: parameters.toDeduplicateMapping
+        elastic.aliases.TO_DEDUPLICATE: parameters.CO_DEDUPLICATE_ES_TARGET
 
 
 
@@ -25,4 +25,7 @@ elastic:
   indices:
     documents:
          index: ~ # string - The name of the index
-         aliases: %toDeduplicate%
+         aliases: ~ # object of objects - Aliases for the index
+
+deduplicate:
+    target: %env(CO_DEDUPLICATE_ES_TARGET)% # Comma-separated list of data streams, indices, and aliases to search.
