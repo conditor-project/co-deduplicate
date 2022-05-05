@@ -1,8 +1,0 @@
-ArrayList mergedRules = new ArrayList();
-for (int i=0;i<ctx._source.duplicates.length;i++) {
-    for (int j = 0 ; j < ctx._source.duplicates[i].rules.length; j++) {
-        if (!mergedRules.contains(ctx._source.duplicates[i].rules[j])) mergedRules.add(ctx._source.duplicates[i].rules[j]);
-    }
-}
-mergedRules.sort(null);
-ctx._source.duplicateRules = mergedRules;

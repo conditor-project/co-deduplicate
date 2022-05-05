@@ -7,7 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "nyc mocha"
+    "test": "export NODE_ENV=test; npm run config:view; mocha --recursive",
+    "config:view": "view-config"
   },
   "repository": {
     "type": "git",
@@ -19,18 +20,26 @@
   "author": "Genicot JB",
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
+    "@elastic/elasticsearch": "^7.17.0",
+    "@istex/config-component": "^1.4.0",
     "bluebird": "^3.5.4",
     "co-config": "git+https://github.com/conditor-project/co-config.git",
+    "colors": "^1.4.0",
+    "corhal-config": "github:istex/corhal-config",
     "debug": "^4.1.1",
-    "elasticsearch": "^14.2.1",
     "fs-extra": "^7.0.1",
     "lodash": "^4.17.21",
-    "nanoid": "^2.0.1",
-    "rewire": "^4.0.1"
+    "nanoid": "^2.0.1"
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "eslint": "^7.32.0",
+    "eslint-config-semistandard": "^16.0.0",
+    "eslint-config-standard-jsx": "^10.0.0",
     "mocha": "^6.1.4",
-    "nyc": "^14.1.0"
+    "nyc": "^14.1.0",
+    "rewire": "^4.0.1",
+    "semistandard": "^16.0.1",
+    "should": "^13.2.3"
   }
 }

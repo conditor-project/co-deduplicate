@@ -1,5 +1,0 @@
-if (ctx._source.duplicates == null || ctx._source.duplicates.length == 0 ) {
-    ctx._source.isDuplicate = false
-} else {
-    ctx._source.isDuplicate = true 
-}

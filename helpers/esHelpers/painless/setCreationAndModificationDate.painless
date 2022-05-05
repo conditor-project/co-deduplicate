@@ -1,0 +1,27 @@
+if(ctx.technical == null){
+    ctx.technical = new HashMap();
+}
+
+Date date = new Date();
+
+if(ctx.technical.creationDate == null){
+    ctx.technical.put("creationDate", date.getTime());
+}
+
+ctx.technical.put("modificationDate", date.getTime());
+
+if(ctx.business == null){
+    ctx.business= new HashMap();
+}
+
+if(ctx.business.sourceUidChain == null){
+    ctx.business.put("sourceUidChain", "!" + ctx.sourceUid + "!");
+}
+
+if(ctx.business.sources == null){
+    ctx.business.sources = new ArrayList();
+    ctx.business.sources.add(ctx.source);
+}
+
+ctx.internal = ctx._id;
+
