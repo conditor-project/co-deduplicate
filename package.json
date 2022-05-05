@@ -17,7 +17,7 @@
   "keywords": [
     "conditor"
   ],
-  "author": "Genicot JB",
+  "author": "Genicot JB, jj618",
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "@elastic/elasticsearch": "^7.17.0",
