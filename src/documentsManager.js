@@ -102,7 +102,7 @@ function updateDuplicatesTree (docObject, duplicatesDocuments) {
       rules: rules?.sort(),
       source: _source.source,
       sourceUid: _source.sourceUid,
-      sessionName: _source.technical.sessionName,
+      sessionName: docObject?.technical?.sessionName,
       internalId: _source.technical.internalId,
     }))
     .concat(_(duplicatesDocuments).concat({ _source: docObject }).flatMap('_source.business.duplicates').compact().map(omit('rules')).value())

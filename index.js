@@ -40,7 +40,7 @@ function deduplicate (docObject) {
       return search({
         index: target,
         body: request,
-        size: 1000, // This means, 1000 duplicates found max.
+        size: 1000, // This means, 1000 duplicates found max, hopefully it would be enougth.
       }).then((result) => {
         const { body: { hits } } = result;
         if (hits.total.value === 0) {

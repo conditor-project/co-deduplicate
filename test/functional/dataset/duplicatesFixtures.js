@@ -336,10 +336,11 @@ module.exports.duplicatesFixtures = [
       duplicateGenre: 'Article',
       duplicates: [
         {
+          sessionName: 'ANOTHER_SESSION',
           source: 'A',
           sourceUid: 'A$1',
-          rules: ['yo'],
-        }
+          rules: ['RULE_1'],
+        },
       ],
       xissn: '2380-6583,2380-6591',
       xPublicationDate: '2015-01-20',
@@ -416,7 +417,7 @@ module.exports.duplicatesFixtures = [
       specialIssue: 'P1',
       supplement: 'Suppl 1',
       publisher: 'American Medical Association ',
-      pages: [{ range: '306', total: 0 }],
+      pages: { range: '306', total: 0 },
       volume: '313',
     },
     source: 'hal',

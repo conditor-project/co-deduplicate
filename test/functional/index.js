@@ -9,6 +9,7 @@ const { doTheJob } = business;
 const { notDuplicatesFixtures } = require('./dataset/notDuplicatesFixtures');
 const { duplicatesFixtures } = require('./dataset/duplicatesFixtures');
 const { bulkCreate } = require('../../src/documentsManager');
+const _ = require('lodash');
 
 before(function () {
   this.timeout(10000);
@@ -21,6 +22,12 @@ before(function () {
     .then(() => bulkCreate(notDuplicatesFixtures, indices.documents.index, { refresh: true }))
     .then(() => bulkCreate(duplicatesFixtures, indices.documents.index, { refresh: true }));
 });
+
+notDuplicatesFixtures
+  .concat(duplicatesFixtures)
+  .forEach((docObject) => {
+    _.set(docObject, 'technical.sessionName', 'TEST_SESSION');
+  });
 
 after(function () {
   return deleteIndiceIx(indices.documents.index)
