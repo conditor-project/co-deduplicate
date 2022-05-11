@@ -11,7 +11,7 @@ module.exports = (function () {
       //console.dir(result.meta.request)
       //console.dir(result.body);
       if (err) {
-        console.dir(err.meta.body.error)
+        console.dir(err.meta.body.error);
         logError(err);
       }
     });

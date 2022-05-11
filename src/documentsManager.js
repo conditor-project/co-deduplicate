@@ -4,6 +4,7 @@ const _ = require('lodash');
 const { omit, get } = require('lodash/fp');
 const fs = require('fs-extra');
 const path = require('path');
+const { logError } = require('../helpers/logger');
 
 const validateDuplicates = fs.readFileSync(path.join(__dirname, '../painless/updateDuplicatesTree.painless'), 'utf8');
 
@@ -71,12 +72,40 @@ function updateByQuery (index, q, body, { refresh = true } = {}) {
     );
 }
 
-function bulkCreate (docObjects, index, { refresh }) {
+function bulkCreate (docObjects, index, { refresh, throwOnError = false }) {
+  const bulkRequest = buildCreateBody(docObjects);
   return esClient.bulk(
     {
       index,
-      body: buildCreateBody(docObjects),
+      body: bulkRequest,
       refresh,
+    })
+    .then(({ body: bulkResponse }) => {
+      if (bulkResponse.errors) {
+        const erroredDocuments = [];
+        // The items array has the same order of the dataset we just indexed.
+        // The presence of the `error` key indicates that the operation
+        // that we did for the document has failed.
+        bulkResponse.items.forEach((action, i) => {
+          const operation = Object.keys(action)[0];
+          if (action[operation].error) {
+            erroredDocuments.push({
+              // If the status is 429 it means that you can retry the document,
+              // otherwise it's very likely a mapping error, and you should
+              // fix the document before to try it again.
+              status: action[operation].status,
+              error: action[operation].error,
+              operation: bulkRequest[i * 2],
+              document: bulkRequest[i * 2 + 1],
+            });
+          }
+        });
+        logError('#bulkCreate Error');
+        console.dir(erroredDocuments, { depth: 2 });
+        if (throwOnError === true) {
+          throw new Error('#bulkCreate Error');
+        }
+      }
     });
 }
 

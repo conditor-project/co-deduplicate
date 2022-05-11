@@ -270,70 +270,6 @@ module.exports.duplicatesFixtures = [
     business: {
       name: 'corhal',
       duplicateGenre: 'Article',
-      xissn: '0098-7484',
-      xPublicationDate: '2015-01-20',
-      first3AuthorNames: 'Marret Stéphane Bénichou Jacques',
-      first3AuthorNamesWithInitials: 'Marret S Bénichou J',
-      pageRange: '306',
-      hasDoi: true,
-      hasFulltext: false,
-      sourceUidChain: '!crossref$10.1001/jama.2014.15912!',
-    },
-    technical: {
-      sessionName: 'CROSSREF_2021-02-19_2015_1',
-      creationDate: '2021-02-19 10:02:12',
-      internalId: 'QVtJr9XOWFjIcbXWTLSXfZGN5',
-    },
-    language: ['English'],
-    title: {
-      default: 'Antenatal Magnesium Sulfate and Outcomes for School-aged Children',
-      en: 'Antenatal Magnesium Sulfate and Outcomes for School-aged Children',
-    },
-    authors: [
-      {
-        forename: 'Stéphane',
-        surname: 'Marret',
-        affiliations: [
-          {
-            address: 'Department of Neonatal Medicine, Rouen University Hospital and Région-INSERM (ERI 28), Normandy University, Rouen, France',
-          },
-        ],
-        fullname: 'Marret Stéphane',
-      },
-      {
-        forename: 'Jacques',
-        surname: 'Bénichou',
-        affiliations: [
-          { address: 'Department of Biostatistics and INSERM UMR 657, Normandy University, Rouen, France' },
-        ],
-        fullname: 'Bénichou Jacques',
-      },
-    ],
-    doi: '10.1001/jama.2014.15912',
-    originalGenre: 'Journal article',
-    host: {
-      title: 'JAMA',
-      eisbn: '978-3-319-78926-2',
-      isbn: '978-3-319-78924-8',
-      eissn: '2380-6591',
-      issn: '0098-7484',
-      electronicPublicationDate: '2017-10-23',
-      publicationDate: '2015-01-20',
-      issue: '3',
-      language: ['English'],
-      part: '10 Pt A',
-      specialIssue: 'P1',
-      supplement: 'Suppl 1',
-      publisher: 'American Medical Association ',
-      pages: [{ range: '306', total: 0 }],
-      volume: '313',
-    },
-    source: 'crossref',
-    sourceUid: 'crossref$10.1001/jama.2014.15912',
-  }, {
-    business: {
-      name: 'corhal',
-      duplicateGenre: 'Article',
       duplicates: [
         {
           sessionName: 'ANOTHER_SESSION',
@@ -357,7 +293,7 @@ module.exports.duplicatesFixtures = [
       internalId: 'udLj9TxkLzeYwHM_8ax1iq2Ix',
     },
     language: ['English'],
-    classifications: { hal: ['Life Sciences [q-bio]'] },
+    classifications: { hal: { code: 'Life Sciences [q-bio]' } },
     title: {
       default: 'Antenatal Magnesium Sulfate and Outcomes for School-aged Children',
       en: 'Antenatal Magnesium Sulfate and Outcomes for School-aged Children',
@@ -422,5 +358,70 @@ module.exports.duplicatesFixtures = [
     },
     source: 'hal',
     sourceUid: 'hal$hal-02462375',
+  },
+  {
+    business: {
+      name: 'corhal',
+      duplicateGenre: 'Article',
+      xissn: '0098-7484',
+      xPublicationDate: '2015-01-20',
+      first3AuthorNames: 'Marret Stéphane Bénichou Jacques',
+      first3AuthorNamesWithInitials: 'Marret S Bénichou J',
+      pageRange: '306',
+      hasDoi: true,
+      hasFulltext: false,
+      sourceUidChain: '!crossref$10.1001/jama.2014.15912!',
+    },
+    technical: {
+      sessionName: 'CROSSREF_2021-02-19_2015_1',
+      creationDate: '2021-02-19 10:02:12',
+      internalId: 'QVtJr9XOWFjIcbXWTLSXfZGN5',
+    },
+    language: ['English'],
+    title: {
+      default: 'Antenatal Magnesium Sulfate and Outcomes for School-aged Children',
+      en: 'Antenatal Magnesium Sulfate and Outcomes for School-aged Children',
+    },
+    authors: [
+      {
+        forename: 'Stéphane',
+        surname: 'Marret',
+        affiliations: [
+          {
+            address: 'Department of Neonatal Medicine, Rouen University Hospital and Région-INSERM (ERI 28), Normandy University, Rouen, France',
+          },
+        ],
+        fullname: 'Marret Stéphane',
+      },
+      {
+        forename: 'Jacques',
+        surname: 'Bénichou',
+        affiliations: [
+          { address: 'Department of Biostatistics and INSERM UMR 657, Normandy University, Rouen, France' },
+        ],
+        fullname: 'Bénichou Jacques',
+      },
+    ],
+    doi: '10.1001/jama.2014.15912',
+    originalGenre: 'Journal article',
+    host: {
+      title: 'JAMA',
+      eisbn: '978-3-319-78926-2',
+      isbn: '978-3-319-78924-8',
+      eissn: '2380-6591',
+      issn: '0098-7484',
+      electronicPublicationDate: '2017-10-23',
+      publicationDate: '2015-01-20',
+      issue: '3',
+      language: ['English'],
+      part: '10 Pt A',
+      specialIssue: 'P1',
+      supplement: 'Suppl 1',
+      publisher: 'American Medical Association ',
+      pages: [{ range: '306', total: 0 }],
+      volume: '313',
+    },
+    source: 'crossref',
+    sourceUid: 'crossref$10.1001/jama.2014.15912',
   },
 ];
