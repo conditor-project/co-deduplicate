@@ -125,35 +125,38 @@ function buildCreateBody (docObjects) {
 }
 
 function updateDuplicatesTree (docObject, duplicatesDocuments) {
-  const duplicates = _(duplicatesDocuments)
-    .concat({ _source: docObject })
-    .map(({ _source, matched_queries: rules }) => ({
-      rules: rules?.sort(),
-      source: _source.source,
-      sourceUid: _source.sourceUid,
-      sessionName: docObject?.technical?.sessionName,
-      internalId: _source.technical.internalId,
-    }))
-    .concat(_(duplicatesDocuments).concat({ _source: docObject }).flatMap('_source.business.duplicates').compact().map(omit('rules')).value())
-    .compact()
-    .uniqBy('sourceUid')
-    .value();
+  const duplicatesBucket =
+    _(duplicatesDocuments)
+      .concat({ _source: docObject })
+      .map(({ _source, matched_queries: rules }) => ({
+        rules: rules?.sort(),
+        source: _source.source,
+        sourceUid: _source.sourceUid,
+        sessionName: docObject?.technical?.sessionName,
+        internalId: _source.technical.internalId,
+      }))
+      .concat(_.get(docObject, 'business.duplicates'))
+      .concat(_(duplicatesDocuments).flatMap('_source.business.duplicates').compact().map(omit('rules')).value())
+      .compact()
+      .uniqBy('sourceUid')
+      .value();
 
-  const sourceUids = _.map(duplicates, get('sourceUid')).sort();
-  const sources = _.map(duplicates, get('source')).sort();
+  const sourceUids = _.map(duplicatesBucket, get('sourceUid')).sort();
+  const sources = _.map(duplicatesBucket, get('source')).sort();
   const sourceUidChain = sourceUids.length ? `!${sourceUids.join('!')}!` : null;
 
   const duplicateRules = _(duplicatesDocuments).map(({ matched_queries: rules = [] }) => rules).flatMap().uniq().sortBy().value();
 
-  docObject.business.duplicates = _.filter(duplicates, { sourceUid: docObject.sourceUid });
+  docObject.business.duplicates = _.filter(duplicatesBucket, { sourceUid: docObject.sourceUid });
   docObject.business.duplicateRules = duplicateRules;
-  docObject.business.isDuplicate = duplicates.length > 0;
+  docObject.business.isDuplicate = duplicatesBucket.length > 0;
   docObject.business.sourceUidChain = sourceUidChain;
   docObject.business.sources = sources;
 
   const q = `sourceUid:("${sourceUids.join('" OR "')}")`;
+
   const painlessParams = {
-    duplicates,
+    duplicatesBucket,
     sourceUidChain,
     sources,
     initialSourceUid: docObject.sourceUid,
@@ -167,5 +170,6 @@ function updateDuplicatesTree (docObject, duplicatesDocuments) {
     },
   };
 
+  // @todo: Handle the case where less than sourceUids.length documents are updated
   return updateByQuery(target, q, body, { refresh: true });
 }

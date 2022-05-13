@@ -8,11 +8,13 @@ module.exports = (function () {
   function createInstance () {
     const client = new Client(config.elastic.clients.default);
     client.on('response', (err, result) => {
-      //console.dir(result.meta.request)
-      //console.dir(result.body);
+      // console.dir(result.meta.request)
+      // console.dir(result.body);
       if (err) {
-        console.dir(err.meta.body.error);
         logError(err);
+        if (err?.meta?.body?.error?.type === 'script_exception') {
+          console.dir(err?.meta?.body?.error);
+        }
       }
     });
 

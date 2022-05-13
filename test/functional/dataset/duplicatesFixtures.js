@@ -361,6 +361,14 @@ module.exports.duplicatesFixtures = [
   },
   {
     business: {
+      duplicates: [
+        {
+          sessionName: 'ANOTHER_SESSION',
+          source: 'B',
+          sourceUid: 'B$5',
+          rules: ['RULE_66'],
+        },
+      ],
       name: 'corhal',
       duplicateGenre: 'Article',
       xissn: '0098-7484',

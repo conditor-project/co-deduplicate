@@ -5,6 +5,16 @@
       return null;
     }
 
+    Object omitRules(def duplicate){
+    if(duplicate.rules == null){return duplicate;}
+
+    HashMap result = new HashMap();
+    result.putAll(duplicate);
+    result.remove('rules');
+
+    return result;
+    }
+
     int addNx(ArrayList duplicates, def duplicate){
       if(findDuplicate(duplicates, duplicate) == null){
         duplicates.add(duplicate);
@@ -47,20 +57,30 @@
       ctx._source.business.duplicates = new ArrayList();
     }
 
-    if(params.duplicates == null){
-      params.duplicates = new ArrayList();
+    if(params.duplicatesBucket == null){
+      params.duplicatesBucket = new ArrayList();
     }
 
-    for(def duplicate:params.duplicates){
-      if(duplicate.sourceUid == ctx._source.sourceUid){
-        continue;
-      }
-      if(params.initialSourceUid == ctx._source.sourceUid){
-        replaceIxOrAddNx(ctx._source.business.duplicates, duplicate);
-        continue;
-      }
-      addNx(ctx._source.business.duplicates, duplicate);
+    if(params.initialSourceUid == ctx._source.sourceUid){
+        ctx._source.business.duplicateRules = params.duplicateRules;
+        for(def duplicate:params.duplicatesBucket ){
+          if(duplicate.sourceUid == ctx._source.sourceUid){
+            continue;
+          }
+
+          replaceIxOrAddNx(ctx._source.business.duplicates, duplicate);
+        }
+    } else {
+       for(def duplicate:params.duplicatesBucket ){
+          if(duplicate.sourceUid == ctx._source.sourceUid){
+            continue;
+          }
+
+          addNx(ctx._source.business.duplicates, omitRules(duplicate));
+        }
     }
+
+
 
     ctx._source.business.isDuplicate = ctx._source.business.duplicates.size() > 0 ? true: false;
 
@@ -68,9 +88,6 @@
 
     ctx._source.business.sources = params.sources;
 
-    if(params.initialSourceUid == ctx._source.sourceUid){
-       ctx._source.business.duplicateRules = params.duplicateRules;
-    }
 
     if(params.sourceUidChain != null){
         ctx._source.business.sourceUidChain = params.sourceUidChain;
