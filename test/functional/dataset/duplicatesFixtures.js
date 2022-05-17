@@ -426,7 +426,7 @@ module.exports.duplicatesFixtures = [
       specialIssue: 'P1',
       supplement: 'Suppl 1',
       publisher: 'American Medical Association ',
-      pages: [{ range: '306', total: 0 }],
+      pages: [{ range: '306-310', total: 0 }, { range: '666' }],
       volume: '313',
     },
     source: 'crossref',

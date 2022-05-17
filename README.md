@@ -16,13 +16,13 @@ Lorsque pour un document, un ou plusieurs doublons sont trouvés, l'objet docume
 
 #### Structure d'entrée
 
-Identique à la structure des champs de sortie du module [co-formatter](https://github.com/conditor-project/co-formatter), elle contient pour chaque champ du chapeau Conditor un sous-champ `value` contenant la valeur telle qu'elle est présente dans la notice d'origine.
+Identique à la structure des champs de sortie du module [co-formatter](https://github.com/conditor-project/co-formatter).
 
 #### Structure de sortie
 
 2 champs sont ajoutés au JSON d'entrée :
 
-* `idChain` : la liste des doublons trouvés, sous la forme d'une suite d'identifiants séparés par un caractère délimiteur.
+* `sourceUidChain` : la liste des doublons trouvés, sous la forme d'une suite d'identifiants séparés par un caractère délimiteur.
 * `duplicates` : la liste des noms de règles ayant amené au dédoublonnage
 
 #### Normalisation
@@ -59,7 +59,7 @@ POST /records/_analyze
 
 #### Règles de dédoublonnage
 
-Ces règles sont numérotées, nommées et externalisées dans le fichier de configuration [rules_certain.json](https://github.com/conditor-project/co-config/blob/master/rules_certain.json). Ces règles sont ensuite exécuté selon des [scénarios prédéfinis](https://github.com/conditor-project/co-config/blob/master/scenario.json) en fonction du type de document.
+Ces règles sont numérotées, nommées et externalisées dans le fichier de configuration [rules.json]. Ces règles sont ensuite exécuté selon des [scénarios prédéfinis](https://github.com/conditor-project/co-config/blob/master/scenario.json) en fonction du type de document.
 
 :warning: à l'avenir, ces règles seront probablement pondérées, de manière à pouvoir identifier des doublons probables, mais qui demandent une validation manuelle.
 
@@ -68,8 +68,8 @@ Ces règles sont numérotées, nommées et externalisées dans le fichier de con
 ### Installation ###
 
 Dépendances système : 
-    * NodeJS 4.0.0+
-    * ElasticSearch 5.4.0+
+    * NodeJS 14.0.0+
+    * ElasticSearch 7.0.0+
 
 Commande d'installation :
 ```bash 
@@ -89,20 +89,4 @@ Comme pour tous les modules, la présente partie métier n'est pas destinée à 
 L'exécution se fera donc en appelant cette fonction depuis une instanciation d`li-canvas` ou indirectement depuis les tests unitaires.
 
 ## Annexes ##
-
-### Arborescence ###
-
-```
-.
-├── index.js                        // Point d'entrée, contenant la fonction doTheJob()
-├── node_modules                    // Modules NPM
-│   ├── ...
-├── package.json                    // No comment
-├── README.md
-└── test                            // Fichiers nécessaires aux TU
-    ├── dataset                     // rép de données de tests
-    │   └── in
-    |       └── test.json          // contient 2 docObjects pris en entrée des TU
-    ├── run.js                      // point d'entrée des TU
-    └──
 ```

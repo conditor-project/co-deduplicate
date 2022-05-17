@@ -40,21 +40,21 @@ after(function () {
 business.on('info', (message) => logInfo(message));
 
 describe('doTheJob', function () {
-  notDuplicatesFixtures.forEach((notDuplicate) => {
-    it(`Must not find duplicates for document ${notDuplicate.technical.internalId}`, (done) => {
-      doTheJob(notDuplicate, (err) => {
+  notDuplicatesFixtures.forEach((docObjectNoDuplicates) => {
+    it(`Must not find duplicates for docObject ${docObjectNoDuplicates.technical.internalId}`, (done) => {
+      doTheJob(docObjectNoDuplicates, (err) => {
         if (err) return done(err);
-        notDuplicate.business.should.have.property('isDuplicate').equal(false);
+        docObjectNoDuplicates.business.should.have.property('isDuplicate').equal(false);
         done();
       });
     });
   });
 
-  duplicatesFixtures.forEach((duplicate) => {
-    it(`Must find duplicates for document ${duplicate.technical.internalId}`, (done) => {
-      doTheJob(duplicate, (err) => {
+  duplicatesFixtures.forEach((docObjectWithDuplicates) => {
+    it(`Must find duplicates for docObject ${docObjectWithDuplicates.technical.internalId}`, (done) => {
+      doTheJob(docObjectWithDuplicates, (err) => {
         if (err) return done(err);
-        duplicate.business.should.have.property('isDuplicate').equal(true);
+        docObjectWithDuplicates.business.should.have.property('isDuplicate').equal(true);
         done();
       });
     });
