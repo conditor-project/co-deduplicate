@@ -167,6 +167,21 @@ module.exports.duplicatesFixtures = [
     business: {
       name: 'corhal',
       duplicateGenre: 'Article',
+      duplicates: [
+        {
+          sourceUid: 'crossref$10.1001/jama.2014.15912',
+          internalId: 'QVtJr9XOWFjIcbXWTLSXfZGN5',
+          sessionName: 'TEST_SESSION',
+          source: 'crossref',
+          rules: ['RULE_111'],
+        },
+        {
+          sourceUid: 'x$1',
+          sessionName: 'TEST_SESSION',
+          source: 'x',
+          rules: ['RULE_111'],
+        },
+      ],
       xissn: '1538-3598',
       xPublicationDate: '2015-01-20',
       first3AuthorNames: 'Marret Stéphane Bénichou Jacques',
@@ -277,6 +292,18 @@ module.exports.duplicatesFixtures = [
           sourceUid: 'A$1',
           rules: ['RULE_1'],
         },
+        {
+          sessionName: 'ANOTHER_SESSION',
+          source: 'x',
+          sourceUid: 'x$1',
+        },
+        {
+          sessionName: 'ANOTHER_SESSION',
+          source: 'crossref',
+          sourceUid: 'crossref$10.1001/jama.2014.15912',
+          rules: ['RULE_555'],
+        },
+
       ],
       xissn: '2380-6583,2380-6591',
       xPublicationDate: '2015-01-20',
@@ -365,8 +392,40 @@ module.exports.duplicatesFixtures = [
         {
           sessionName: 'ANOTHER_SESSION',
           source: 'B',
-          sourceUid: 'B$5',
+          sourceUid: 'b$5',
           rules: ['RULE_66'],
+        },
+        {
+          sessionName: 'TEST_SESSION',
+          source: 'k',
+          sourceUid: 'k$1',
+        },
+        {
+          sourceUid: 'hal$hal-02462375',
+          internalId: 'udLj9TxkLzeYwHM_8ax1iq2Ix',
+          sessionName: 'ANOTHER_SESSION',
+          rules: [
+            'RULE_66',
+            'Article : 1ID:doi+TiC',
+            'Article : 1ID:doi+TiC_ENG',
+          ],
+          source: 'hal',
+        },
+        {
+          sessionName: 'ANOTHER_SESSION',
+          source: 'z',
+          sourceUid: 'z$2',
+          rules: ['RULE_69'],
+        },
+        {
+          sessionName: 'ANOTHER_SESSION',
+          source: 'x',
+          sourceUid: 'x$1',
+        },
+        {
+          sessionName: 'ANOTHER_SESSION',
+          source: 'h',
+          sourceUid: 'h$1',
         },
       ],
       name: 'corhal',
@@ -378,7 +437,7 @@ module.exports.duplicatesFixtures = [
       pageRange: '306',
       hasDoi: true,
       hasFulltext: false,
-      sourceUidChain: '!crossref$10.1001/jama.2014.15912!',
+      sourceUidChain: '!b$5!crossref$10.1001/jama.2014.15912!',
     },
     technical: {
       sessionName: 'CROSSREF_2021-02-19_2015_1',
@@ -431,5 +490,95 @@ module.exports.duplicatesFixtures = [
     },
     source: 'crossref',
     sourceUid: 'crossref$10.1001/jama.2014.15912',
+  },
+  {
+    business: {
+      duplicates: [
+        {
+          sessionName: 'ANOTHER_SESSION',
+          source: 'crossref',
+          sourceUid: 'crossref$10.1001/jama.2014.15912',
+          rules: ['RULE_66'],
+        },
+        {
+          sessionName: 'ANOTHER_SESSION',
+          source: 'z',
+          sourceUid: 'z$2',
+          rules: ['RULE_69'],
+        },
+        {
+          sessionName: 'YET_ANOTHER_SESSION',
+          source: 'z',
+          sourceUid: 'z$5',
+          rules: ['RULE_699'],
+        },
+        {
+          sessionName: 'ANOTHER_SESSION',
+          source: 'h',
+          sourceUid: 'h$1',
+        },
+      ],
+      name: 'corhal',
+      duplicateGenre: 'Article',
+      xissn: '0098-7484',
+      xPublicationDate: '2015-01-20',
+      first3AuthorNames: 'Marret Stéphane Bénichou Jacques',
+      first3AuthorNamesWithInitials: 'Marret S Bénichou J',
+      pageRange: '306',
+      hasDoi: true,
+      hasFulltext: false,
+      sourceUidChain: '!b$5!crossref$10.1001/jama.2014.15912!z$2!z$5!',
+    },
+    technical: {
+      sessionName: 'ANOTHER_SESSION',
+      creationDate: '2021-02-19 10:02:12',
+      internalId: 'b$5',
+    },
+    language: ['English'],
+    title: {
+      default: 'Antenatal Magnesium Sulfate and Outcomes for School-aged Children',
+      en: 'Antenatal Magnesium Sulfate and Outcomes for School-aged Children',
+    },
+    authors: [
+      {
+        forename: 'Stéphane',
+        surname: 'Marret',
+        affiliations: [
+          {
+            address: 'Department of Neonatal Medicine, Rouen University Hospital and Région-INSERM (ERI 28), Normandy University, Rouen, France',
+          },
+        ],
+        fullname: 'Marret Stéphane',
+      },
+      {
+        forename: 'Jacques',
+        surname: 'Bénichou',
+        affiliations: [
+          { address: 'Department of Biostatistics and INSERM UMR 657, Normandy University, Rouen, France' },
+        ],
+        fullname: 'Bénichou Jacques',
+      },
+    ],
+    doi: '10.1001/jama.2014.15912',
+    originalGenre: 'Journal article',
+    host: {
+      title: 'JAMA',
+      eisbn: '978-3-319-78926-2',
+      isbn: '978-3-319-78924-8',
+      eissn: '2380-6591',
+      issn: '0098-7484',
+      electronicPublicationDate: '2017-10-23',
+      publicationDate: '2015-01-20',
+      issue: '3',
+      language: ['English'],
+      part: '10 Pt A',
+      specialIssue: 'P1',
+      supplement: 'Suppl 1',
+      publisher: 'American Medical Association ',
+      pages: [{ range: '306-310', total: 0 }, { range: '666' }],
+      volume: '313',
+    },
+    source: 'B',
+    sourceUid: 'b$5',
   },
 ];

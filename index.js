@@ -1,22 +1,27 @@
-const { has, pick } = require('lodash');
+const { has, pick, _ } = require('lodash');
 const EventEmitter = require('events');
 
 const { deduplicate: { target } } = require('@istex/config-component').get(module);
 const { search, update, updateDuplicatesTree } = require('./src/documentsManager');
 const { buildQuery } = require('./src/deduplicateQueryBuilder');
+const { hasDuplicateFromOtherSession } = require('./helpers/deduplicates/helpers');
 
 class Business extends EventEmitter {
   doTheJob (docObject, cb) {
-    deduplicate(docObject)
-      .then(() => cb())
-      .catch((reason) => {
-        docObject.error = {
-          code: reason?.code,
-          message: reason?.message,
-          stack: reason?.stack,
-        };
-        return cb(reason);
-      });
+    if (typeof cb === 'function') {
+      deduplicate(docObject)
+        .then(() => cb())
+        .catch((reason) => {
+          _setDocObjectError(docObject, reason);
+          return cb(reason);
+        });
+    } else {
+      return deduplicate(docObject)
+        .catch((reason) => {
+          _setDocObjectError(docObject, reason);
+          throw reason;
+        });
+    }
   }
 }
 
@@ -34,6 +39,10 @@ function deduplicate (docObject) {
       // maybe change this into simple warning
       if (!has(docObject, 'business.duplicateGenre')) {
         throw new Error(`Expected Object ${docObject.technical.internalId} to have property business.duplicateGenre`);
+      }
+
+      if (hasDuplicateFromOtherSession(docObject)) {
+        business.emit('info', `{docObject} already got [duplicates] from other session, technical.internalId: ${docObject.technical.internalId}`);
       }
 
       const request = buildQuery(docObject);
@@ -69,4 +78,13 @@ function deduplicate (docObject) {
       });
     },
   );
+}
+
+function _setDocObjectError (docObject, error) {
+  docObject.error = {
+    code: error?.code,
+    message: error?.message,
+    stack: error?.stack,
+  };
+  return docObject;
 }

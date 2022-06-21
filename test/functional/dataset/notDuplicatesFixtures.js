@@ -451,23 +451,23 @@ module.exports.notDuplicatesFixtures = [
     doi: '10.1001/jama.2014.11061',
     originalGenre: 'Journal article',
     enrichments: {
-      openAcces: {
+      openAccess: {
         unpaywall: {
-          is_oa: true,
-          oa_status: 'n/a',
-          has_repository_copy: true,
-          oa_locations: [
+          isOa: true,
+          oaStatus: 'n/a',
+          hasRepositoryCopy: true,
+          oaLocations: [
             {
-              host_type: 'repository',
+              hostType: 'repository',
               url: 'https://jamanetwork.com/journals/jama/articlepdf/1900827/joi140114.pdf',
-              url_for_landing_page: 'https://jamanetwork.com/journals/jama/articlepdf/1900827/joi140114.pdf',
-              url_for_pdf: 'https://jamanetwork.com/journals/jama/articlepdf/1900827/joi140114.pdf',
+              urlForLandingPage: 'https://jamanetwork.com/journals/jama/articlepdf/1900827/joi140114.pdf',
+              urlForPdf: 'https://jamanetwork.com/journals/jama/articlepdf/1900827/joi140114.pdf',
             },
             {
-              host_type: 'repository',
+              hostType: 'repository',
               url: 'http://jama.jamanetwork.com/data/Journals/JAMA/930764/joi140114.pdf',
-              url_for_landing_page: 'http://jama.jamanetwork.com/data/Journals/JAMA/930764/joi140114.pdf',
-              url_for_pdf: 'http://jama.jamanetwork.com/data/Journals/JAMA/930764/joi140114.pdf',
+              urlForLandingPage: 'http://jama.jamanetwork.com/data/Journals/JAMA/930764/joi140114.pdf',
+              urlForPdf: 'http://jama.jamanetwork.com/data/Journals/JAMA/930764/joi140114.pdf',
             },
           ],
         },
@@ -662,29 +662,29 @@ module.exports.notDuplicatesFixtures = [
     doi: '10.1001/jama.2014.13381',
     originalGenre: 'Journal article',
     enrichments: {
-      openAcces: {
+      openAccess: {
         unpaywall: {
-          is_oa: true,
-          oa_status: 'n/a',
-          has_repository_copy: true,
-          oa_locations: [
+          isOa: true,
+          oaStatus: 'n/a',
+          hasRepositoryCopy: true,
+          oaLocations: [
             {
-              host_type: 'repository',
+              hostType: 'repository',
               url: 'https://jamanetwork.com/journals/jama/articlepdf/1915608/joi140131.pdf',
-              url_for_landing_page: 'https://jamanetwork.com/journals/jama/articlepdf/1915608/joi140131.pdf',
-              url_for_pdf: 'https://jamanetwork.com/journals/jama/articlepdf/1915608/joi140131.pdf',
+              urlForLandingPage: 'https://jamanetwork.com/journals/jama/articlepdf/1915608/joi140131.pdf',
+              urlForPdf: 'https://jamanetwork.com/journals/jama/articlepdf/1915608/joi140131.pdf',
             },
             {
-              host_type: 'repository',
+              hostType: 'repository',
               url: 'http://europepmc.org/articles/pmc4334152?pdf=render',
-              url_for_landing_page: 'http://europepmc.org/articles/pmc4334152?pdf=render',
-              url_for_pdf: 'http://europepmc.org/articles/pmc4334152?pdf=render',
+              urlForLandingPage: 'http://europepmc.org/articles/pmc4334152?pdf=render',
+              urlForPdf: 'http://europepmc.org/articles/pmc4334152?pdf=render',
             },
             {
-              host_type: 'repository',
+              hostType: 'repository',
               url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4334152',
-              url_for_landing_page: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4334152',
-              url_for_pdf: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4334152',
+              urlForLandingPage: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4334152',
+              urlForPdf: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4334152',
             },
           ],
         },

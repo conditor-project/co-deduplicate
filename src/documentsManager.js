@@ -4,15 +4,17 @@ const _ = require('lodash');
 const { omit, get } = require('lodash/fp');
 const fs = require('fs-extra');
 const path = require('path');
-const { logError } = require('../helpers/logger');
+const { logError, logInfo } = require('../helpers/logger');
+const { buildSourceUidChain, buildDuplicatesAndSelf } = require('../helpers/deduplicates/helpers');
 
 const validateDuplicates = fs.readFileSync(path.join(__dirname, '../painless/updateDuplicatesTree.painless'), 'utf8');
 
 module.exports = { search, deleteById, index, bulk, bulkCreate, update, updateByQuery, updateDuplicatesTree };
 
-function search ({ body = {}, index = '*', size }) {
+function search ({ q, body = {}, index = '*', size }) {
   return esClient
     .search({
+      q,
       body,
       index,
       size,
@@ -125,7 +127,15 @@ function buildCreateBody (docObjects) {
 }
 
 function updateDuplicatesTree (docObject, duplicatesDocuments) {
-  const duplicatesBucket =
+  const sourceUidsToRemove =
+    _.chain(docObject)
+      .get('business.duplicates')
+      .filter(duplicate => duplicate.sessionName !== docObject.technical.sessionName)
+      .map((duplicate) => duplicate.sourceUid)
+      .push(docObject.sourceUid)
+      .value();
+
+  const newDuplicatesAndSelf =
     _(duplicatesDocuments)
       .concat({ _source: docObject })
       .map(({ _source, matched_queries: rules }) => ({
@@ -135,32 +145,52 @@ function updateDuplicatesTree (docObject, duplicatesDocuments) {
         sessionName: docObject?.technical?.sessionName,
         internalId: _source.technical.internalId,
       }))
-      .concat(_.get(docObject, 'business.duplicates'))
-      .concat(_(duplicatesDocuments).flatMap('_source.business.duplicates').compact().map(omit('rules')).value())
+      .concat(
+        _.chain(docObject)
+          .get('business.duplicates')
+          .reject(duplicate => duplicate.sessionName !== docObject.technical.sessionName)
+          .value(),
+      )
+      .concat(
+        _(duplicatesDocuments)
+          .flatMap('_source.business.duplicates')
+          .compact()
+          .reject(duplicate =>
+            duplicate.sessionName !== docObject.technical.sessionName &&
+                               sourceUidsToRemove.includes(duplicate.sourceUid) &&
+                               _.isEmpty(duplicate.rules),
+          )
+          .map(omit('rules'))
+          .map((duplicate) => { duplicate.sessionName = docObject.technical.sessionName; return duplicate; })
+          .value(),
+      )
       .compact()
       .uniqBy('sourceUid')
       .value();
 
-  const sourceUids = _.map(duplicatesBucket, get('sourceUid')).sort();
-  const sources = _.map(duplicatesBucket, get('source')).sort();
-  const sourceUidChain = sourceUids.length ? `!${sourceUids.join('!')}!` : null;
+  const newSourceUids = _(newDuplicatesAndSelf).map(get('sourceUid')).sort().value();
+  const newSources = _(newDuplicatesAndSelf).map(get('source')).uniq().sort().value();
+  const newSourceUidChain = newSourceUids.length ? `!${newSourceUids.join('!')}!` : null;
+  //console.log(sourceUidsToRemove);
+  //console.log(newDuplicatesAndSelf);
+  const newDuplicateRules = _(duplicatesDocuments).map(({ matched_queries: rules = [] }) => rules).flatMap().uniq().sortBy().value();
 
-  const duplicateRules = _(duplicatesDocuments).map(({ matched_queries: rules = [] }) => rules).flatMap().uniq().sortBy().value();
+  docObject.business.duplicates = _.reject(newDuplicatesAndSelf, { sourceUid: docObject.sourceUid });
+  docObject.business.duplicateRules = newDuplicateRules;
+  docObject.business.isDuplicate = newDuplicatesAndSelf.length > 0;
+  docObject.business.sourceUidChain = newSourceUidChain;
+  docObject.business.sources = newSources;
 
-  docObject.business.duplicates = _.filter(duplicatesBucket, { sourceUid: docObject.sourceUid });
-  docObject.business.duplicateRules = duplicateRules;
-  docObject.business.isDuplicate = duplicatesBucket.length > 0;
-  docObject.business.sourceUidChain = sourceUidChain;
-  docObject.business.sources = sources;
-
-  const q = `sourceUid:("${sourceUids.join('" OR "')}")`;
+  const q = `sourceUid:("${_(newSourceUids).concat(sourceUidsToRemove).uniq().join('" OR "')}")`;
 
   const painlessParams = {
-    duplicatesBucket,
-    sourceUidChain,
-    sources,
-    initialSourceUid: docObject.sourceUid,
-    duplicateRules,
+    duplicatesAndSelf: newDuplicatesAndSelf,
+    selfSourceUid: docObject.sourceUid,
+    currentSessionName: docObject?.technical?.sessionName,
+    sourceUidsToRemove,
+    duplicateRules: newDuplicateRules,
+    sourceUidChain: newSourceUidChain,
+    sources: newSources,
   };
   const body = {
     script: {
@@ -171,5 +201,6 @@ function updateDuplicatesTree (docObject, duplicatesDocuments) {
   };
 
   // @todo: Handle the case where less than sourceUids.length documents are updated
-  return updateByQuery(target, q, body, { refresh: true });
+  return updateByQuery(target, q, body, { refresh: true })
+    .then(({ body: bulkResponse }) => { if (bulkResponse.total !== newDuplicatesAndSelf.length) { logInfo(`Update diff. between targets documents: ${newDuplicatesAndSelf.length} and updated documents total: ${bulkResponse.total} for {docObject}, internalId: ${docObject.technical.internalId}, q=${q}`); } });
 }

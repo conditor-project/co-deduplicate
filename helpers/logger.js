@@ -1,7 +1,4 @@
-'use strict';
-
-const
-  _ = require('lodash');
+const _ = require('lodash');
 const trans = require('./trans');
 const colors = require('./myColors');
 const packageJson = require('../package.json')
@@ -17,7 +14,7 @@ module.exports.logSuccess = logSuccess;
 module.exports.getUtcDate = getUtcDate;
 
 function logError (err) {
-  const message = typeof err === 'string' ? arguments : [err.message || '', err];
+  const message = typeof err === 'string' ? arguments : [err?.message || '', err];
   console.error('%s [%s] [%s] %s',
     appName.bold.danger,
     'Error',
@@ -47,7 +44,7 @@ function logInfo () {
 
 function logWarning (err) {
   if ((process.env.NODE_ENV === 'test' && logWarning.doWarn !== true) || logWarning.doWarn === false) return;
-  const message = typeof err === 'string' ? arguments : [err.message || '', err];
+  const message = typeof err === 'string' ? arguments : [err?.message || '', err];
   console.warn('%s [%s] [%s] %s',
     appName.bold.warning,
     'Warning',

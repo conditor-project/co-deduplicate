@@ -1,3 +1,4 @@
+// helpers
     Object findDuplicate(def duplicates, def predicateDuplicate){
       for(def duplicate:duplicates){
         if(duplicate.sourceUid == predicateDuplicate.sourceUid){return duplicate}
@@ -42,6 +43,38 @@
       return duplicates.size();
     }
 
+    int removeIx(ArrayList duplicates, def duplicate){
+      for(int i = 0; i < duplicates.size(); i++ ){
+       if(duplicates[i].sourceUid == duplicate.sourceUid){duplicates.remove(i);}
+      }
+
+      return  duplicates.size();
+    }
+
+    boolean isEmptyArray(def value){
+        if(!(value instanceof ArrayList)){return true;}
+        if(value.size() == 0) return true;
+
+        return false;
+    }
+
+
+    int removeIxBySourceUidsAndSessionName(ArrayList duplicates, ArrayList sourceUids, String sessionName, String selfSourceUid){
+        Iterator it = duplicates.iterator();
+        while(it.hasNext()){
+        def duplicate = it.next();
+             for(int j = 0; j < sourceUids.size(); ++j){
+               if(duplicate.sourceUid == sourceUids[j] &&
+                  duplicate.sessionName != sessionName &&
+                  (isEmptyArray(duplicate.rules) || duplicate.sourceUid == selfSourceUid)
+                ){it.remove();}
+             }
+        }
+
+        return  duplicates.size();
+    }
+
+
     boolean hasTransDuplicate(ArrayList duplicates){
           for(def duplicate:duplicates){
             if(duplicate.rules == null){return true}
@@ -49,6 +82,7 @@
           return false;
     }
 
+// main
     if(ctx._source.business == null){
         ctx._source.business= new HashMap();
     }
@@ -57,13 +91,18 @@
       ctx._source.business.duplicates = new ArrayList();
     }
 
-    if(params.duplicatesBucket == null){
-      params.duplicatesBucket = new ArrayList();
+    if(params.duplicatesAndSelf == null){
+      params.duplicatesAndSelf = new ArrayList();
     }
 
-    if(params.initialSourceUid == ctx._source.sourceUid){
+    removeIxBySourceUidsAndSessionName(ctx._source.business.duplicates, params.sourceUidsToRemove, params.currentSessionName, params.selfSourceUid);
+
+    if(ctx._source.sourceUid == params.selfSourceUid){
+        // Target docObject
         ctx._source.business.duplicateRules = params.duplicateRules;
-        for(def duplicate:params.duplicatesBucket ){
+        ctx._source.business.isDeduplicable = true;
+
+        for(def duplicate:params.duplicatesAndSelf ){
           if(duplicate.sourceUid == ctx._source.sourceUid){
             continue;
           }
@@ -71,7 +110,8 @@
           replaceIxOrAddNx(ctx._source.business.duplicates, duplicate);
         }
     } else {
-       for(def duplicate:params.duplicatesBucket ){
+        // Found duplicate documents
+       for(def duplicate:params.duplicatesAndSelf ){
           if(duplicate.sourceUid == ctx._source.sourceUid){
             continue;
           }
@@ -93,6 +133,7 @@
         ctx._source.business.sourceUidChain = params.sourceUidChain;
     }
 
+// update technical
     if(ctx._source.technical == null){
         ctx._source.technical = new HashMap();
     }

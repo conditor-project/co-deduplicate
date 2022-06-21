@@ -8,9 +8,9 @@ module.exports = (function () {
   function createInstance () {
     const client = new Client(config.elastic.clients.default);
     client.on('response', (err, result) => {
-      // console.dir(result.meta.request)
-      // console.dir(result.body);
       if (err) {
+        const failuresList = err?.meta?.body?.failures?.map((failure) => failure?.cause?.reason) || [];
+        err.failuresList = failuresList;
         logError(err);
         if (err?.meta?.body?.error?.type === 'script_exception') {
           console.dir(err?.meta?.body?.error);

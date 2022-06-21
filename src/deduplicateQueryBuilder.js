@@ -1,6 +1,5 @@
-const { has, _ } = require('lodash');
+const { _ } = require('lodash');
 const { deduplicate: { scenario, rules } } = require('corhal-config');
-const jp = require('jsonpath');
 const { getBaseRequest } = require('./getBaseRequest');
 
 module.exports = { buildQuery, buildQueryFromRule };
@@ -47,17 +46,16 @@ function validateRequiredAndForbiddenParameters (docObject, rule) {
 }
 
 function buildQueryFromRule (docObject, rule) {
-  let rulename;
+  let ruleName;
   const type = docObject.business.duplicateGenre;
   if (_isContentString(type)) {
-    rulename = type + ' : ' + rule.query.bool._name;
+    ruleName = type + ' : ' + rule.query.bool._name;
   } else {
-    rulename = rule.query.bool._name;
+    ruleName = rule.query.bool._name;
   }
-
   const newQuery = {
     bool: {
-      _name: rulename,
+      _name: ruleName,
     },
   };
 
