@@ -2,7 +2,7 @@
 ---
 
 imports:
-  - resource: ../node_modules/corhal-config/index.js
+  - resource: corhalConfig.js
     pick:
         elastic.nodes: parameters.nodes
         elastic.authUsername: parameters.authUsername
