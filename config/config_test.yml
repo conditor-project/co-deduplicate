@@ -11,3 +11,5 @@ elastic:
 
 deduplicate:
   target: co-deduplicate-integration-test
+
+currentSessionName: TEST_SESSION

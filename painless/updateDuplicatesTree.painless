@@ -6,6 +6,13 @@
       return null;
     }
 
+    Object findDuplicateBySourceUid(def duplicates, String sourceUid){
+      for(def duplicate:duplicates){
+        if(duplicate.sourceUid == sourceUid){return duplicate}
+      }
+      return null;
+    }
+
     Object omitRules(def duplicate){
     if(duplicate.rules == null){return duplicate;}
 
@@ -45,10 +52,26 @@
 
     int removeIx(ArrayList duplicates, def duplicate){
       for(int i = 0; i < duplicates.size(); i++ ){
-       if(duplicates[i].sourceUid == duplicate.sourceUid){duplicates.remove(i);}
+       if(duplicates[i].sourceUid == duplicate.sourceUid){duplicates.remove(i); break;}
       }
 
       return  duplicates.size();
+    }
+
+    int removeIxBySourceUid(ArrayList duplicates, String sourceUidToRemove){
+       for(int i = 0; i < duplicates.size(); i++ ){
+         if(duplicates[i].sourceUid == sourceUidToRemove){duplicates.remove(i); break;}
+       }
+
+       return  duplicates.size();
+    }
+
+    int removeIxBySourceUidAndNotSessionName(ArrayList duplicates, String sourceUidToRemove, String sessionName){
+       for(int i = 0; i < duplicates.size(); i++ ){
+         if(duplicates[i].sourceUid == sourceUidToRemove && duplicates[i].sessionName != sessionName){duplicates.remove(i); break;}
+       }
+
+       return  duplicates.size();
     }
 
     boolean isEmptyArray(def value){
@@ -82,6 +105,58 @@
           return false;
     }
 
+    ArrayList getSourceUids(ArrayList duplicates){
+      ArrayList sourceUids = new ArrayList();
+          for(def duplicate:duplicates){
+            sourceUids.add(duplicate.sourceUid);
+          }
+
+      return sourceUids;
+    }
+
+    ArrayList getDuplicatesSources(ArrayList duplicates){
+        ArrayList sources = new ArrayList();
+            for(def duplicate:duplicates){
+                sources.add(duplicate.source);
+            }
+
+     return sources;
+    }
+
+    ArrayList buildSources(def docObject){
+        if(docObject.business.duplicates == null){return null;}
+        ArrayList sources = getDuplicatesSources(docObject.business.duplicates);
+        sources.add(docObject.source);
+
+        return uniqSort(sources);
+    }
+
+    ArrayList uniqSort(ArrayList values){
+        ArrayList result;
+
+        HashSet hset = new HashSet(values);
+        result = new ArrayList(hset);
+        result.sort(Comparator.naturalOrder());
+
+        return result;
+    }
+
+    String buildSourceUidChain(def docObject){
+        if(docObject.business.duplicates == null){return "!" + docObject.sourceUid + "!";}
+
+        ArrayList sourceUids = getSourceUids(docObject.business.duplicates);
+        String result = "";
+
+        sourceUids.add(docObject.sourceUid);
+        sourceUids = uniqSort(sourceUids);
+
+        for(String sourceUid:sourceUids){
+          result = result.concat(sourceUid + "!")
+        }
+
+        return "!" + result;
+    }
+
 // main
     if(ctx._source.business == null){
         ctx._source.business= new HashMap();
@@ -91,16 +166,17 @@
       ctx._source.business.duplicates = new ArrayList();
     }
 
-    if(params.duplicatesAndSelf == null){
-      params.duplicatesAndSelf = new ArrayList();
-    }
 
-    removeIxBySourceUidsAndSessionName(ctx._source.business.duplicates, params.sourceUidsToRemove, params.currentSessionName, params.selfSourceUid);
 
-    if(ctx._source.sourceUid == params.selfSourceUid){
+
+    if(ctx._source.sourceUid == params.mainSourceUid){
         // Target docObject
         ctx._source.business.duplicateRules = params.duplicateRules;
         ctx._source.business.isDeduplicable = true;
+
+        for(def sourceUid:params.sourceUidsToRemove){
+            removeIxBySourceUid(ctx._source.business.duplicates, sourceUid);
+        }
 
         for(def duplicate:params.duplicatesAndSelf ){
           if(duplicate.sourceUid == ctx._source.sourceUid){
@@ -110,13 +186,28 @@
           replaceIxOrAddNx(ctx._source.business.duplicates, duplicate);
         }
     } else {
-        // Found duplicate documents
-       for(def duplicate:params.duplicatesAndSelf ){
-          if(duplicate.sourceUid == ctx._source.sourceUid){
-            continue;
-          }
+       // Rest of the documents
+        if(
+            params.sourceUidsToRemove.contains(ctx._source.sourceUid)
+        ){
+            // Doc only to remove
+            for(def sourceUid:getSourceUids(params.duplicatesAndSelf)){
+                removeIxBySourceUid(ctx._source.business.duplicates, sourceUid);
+            }
+        } else {
+           removeIxBySourceUidAndNotSessionName(ctx._source.business.duplicates, params.mainSourceUid, params.currentSessionName);
 
-          addNx(ctx._source.business.duplicates, omitRules(duplicate));
+            for(def sourceUid:params.sourceUidsToRemove){
+                removeIxBySourceUid(ctx._source.business.duplicates, sourceUid);
+            }
+
+           for(def duplicate:params.duplicatesAndSelf ){
+              if(duplicate.sourceUid == ctx._source.sourceUid){
+                continue;
+              }
+
+              addNx(ctx._source.business.duplicates, omitRules(duplicate));
+            }
         }
     }
 
@@ -126,12 +217,9 @@
 
     ctx._source.business.hasTransDuplicate = hasTransDuplicate(ctx._source.business.duplicates);
 
-    ctx._source.business.sources = params.sources;
+    ctx._source.business.sources = buildSources(ctx._source);
 
-
-    if(params.sourceUidChain != null){
-        ctx._source.business.sourceUidChain = params.sourceUidChain;
-    }
+    ctx._source.business.sourceUidChain = buildSourceUidChain(ctx._source);
 
 // update technical
     if(ctx._source.technical == null){
@@ -139,4 +227,5 @@
     }
 
     Date date = new Date();
+    ctx._source.technical.put('sessionName', params.currentSessionName);
     ctx._source.technical.put("modificationDate", date.getTime());

@@ -23,13 +23,16 @@
     "@elastic/elasticsearch": "^7.17.0",
     "@istex/config-component": "^1.4.0",
     "bluebird": "^3.5.4",
-    "co-config": "git+https://github.com/conditor-project/co-config.git",
     "colors": "^1.4.0",
     "corhal-config": "github:istex/corhal-config",
     "debug": "^4.1.1",
     "fs-extra": "^7.0.1",
     "lodash": "^4.17.21",
-    "nanoid": "^2.0.1"
+    "nanoid": "^2.0.1",
+    "ngraph.coarsen": "^1.5.0",
+    "ngraph.graph": "^20.0.0",
+    "ngraph.louvain": "^2.0.0",
+    "ngraph.path": "^1.4.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",

@@ -23,5 +23,3 @@ if(ctx.business.sources == null){
     ctx.business.sources.add(ctx.source);
 }
 
-ctx.internal = ctx._id;
-

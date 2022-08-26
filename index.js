@@ -1,7 +1,7 @@
 const { has, pick, _ } = require('lodash');
 const EventEmitter = require('events');
 
-const { deduplicate: { target } } = require('@istex/config-component').get(module);
+const { deduplicate: { target }, currentSessionName } = require('@istex/config-component').get(module);
 const { search, update, updateDuplicatesTree } = require('./src/documentsManager');
 const { buildQuery } = require('./src/deduplicateQueryBuilder');
 const { hasDuplicateFromOtherSession } = require('./helpers/deduplicates/helpers');
@@ -74,7 +74,7 @@ function deduplicate (docObject) {
             { doc: pick(docObject, ['business.isDeduplicable', 'business.isDuplicate']) });
         }
 
-        return updateDuplicatesTree(docObject, hits.hits);
+        return updateDuplicatesTree(docObject, hits.hits, currentSessionName);
       });
     },
   );

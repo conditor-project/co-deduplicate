@@ -6,3 +6,8 @@ imports:
     pick:
       name: app.name
       version: app.version
+
+parameters:
+    ISTEX_SESSION: DEFAULT_SESSION
+
+currentSessionName: %env(ISTEX_SESSION)%

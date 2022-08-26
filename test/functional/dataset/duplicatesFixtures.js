@@ -176,6 +176,7 @@ module.exports.duplicatesFixtures = [
           rules: ['RULE_111'],
         },
         {
+          // duplicate from the current session are kept
           sourceUid: 'x$1',
           sessionName: 'TEST_SESSION',
           source: 'x',
@@ -390,17 +391,21 @@ module.exports.duplicatesFixtures = [
     business: {
       duplicates: [
         {
+          // should be present coz must be found as duplicate
           sessionName: 'ANOTHER_SESSION',
           source: 'B',
           sourceUid: 'b$5',
           rules: ['RULE_66'],
         },
         {
+          // should be remove coz no rules
           sessionName: 'TEST_SESSION',
           source: 'k',
           sourceUid: 'k$1',
+          rules: [],
         },
         {
+          // should be present coz must be found as duplicate
           sourceUid: 'hal$hal-02462375',
           internalId: 'udLj9TxkLzeYwHM_8ax1iq2Ix',
           sessionName: 'ANOTHER_SESSION',
@@ -412,20 +417,35 @@ module.exports.duplicatesFixtures = [
           source: 'hal',
         },
         {
+          // should be present coz trans dup from b$5
           sessionName: 'ANOTHER_SESSION',
           source: 'z',
           sourceUid: 'z$2',
-          rules: ['RULE_69'],
         },
         {
+          // should be present coz trans dup from pubmed$25603006
           sessionName: 'ANOTHER_SESSION',
           source: 'x',
           sourceUid: 'x$1',
         },
         {
+          // should be remove coz no rules in b$5
           sessionName: 'ANOTHER_SESSION',
           source: 'h',
           sourceUid: 'h$1',
+        },
+        {
+          // should be remove coz no rules
+          sessionName: 'TEST_SESSION',
+          source: 'w',
+          sourceUid: 'w$1',
+        },
+        {
+          // should be remove coz another session
+          sessionName: 'ANOTHER_SESSION',
+          source: 'crossref',
+          sourceUid: 'crossref$10.1001/jama.2014.10498',
+          rules: ['RULE_69'],
         },
       ],
       name: 'corhal',

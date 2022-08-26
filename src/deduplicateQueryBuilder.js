@@ -38,10 +38,6 @@ function validateRequiredAndForbiddenParameters (docObject, rule) {
         )) { isAllParametersValid = false; }
   });
 
-  // _.each(rule.is_empty, function (forbiddenParameter) {
-  //  if (!['', [], {}, undefined, null].includes(_.get(docObject, forbiddenParameter))) { isAllParametersValid = false; }
-  // });
-
   return isAllParametersValid;
 }
 
