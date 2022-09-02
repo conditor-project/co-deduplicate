@@ -148,138 +148,238 @@ function searchBySourceUid (...sourceUids) {
     );
 }
 
-async function updateDuplicatesTree (docObject, duplicateDocumentsEsHits, currentSessionName) {
-  if (hasDuplicateFromOtherSession(docObject)) { return handleDocumentUpdate(docObject, duplicateDocumentsEsHits, currentSessionName); }
+//async function updateDuplicatesTree (docObject, duplicateDocumentsEsHits, currentSessionName) {
+//  if (hasDuplicateFromOtherSession(docObject)) { return handleDocumentUpdate(docObject, duplicateDocumentsEsHits, currentSessionName); }
+//  const duplicatesDocuments = unwrapEsHits(duplicateDocumentsEsHits);
+//
+//  const newDuplicatesAndSelf =
+//    _(buildDuplicateFromDocObject(docObject, currentSessionName))
+//      .concat(buildDuplicatesFromEsHits(duplicateDocumentsEsHits, currentSessionName))
+//      .concat(
+//        _.chain(docObject)
+//          .get('business.duplicates', [])
+//          .value(),
+//      )
+//      .concat(
+//        _(duplicatesDocuments)
+//          .flatMap('business.duplicates')
+//          .compact()
+//          .map(omit('rules'))
+//          .value(),
+//      )
+//      .uniqBy('sourceUid')
+//      .map((duplicate) => {
+//        duplicate.sessionName = currentSessionName;
+//        return duplicate;
+//      })
+//      .value();
+//
+//  const newSourceUids = _(newDuplicatesAndSelf).map(get('sourceUid')).sort().value();
+//  const newSources = _(newDuplicatesAndSelf).map(get('source')).uniq().sort().value();
+//  const newSourceUidChain = newSourceUids.length ? `!${newSourceUids.join('!')}!` : null;
+//
+//  // console.log(newSourceUids);
+//  // console.log(sourceUidsToRemove);
+//  // console.log(newDuplicatesAndSelf);
+//  const newDuplicateRules = _(duplicateDocumentsEsHits)
+//    .map(({ matched_queries: rules = [] }) => rules)
+//    .flatMap()
+//    .compact()
+//    .uniq()
+//    .sortBy()
+//    .value();
+//
+//  const newDuplicates = _.reject(newDuplicatesAndSelf, { sourceUid: docObject.sourceUid });
+//
+//  docObject.business.duplicates = newDuplicates;
+//  docObject.business.duplicateRules = newDuplicateRules;
+//  docObject.business.isDuplicate = newDuplicates.length > 0;
+//  docObject.business.sourceUidChain = newSourceUidChain;
+//  docObject.business.sources = newSources;
+//  docObject.technical.sessionName = currentSessionName;
+//
+//  const q = `sourceUid:("${_(newSourceUids).uniq().join('" OR "')}")`;
+//
+//  const painlessParams = {
+//    duplicatesAndSelf: newDuplicatesAndSelf,
+//    mainSourceUid: docObject.sourceUid,
+//    sourceUidsToRemove: [],
+//    currentSessionName,
+//    duplicateRules: newDuplicateRules,
+//    sourceUidChain: newSourceUidChain,
+//    sources: newSources,
+//  };
+//  const body = {
+//    script: {
+//      lang: 'painless',
+//      source: validateDuplicates,
+//      params: painlessParams,
+//    },
+//  };
+//
+//  // @todo: Handle the case where less than sourceUids.length documents are updated
+//  return updateByQuery(target, q, body, { refresh: true })
+//    .then(({ body: bulkResponse }) => { if (bulkResponse.total !== newDuplicatesAndSelf.length) { logWarning(`Update diff. between targets documents: ${newDuplicatesAndSelf.length} and updated documents total: ${bulkResponse.total} for {docObject}, internalId: ${docObject.technical.internalId}, q=${q}`); } });
+//}
 
+//async function handleDocumentUpdate (docObject, duplicateDocumentsEsHits, currentSessionName) {
+//  const duplicatesDocuments = unwrapEsHits(duplicateDocumentsEsHits);
+//  const subDuplicateSourceUids =
+//    _(duplicatesDocuments)
+//      .flatMap('business.duplicates')
+//      .compact()
+//      .map('sourceUid')
+//      .concat(
+//        _.chain(docObject)
+//          .get('business.duplicates', [])
+//          .map('sourceUid')
+//          .value(),
+//      ).uniq()
+//      .pull(
+//        ..._([docObject.sourceUid])
+//          .concat(_(duplicatesDocuments).map('sourceUid').value())
+//          .uniq()
+//          .value(),
+//      )
+//      .value();
+//  //
+//  // console.log(docObject.sourceUid);
+//  // console.log(_.map(buildDuplicatesFromEsHits(duplicateDocumentsEsHits, currentSessionName), 'sourceUid'));
+//  // console.log(subDuplicateSourceUids);
+//  const subDuplicateDocuments = await searchBySourceUid(...subDuplicateSourceUids);
+//  const { allDuplicateSourceUids, allNotDuplicateSourceUids } =
+//    partitionDuplicatesClusters(
+//      docObject,
+//      unwrapEsHits(duplicateDocumentsEsHits),
+//      subDuplicateDocuments,
+//      currentSessionName,
+//    );
+//
+//  // console.dir({ duplicates: allDuplicateSourceUids, notDuplicates: allNotDuplicateSourceUids });
+//
+//  const newDuplicatesAndSelf =
+//    _(buildDuplicateFromDocObject(docObject, currentSessionName))
+//      .concat(buildDuplicatesFromEsHits(duplicateDocumentsEsHits, currentSessionName))
+//      .concat(
+//        _.chain(docObject)
+//          .get('business.duplicates', [])
+//          .value(),
+//      )
+//      .concat(
+//        _(duplicatesDocuments).concat(subDuplicateDocuments)
+//          .flatMap('business.duplicates')
+//          .compact()
+//          .map(omit('rules'))
+//          .value(),
+//      )
+//      .uniqBy('sourceUid')
+//      .pullAllWith(allNotDuplicateSourceUids, (duplicate, sourceUidToRemove) => duplicate.sourceUid === sourceUidToRemove)
+//      .map((duplicate) => {
+//        duplicate.sessionName = currentSessionName;
+//        return duplicate;
+//      })
+//      .value();
+//
+//  // console.log(newDuplicatesAndSelf);
+//  const newSourceUids = _(newDuplicatesAndSelf).map(get('sourceUid')).sort().value();
+//  const newSources = _(newDuplicatesAndSelf).map(get('source')).uniq().sort().value();
+//  const newSourceUidChain = newSourceUids.length ? `!${newSourceUids.join('!')}!` : null;
+//
+//  // console.log(newSourceUids);
+//  // console.log(sourceUidsToRemove);
+//  // console.log(newDuplicatesAndSelf);
+//  const newDuplicateRules = _(duplicateDocumentsEsHits)
+//    .map(({ matched_queries: rules = [] }) => rules)
+//    .flatMap()
+//    .compact()
+//    .uniq()
+//    .sortBy()
+//    .value();
+//
+//  const newDuplicates = _.reject(newDuplicatesAndSelf, { sourceUid: docObject.sourceUid });
+//
+//  docObject.business.duplicates = newDuplicates;
+//  docObject.business.duplicateRules = newDuplicateRules;
+//  docObject.business.isDuplicate = newDuplicates.length > 0;
+//  docObject.business.sourceUidChain = newSourceUidChain;
+//  docObject.business.sources = newSources;
+//  docObject.technical.sessionName = currentSessionName;
+//
+//  const allSourceUids = allDuplicateSourceUids.concat(allNotDuplicateSourceUids);
+//  const q = `sourceUid:("${allSourceUids.join('" OR "')}")`;
+//
+//  const painlessParams = {
+//    duplicatesAndSelf: newDuplicatesAndSelf,
+//    mainSourceUid: docObject.sourceUid,
+//    currentSessionName,
+//    sourceUidsToRemove: allNotDuplicateSourceUids,
+//    duplicateRules: newDuplicateRules,
+//    sourceUidChain: newSourceUidChain,
+//    sources: newSources,
+//  };
+//  const body = {
+//    script: {
+//      lang: 'painless',
+//      source: validateDuplicates,
+//      params: painlessParams,
+//    },
+//  };
+//
+//  // @todo: Handle the case where less than sourceUids.length documents are updated
+//  return updateByQuery(target, q, body, { refresh: true })
+//    .then(({ body: bulkResponse }) => { if (bulkResponse.total !== allSourceUids.length) { logWarning(`Update diff. between targets documents: ${allSourceUids.length} and updated documents total: ${bulkResponse.total} for {docObject}, internalId: ${docObject.technical.internalId}, q=${q}`); } });
+//}
 
-  const newDuplicatesAndSelf =
-    _(duplicateDocumentsEsHits)
-      .concat({ _source: docObject })
-      .map(({ _source, matched_queries: rules }) => ({
-        rules: rules?.sort(),
-        source: _source.source,
-        sourceUid: _source.sourceUid,
-        sessionName: currentSessionName,
-        internalId: _source.technical.internalId,
-      }))
-      .concat(
-        _.chain(docObject)
-          .get('business.duplicates')
-          .reject(duplicate => duplicate.sessionName !== currentSessionName)
-          .value(),
-      )
-      .concat(
-        _(duplicateDocumentsEsHits)
-          .flatMap('_source.business.duplicates')
-          .compact()
-          .map(omit('rules'))
-          .map((duplicate) => {
-            duplicate.sessionName = currentSessionName;
-            return duplicate;
-          })
-          .value(),
-      )
-      .compact()
-      .uniqBy('sourceUid')
-      .value();
-
-  const newSourceUids = _(newDuplicatesAndSelf).map(get('sourceUid')).sort().value();
-  const newSources = _(newDuplicatesAndSelf).map(get('source')).uniq().sort().value();
-  const newSourceUidChain = newSourceUids.length ? `!${newSourceUids.join('!')}!` : null;
-
-  // console.log(newSourceUids);
-  // console.log(sourceUidsToRemove);
-  // console.log(newDuplicatesAndSelf);
-  const newDuplicateRules = _(duplicateDocumentsEsHits)
-    .map(({ matched_queries: rules = [] }) => rules)
-    .flatMap()
-    .uniq()
-    .sortBy()
-    .value();
-
-  docObject.business.duplicates = _.reject(newDuplicatesAndSelf, { sourceUid: docObject.sourceUid });
-  docObject.business.duplicateRules = newDuplicateRules;
-  docObject.business.isDuplicate = newDuplicatesAndSelf.length > 0;
-  docObject.business.sourceUidChain = newSourceUidChain;
-  docObject.business.sources = newSources;
-  docObject.technical.sessionName = currentSessionName;
-
-  const q = `sourceUid:("${_(newSourceUids).uniq().join('" OR "')}")`;
-
-  const painlessParams = {
-    duplicatesAndSelf: newDuplicatesAndSelf,
-    mainSourceUid: docObject.sourceUid,
-    sourceUidsToRemove: [],
-    currentSessionName,
-    duplicateRules: newDuplicateRules,
-    sourceUidChain: newSourceUidChain,
-    sources: newSources,
-  };
-  const body = {
-    script: {
-      lang: 'painless',
-      source: validateDuplicates,
-      params: painlessParams,
-    },
-  };
-
-  // @todo: Handle the case where less than sourceUids.length documents are updated
-  return updateByQuery(target, q, body, { refresh: true })
-    .then(({ body: bulkResponse }) => { if (bulkResponse.total !== newDuplicatesAndSelf.length) { logWarning(`Update diff. between targets documents: ${newDuplicatesAndSelf.length} and updated documents total: ${bulkResponse.total} for {docObject}, internalId: ${docObject.technical.internalId}, q=${q}`); } });
-}
-
-async function handleDocumentUpdate (docObject, duplicateDocumentsEsHits, currentSessionName) {
+async function updateDuplicatesTree  (docObject, duplicateDocumentsEsHits, currentSessionName) {
   const duplicatesDocuments = unwrapEsHits(duplicateDocumentsEsHits);
-  const subDuplicateSourceUids =
-    _(duplicatesDocuments)
-      .flatMap('business.duplicates')
-      .map('sourceUid')
-      .concat(
-        _.chain(docObject)
-          .get('business.duplicates')
-          .map('sourceUid')
-          .value(),
-      ).uniq()
-      .pull(
-        ..._([docObject.sourceUid])
-          .concat(_(duplicatesDocuments).map('sourceUid').value())
-          .uniq()
-          .value(),
-      )
-      .value();
-  //
-  //console.log(docObject.sourceUid);
-  //console.log(_.map(buildDuplicatesFromEsHits(duplicateDocumentsEsHits, currentSessionName), 'sourceUid'));
-  //console.log(subDuplicateSourceUids);
-  const subDuplicateDocuments = await searchBySourceUid(...subDuplicateSourceUids);
-  const { allDuplicateSourceUids, allNotDuplicateSourceUids } =
-    partitionDuplicatesClusters(
-      docObject,
-      unwrapEsHits(duplicateDocumentsEsHits),
-      subDuplicateDocuments,
-      currentSessionName,
-    );
+  let subDuplicateDocuments = [];
+  let allNotDuplicateSourceUids = [];
+  let allDuplicateSourceUids = [];
 
-  //console.dir({ duplicates: allDuplicateSourceUids, notDuplicates: allNotDuplicateSourceUids });
+  if (hasDuplicateFromOtherSession(docObject)) {
+    const subDuplicateSourceUids =
+      _(duplicatesDocuments)
+        .flatMap('business.duplicates')
+        .compact()
+        .map('sourceUid')
+        .concat(
+          _.chain(docObject)
+            .get('business.duplicates', [])
+            .map('sourceUid')
+            .value(),
+        ).uniq()
+        .pull(
+          ..._([docObject.sourceUid])
+            .concat(_(duplicatesDocuments).map('sourceUid').value())
+            .uniq()
+            .value(),
+        )
+        .value();
+
+    subDuplicateDocuments = await searchBySourceUid(...subDuplicateSourceUids);
+
+    ({ allDuplicateSourceUids, allNotDuplicateSourceUids } =
+      partitionDuplicatesClusters(
+        docObject,
+        duplicatesDocuments,
+        subDuplicateDocuments,
+        currentSessionName,
+      ));
+  }
 
   const newDuplicatesAndSelf =
     _(buildDuplicateFromDocObject(docObject, currentSessionName))
       .concat(buildDuplicatesFromEsHits(duplicateDocumentsEsHits, currentSessionName))
       .concat(
         _.chain(docObject)
-          .get('business.duplicates')
-          .reject(duplicate => duplicate.sessionName !== currentSessionName)
+          .get('business.duplicates', [])
           .value(),
       )
       .concat(
         _(duplicatesDocuments).concat(subDuplicateDocuments)
           .flatMap('business.duplicates')
+          .compact()
           .map(omit('rules'))
-          .concat(
-            _.chain(docObject)
-              .get('business.duplicates')
-              .value(),
-          )
           .value(),
       )
       .uniqBy('sourceUid')
@@ -290,20 +390,18 @@ async function handleDocumentUpdate (docObject, duplicateDocumentsEsHits, curren
       })
       .value();
 
-   //console.log(newDuplicatesAndSelf);
-  const newSourceUids = _(allDuplicateSourceUids).sort().value();
+  const newSourceUids = _(newDuplicatesAndSelf).map(get('sourceUid')).sort().value();
   const newSources = _(newDuplicatesAndSelf).map(get('source')).uniq().sort().value();
   const newSourceUidChain = newSourceUids.length ? `!${newSourceUids.join('!')}!` : null;
 
-  // console.log(newSourceUids);
-  // console.log(sourceUidsToRemove);
-  // console.log(newDuplicatesAndSelf);
   const newDuplicateRules = _(duplicateDocumentsEsHits)
     .map(({ matched_queries: rules = [] }) => rules)
     .flatMap()
+    .compact()
     .uniq()
     .sortBy()
     .value();
+
   const newDuplicates = _.reject(newDuplicatesAndSelf, { sourceUid: docObject.sourceUid });
 
   docObject.business.duplicates = newDuplicates;
@@ -313,7 +411,8 @@ async function handleDocumentUpdate (docObject, duplicateDocumentsEsHits, curren
   docObject.business.sources = newSources;
   docObject.technical.sessionName = currentSessionName;
 
-  const allSourceUids = allDuplicateSourceUids.concat(allNotDuplicateSourceUids);
+  const allSourceUids = newSourceUids.concat(allNotDuplicateSourceUids);
+
   const q = `sourceUid:("${allSourceUids.join('" OR "')}")`;
 
   const painlessParams = {

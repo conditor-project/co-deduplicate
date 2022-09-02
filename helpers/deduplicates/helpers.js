@@ -2,15 +2,12 @@ const { _, get, isPlainObject, each, isEmpty } = require('lodash');
 const fp = require('lodash/fp');
 const assert = require('assert').strict;
 const createGraph = require('ngraph.graph');
-const detectClusters = require('ngraph.louvain');
-const coarsen = require('ngraph.coarsen');
 const path = require('ngraph.path');
 
 const DUPLICATES_PATH = 'business.duplicates';
 const SOURCE_UID_PATH = 'sourceUid';
 const SOURCE_PATH = 'source';
 const INTERNAL_ID_PATH = 'technical.internalId';
-const SESSION_NAME = 'technical.sessionName';
 
 module.exports = {
   buildDuplicatesBucket,
@@ -50,7 +47,6 @@ function partitionDuplicatesClusters (docObject, duplicatesDocuments = [], subDu
   _.chain(docObject)
     .get(DUPLICATES_PATH)
     .each((duplicate) => {
-      //console.log(duplicate)
       // sessionName should be handled diff
       if (duplicate.sessionName !== currentSessionName) return g.addNode(duplicate.sourceUid);
       if (isEmpty(duplicate.rules)) {
@@ -65,7 +61,6 @@ function partitionDuplicatesClusters (docObject, duplicatesDocuments = [], subDu
     _.chain(document)
       .get(DUPLICATES_PATH)
       .each((duplicate) => {
-        //console.log(duplicate)
         if (duplicate.sourceUid === docObject.sourceUid) return;
         if (isEmpty(duplicate.rules)) {
           g.addNode(duplicate.sourceUid);
