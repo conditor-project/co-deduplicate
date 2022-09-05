@@ -15,7 +15,7 @@ const {
   hasDuplicateFromOtherSession,
 } = require('../helpers/deduplicates/helpers');
 
-const validateDuplicates = fs.readFileSync(path.join(__dirname, '../painless/updateDuplicatesTree.painless'), 'utf8');
+const validateDuplicates = fs.readFileSync(path.join(__dirname, '../painless/updateDuplicatesGraph.painless'), 'utf8');
 
 module.exports = { search, deleteById, index, bulk, bulkCreate, update, updateByQuery, updateDuplicatesGraph };
 
@@ -58,26 +58,26 @@ function bulk ({ body }) {
     );
 }
 
-function update (index, id, body, { refresh = true } = {}) {
+function update (index, id, body, options = { refresh: true, retry_on_conflict: 1 }) {
   return esClient
     .update(
       {
         index,
         id,
         body,
-        refresh,
+        ...options,
       },
     );
 }
 
-function updateByQuery (index, q, body, { refresh = true } = {}) {
+function updateByQuery (index, q, body, options = { refresh: true }) {
   return esClient
     .updateByQuery(
       {
         index,
         q,
         body,
-        refresh,
+        ...options,
       },
     );
 }
@@ -239,7 +239,6 @@ async function updateDuplicatesGraph (docObject, duplicateDocumentsEsHits, curre
     currentSessionName,
     sourceUidsToRemove: allNotDuplicateSourceUids,
     duplicateRules: newDuplicateRules,
-    sourceUidChain: newSourceUidChain,
     sources: newSources,
   };
   const body = {
@@ -251,6 +250,6 @@ async function updateDuplicatesGraph (docObject, duplicateDocumentsEsHits, curre
   };
 
   // @todo: Handle the case where less than sourceUids.length documents are updated
-  return updateByQuery(target, q, body, { refresh: true })
+  return updateByQuery(target, q, body, { refresh: true, conflicts: 'proceed' })
     .then(({ body: bulkResponse }) => { if (bulkResponse.total !== allSourceUids.length) { logWarning(`Update diff. between targets documents: ${allSourceUids.length} and updated documents total: ${bulkResponse.total} for {docObject}, internalId: ${docObject.technical.internalId}, q=${q}`); } });
 }
