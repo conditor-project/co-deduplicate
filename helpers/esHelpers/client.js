@@ -12,7 +12,8 @@ module.exports = (function () {
         const failuresList = err?.meta?.body?.failures?.map((failure) => failure?.cause?.reason) || [];
         err.failuresList = failuresList;
         logError(err);
-        if (err?.meta?.body?.error?.type === 'script_exception') {
+        if (['version_conflict_engine_exception', 'script_exception'].includes(err?.meta?.body?.error?.type)) {
+          logError(`[Error details] name: ${err.name}, type: ${err?.meta?.body?.error?.type}, status: ${err?.meta?.body?.status}`);
           console.dir(err?.meta?.body?.error);
         }
       }

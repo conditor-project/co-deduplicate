@@ -50,9 +50,7 @@ function deduplicate (docObject) {
       if (request.query.bool.should.length === 0) {
         business.emit('info', `Not deduplicable {docObject}, internalId: ${docObject.technical.internalId}`);
         docObject.business.isDeduplicable = false;
-        return update(target,
-          docObject.technical.internalId,
-          { doc: { business: { isDeduplicable: false } } });
+        return updateDuplicatesGraph(docObject, [], currentSessionName);
       }
 
       docObject.business.isDeduplicable = true;
@@ -66,12 +64,6 @@ function deduplicate (docObject) {
         if (hits.total.value === 0) {
           business.emit('info',
             `No duplicates found for {docObject}, internalId: ${docObject.technical.internalId}`);
-
-          docObject.business.isDuplicate = false;
-
-          return update(target,
-            docObject.technical.internalId,
-            { doc: pick(docObject, ['business.isDeduplicable', 'business.isDuplicate']) });
         }
 
         return updateDuplicatesGraph(docObject, hits.hits, currentSessionName);

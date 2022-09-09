@@ -1,6 +1,15 @@
 module.exports.notDuplicatesFixtures = [
   {
     business: {
+      duplicates: [
+        {
+          // should be remove coz this document has no duplicate
+          sessionName: 'ANOTHER_SESSION',
+          source: 'B',
+          sourceUid: 'b$5',
+          rules: ['RULE_66'],
+        },
+      ],
       name: 'corhal',
       duplicateGenre: 'Article',
       xissn: '0098-7484',
@@ -1597,5 +1606,51 @@ module.exports.notDuplicatesFixtures = [
     source: 'crossref',
     sourceId: '10.1001/jama.2014.15284',
     sourceUid: 'crossref$10.1001/jama.2014.15284',
+  }, {
+    business: {
+      name: 'corhal',
+      duplicateGenre: 'Articledf',
+      xissn: '0098-7484',
+      xPublicationDate: '2014-12-03',
+      first3AuthorNames: 'Garg Amit X. Kurz Andrea Sessler Daniel I.',
+      first3AuthorNamesWithInitials: 'Garg AX Kurz A Sessler DI',
+      pageRange: '2254',
+      hasDoi: true,
+      hasFulltext: false,
+      duplicates: [
+        {
+          // should be remove
+          sessionName: 'ANOTHER_SESSION',
+          source: 'B',
+          sourceUid: 'b$5',
+          rules: ['RULE_66'],
+        },
+        {
+          // should be remove
+          sessionName: 'TEST_SESSION',
+          source: 'B',
+          sourceUid: 'b$6',
+        },
+      ],
+    },
+    technical: {
+      sessionName: 'CROSSREF_2021-02-24_2014_2',
+      internalId: 'crossref$10.1001/jama.2014.66666',
+    },
+    language: [
+      'English',
+    ],
+    title: {
+      default: 'Perioperative Aspirin and Clonidine and Risk of Acute Kidney Injury',
+      en: 'Perioperative Aspirin and Clonidine and Risk of Acute Kidney Injury',
+    },
+    authors: [],
+    doi: '10.1001/jama.2014.666666',
+    originalGenre: 'Journal article',
+    host: {
+    },
+    source: 'crossref',
+    sourceId: '10.1001/jama.2014.66666',
+    sourceUid: 'crossref$10.1001/jama.2014.66666',
   },
 ];

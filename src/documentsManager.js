@@ -58,25 +58,27 @@ function bulk ({ body }) {
     );
 }
 
-function update (index, id, body, options = { refresh: true, retry_on_conflict: 1 }) {
+function update (index, id, body, { refresh = true, ...options } = {}) {
   return esClient
     .update(
       {
         index,
         id,
         body,
+        refresh,
         ...options,
       },
     );
 }
 
-function updateByQuery (index, q, body, options = { refresh: true }) {
+function updateByQuery (index, q, body, { refresh = true, ...options } = {}) {
   return esClient
     .updateByQuery(
       {
         index,
         q,
         body,
+        refresh,
         ...options,
       },
     );
@@ -239,7 +241,7 @@ async function updateDuplicatesGraph (docObject, duplicateDocumentsEsHits, curre
     currentSessionName,
     sourceUidsToRemove: allNotDuplicateSourceUids,
     duplicateRules: newDuplicateRules,
-    sources: newSources,
+    isDeduplicable: docObject.business.isDeduplicable,
   };
   const body = {
     script: {
@@ -250,6 +252,9 @@ async function updateDuplicatesGraph (docObject, duplicateDocumentsEsHits, curre
   };
 
   // @todo: Handle the case where less than sourceUids.length documents are updated
-  return updateByQuery(target, q, body, { refresh: true, conflicts: 'proceed' })
-    .then(({ body: bulkResponse }) => { if (bulkResponse.total !== allSourceUids.length) { logWarning(`Update diff. between targets documents: ${allSourceUids.length} and updated documents total: ${bulkResponse.total} for {docObject}, internalId: ${docObject.technical.internalId}, q=${q}`); } });
+  return updateByQuery(target, q, body, { refresh: true })
+    .then(({ body: bulkResponse }) => {
+      if (bulkResponse.total !== allSourceUids.length) { logWarning(`Update diff. between targets documents: ${allSourceUids.length} and updated documents total: ${bulkResponse.total} for {docObject}, internalId: ${docObject.technical.internalId}, q=${q}`); }
+      //console.log(bulkResponse);
+    });
 }

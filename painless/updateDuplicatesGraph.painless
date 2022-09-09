@@ -172,7 +172,7 @@
     if(ctx._source.sourceUid == params.mainSourceUid){
         // Target docObject
         ctx._source.business.duplicateRules = params.duplicateRules;
-        ctx._source.business.isDeduplicable = true;
+        ctx._source.business.isDeduplicable = params.isDeduplicable;
 
         for(def sourceUid:params.sourceUidsToRemove){
             removeIxBySourceUid(ctx._source.business.duplicates, sourceUid);

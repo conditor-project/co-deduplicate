@@ -45,6 +45,7 @@ describe('doTheJob', function () {
         if (err) return done(err);
         docObjectNoDuplicates.business.should.have.property('isDeduplicable');
         docObjectNoDuplicates.business.should.have.property('isDuplicate').equal(false);
+        docObjectNoDuplicates.business.sourceUidChain.should.equal(buildSourceUidChain(docObjectNoDuplicates));
         done();
       });
     });
@@ -53,24 +54,24 @@ describe('doTheJob', function () {
   // Test every docObjectWithDuplicates exept 'crossref$10.1001/jama.2014.15912', 'b$5'
   reject(duplicatesFixtures, (docObject) => ['crossref$10.1001/jama.2014.15912', 'b$5'].includes(docObject.sourceUid))
   // _.filter(duplicatesFixtures, {sourceUid:'pubmed$25603006'})
-    .forEach((docObjectsWithDuplicates) => {
-      it(`Must find duplicates for docObject, sourceUid: ${docObjectsWithDuplicates.sourceUid}`, (done) => {
-        doTheJob(docObjectsWithDuplicates, (err) => {
+    .forEach((docObjectWithDuplicates) => {
+      it(`Must find duplicates for docObject, sourceUid: ${docObjectWithDuplicates.sourceUid}`, (done) => {
+        doTheJob(docObjectWithDuplicates, (err) => {
           if (err) return done(err);
 
-          const expectedSourcesLength = _(docObjectsWithDuplicates.business.duplicates)
+          const expectedSourcesLength = _(docObjectWithDuplicates.business.duplicates)
             .map(fpGet('source'))
-            .concat(docObjectsWithDuplicates.source)
+            .concat(docObjectWithDuplicates.source)
             .uniq()
             .size();
 
-          //console.log(docObjectsWithDuplicates.business.sources);
-          //console.log(docObjectsWithDuplicates.business.sourceUidChain);
-          docObjectsWithDuplicates.business.should.have.property('isDuplicate').equal(true);
-          docObjectsWithDuplicates.business.should.have.property('isDeduplicable').equal(true);
-          docObjectsWithDuplicates.business.should.have.property('sources').with.lengthOf(expectedSourcesLength);
-          docObjectsWithDuplicates.business.sourceUidChain.should.equal(buildSourceUidChain(docObjectsWithDuplicates));
-          assert.isNotTrue(hasDuplicateFromOtherSession(docObjectsWithDuplicates), 'Expect no duplicate from other session');
+          //console.log(docObjectWithDuplicates.business.sources);
+          //console.log(docObjectWithDuplicates.business.sourceUidChain);
+          docObjectWithDuplicates.business.should.have.property('isDuplicate').equal(true);
+          docObjectWithDuplicates.business.should.have.property('isDeduplicable').equal(true);
+          docObjectWithDuplicates.business.should.have.property('sources').with.lengthOf(expectedSourcesLength);
+          docObjectWithDuplicates.business.sourceUidChain.should.equal(buildSourceUidChain(docObjectWithDuplicates));
+          assert.isNotTrue(hasDuplicateFromOtherSession(docObjectWithDuplicates), 'Expect no duplicate from other session');
           done();
         });
       });
