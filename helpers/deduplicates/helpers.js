@@ -17,6 +17,7 @@ module.exports = {
   hasDuplicateFromOtherSession,
   hasOwnDuplicateFromOtherSession,
   hasTransDuplicateFromOtherSession,
+  hasDuplicate,
   buildSourceUidChain,
   partitionDuplicatesClusters,
   buildDuplicatesFromEsHits,
@@ -36,11 +37,12 @@ function buildDuplicatesBucket (docObject) {
   return duplicates;
 }
 
-function partitionDuplicatesClusters (docObject, duplicatesDocuments = [], subDuplicateDocuments = [], currentSessionName = 'None') {
+function partitionDuplicatesClusters (docObject, duplicateDocuments = [], subDuplicateDocuments = [], currentSessionName = 'None') {
   const g = createGraph();
+
   g.addNode(docObject.sourceUid);
 
-  each(duplicatesDocuments, (document) => {
+  each(duplicateDocuments, (document) => {
     g.addLink(docObject.sourceUid, document.sourceUid);
   });
 
@@ -57,11 +59,17 @@ function partitionDuplicatesClusters (docObject, duplicatesDocuments = [], subDu
     })
     .value();
 
-  each(duplicatesDocuments.concat(subDuplicateDocuments), (document) => {
+  each(duplicateDocuments.concat(subDuplicateDocuments), (document) => {
     _.chain(document)
       .get(DUPLICATES_PATH)
       .each((duplicate) => {
-        if (duplicate.sourceUid === docObject.sourceUid) return;
+        if (
+          duplicate.sourceUid === docObject.sourceUid &&
+          duplicate.sessionName !== currentSessionName
+        ) {
+          return;
+        }
+
         if (isEmpty(duplicate.rules)) {
           g.addNode(duplicate.sourceUid);
         } else {
@@ -107,27 +115,33 @@ function buildDuplicatesFromEsHits (hits, sessionName) {
 }
 
 // Duplicates behaviors
-function hasDuplicateFromOtherSession (docObject) {
+function hasDuplicateFromOtherSession (docObject, currentSessionName) {
   return _.chain(docObject)
     .get(DUPLICATES_PATH)
-    .some((duplicate) => duplicate.sessionName !== get(docObject, 'technical.sessionName'))
+    .some((duplicate) => duplicate.sessionName !== currentSessionName)
     .value();
 }
 
-function hasOwnDuplicateFromOtherSession (docObject) {
+function hasOwnDuplicateFromOtherSession (docObject, currentSessionName) {
   return _.chain(docObject)
     .get(DUPLICATES_PATH)
-    .some((duplicate) => duplicate.sessionName !== get(docObject, 'technical.sessionName') && !isEmpty(duplicate.rules))
+    .some((duplicate) => duplicate.sessionName !== currentSessionName && !isEmpty(duplicate.rules))
     .value();
 }
 
-function hasTransDuplicateFromOtherSession (docObject) {
+function hasTransDuplicateFromOtherSession (docObject, currentSessionName) {
   return _.chain(docObject)
     .get(DUPLICATES_PATH)
-    .some((duplicate) => duplicate.sessionName !== get(docObject, 'technical.sessionName') && isEmpty(duplicate.rules))
+    .some((duplicate) => duplicate.sessionName !== currentSessionName && isEmpty(duplicate.rules))
     .value();
 }
 
+function hasDuplicate (docObject) {
+  return _.chain(docObject)
+    .get(DUPLICATES_PATH)
+    .size()
+    .value() > 0;
+}
 function buildSourceUidChain (docObject) {
   return `!${_.chain(docObject)
     .get(DUPLICATES_PATH)

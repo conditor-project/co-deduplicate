@@ -1,9 +1,10 @@
 const esClient = require('../helpers/esHelpers/client').get();
 const { elastic: { indices, aliases }, deduplicate: { target } } = require('@istex/config-component').get(module);
-const _ = require('lodash');
+const { _, isString, set } = require('lodash');
 const { omit, get } = require('lodash/fp');
 const fs = require('fs-extra');
 const path = require('path');
+const assert = require('assert').strict;
 const { logError, logInfo, logWarning } = require('../helpers/logger');
 const {
   buildSourceUidChain,
@@ -13,6 +14,7 @@ const {
   buildDuplicatesFromEsHits,
   unwrapEsHits,
   hasDuplicateFromOtherSession,
+  hasDuplicate,
 } = require('../helpers/deduplicates/helpers');
 
 const validateDuplicates = fs.readFileSync(path.join(__dirname, '../painless/updateDuplicatesGraph.painless'), 'utf8');
@@ -140,7 +142,7 @@ function searchBySourceUid (...sourceUids) {
   return Promise.resolve()
     .then(
       () => {
-        if (sourceUids.length === 0) return [];
+        if (_.compact(sourceUids).length === 0) return [];
         const q = `sourceUid:("${sourceUids.join('" OR "')}")`;
         return search({ q, index: target })
           .then((result) => {
@@ -150,15 +152,59 @@ function searchBySourceUid (...sourceUids) {
     );
 }
 
+function searchSubDuplicates (subDuplicateSourceUids, loadedDocumentSourceUids, accumulator = []) {
+  return searchBySourceUid(...subDuplicateSourceUids)
+    .then(
+      (subDuplicateDocuments) => {
+        const newLoadedDocumentSourceUids = _(subDuplicateSourceUids)
+          .concat(loadedDocumentSourceUids)
+          .uniq()
+          .value();
+        const newSubDuplicateSourceUids =
+          _(subDuplicateDocuments)
+            .flatMap('business.duplicates')
+            .compact()
+            .map('sourceUid')
+            .uniq()
+            .pull(
+              ...newLoadedDocumentSourceUids,
+            )
+            .value();
+
+        if (newSubDuplicateSourceUids.length > 0) {
+          set(accumulator, 'i', (accumulator.i ?? 0) + 1);
+          return searchSubDuplicates(newSubDuplicateSourceUids, newLoadedDocumentSourceUids, accumulator);
+        } else {
+          return subDuplicateDocuments;
+        }
+      },
+    );
+}
+
+function searchDuplicatesBySourceUid (sourceUid) {
+  return Promise.resolve()
+    .then(() => searchBySourceUid(sourceUid))
+    .then((result) => { return result?.[0]?.business?.duplicates; });
+}
+
 async function updateDuplicatesGraph (docObject, duplicateDocumentsEsHits, currentSessionName) {
-  const duplicatesDocuments = unwrapEsHits(duplicateDocumentsEsHits);
+  assert.ok(isString(currentSessionName) && currentSessionName !== '', 'Expect <currentSessionName> to be a not empty {string}');
+  const newFoundDuplicateDocuments = unwrapEsHits(duplicateDocumentsEsHits);
   let subDuplicateDocuments = [];
   let allNotDuplicateSourceUids = [];
   let allDuplicateSourceUids = [];
 
-  if (hasDuplicateFromOtherSession(docObject)) {
+  const refreshedDuplicates = await searchDuplicatesBySourceUid(docObject.sourceUid);
+  _.set(docObject, 'business.duplicates', refreshedDuplicates ?? []);
+
+  if (hasDuplicate(docObject, currentSessionName)) {
+    const loadedDocumentSourceUids = _([docObject.sourceUid])
+      .concat(_(newFoundDuplicateDocuments).map('sourceUid').value())
+      .uniq()
+      .value();
+
     const subDuplicateSourceUids =
-      _(duplicatesDocuments)
+      _(newFoundDuplicateDocuments)
         .flatMap('business.duplicates')
         .compact()
         .map('sourceUid')
@@ -169,24 +215,20 @@ async function updateDuplicatesGraph (docObject, duplicateDocumentsEsHits, curre
             .value(),
         ).uniq()
         .pull(
-          ..._([docObject.sourceUid])
-            .concat(_(duplicatesDocuments).map('sourceUid').value())
-            .uniq()
-            .value(),
+          ...loadedDocumentSourceUids,
         )
         .value();
 
-    subDuplicateDocuments = await searchBySourceUid(...subDuplicateSourceUids);
+    subDuplicateDocuments = await searchSubDuplicates(subDuplicateSourceUids, loadedDocumentSourceUids);
 
     ({ allDuplicateSourceUids, allNotDuplicateSourceUids } =
       partitionDuplicatesClusters(
         docObject,
-        duplicatesDocuments,
+        newFoundDuplicateDocuments,
         subDuplicateDocuments,
         currentSessionName,
       ));
   }
-
   const newDuplicatesAndSelf =
     _(buildDuplicateFromDocObject(docObject, currentSessionName))
       .concat(buildDuplicatesFromEsHits(duplicateDocumentsEsHits, currentSessionName))
@@ -196,7 +238,7 @@ async function updateDuplicatesGraph (docObject, duplicateDocumentsEsHits, curre
           .value(),
       )
       .concat(
-        _(duplicatesDocuments).concat(subDuplicateDocuments)
+        _(newFoundDuplicateDocuments).concat(subDuplicateDocuments)
           .flatMap('business.duplicates')
           .compact()
           .map(omit('rules'))
@@ -214,6 +256,7 @@ async function updateDuplicatesGraph (docObject, duplicateDocumentsEsHits, curre
   const newSources = _(newDuplicatesAndSelf).map(get('source')).uniq().sort().value();
   const newSourceUidChain = newSourceUids.length ? `!${newSourceUids.join('!')}!` : null;
 
+  // Todo add already present duplicates rules
   const newDuplicateRules = _(duplicateDocumentsEsHits)
     .map(({ matched_queries: rules = [] }) => rules)
     .flatMap()
@@ -255,6 +298,5 @@ async function updateDuplicatesGraph (docObject, duplicateDocumentsEsHits, curre
   return updateByQuery(target, q, body, { refresh: true })
     .then(({ body: bulkResponse }) => {
       if (bulkResponse.total !== allSourceUids.length) { logWarning(`Update diff. between targets documents: ${allSourceUids.length} and updated documents total: ${bulkResponse.total} for {docObject}, internalId: ${docObject.technical.internalId}, q=${q}`); }
-      //console.log(bulkResponse);
     });
 }

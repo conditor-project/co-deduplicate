@@ -41,10 +41,6 @@ function deduplicate (docObject) {
         throw new Error(`Expected Object ${docObject.technical.internalId} to have property business.duplicateGenre`);
       }
 
-      if (hasDuplicateFromOtherSession(docObject)) {
-        business.emit('info', `{docObject} already got [duplicates] from other session, technical.internalId: ${docObject.technical.internalId}`);
-      }
-
       const request = buildQuery(docObject);
 
       if (request.query.bool.should.length === 0) {
@@ -74,9 +70,10 @@ function deduplicate (docObject) {
 
 function _setDocObjectError (docObject, error) {
   docObject.error = {
-    code: error?.code,
+    code: error?.code ?? error?.meta?.statusCode,
     message: error?.message,
     stack: error?.stack,
+    failuresList: error?.failuresList,
   };
   return docObject;
 }

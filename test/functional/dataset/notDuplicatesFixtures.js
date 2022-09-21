@@ -1609,7 +1609,7 @@ module.exports.notDuplicatesFixtures = [
   }, {
     business: {
       name: 'corhal',
-      duplicateGenre: 'Articledf',
+      duplicateGenre: 'unDeduplicable',
       xissn: '0098-7484',
       xPublicationDate: '2014-12-03',
       first3AuthorNames: 'Garg Amit X. Kurz Andrea Sessler Daniel I.',
@@ -1629,7 +1629,7 @@ module.exports.notDuplicatesFixtures = [
           // should be remove
           sessionName: 'TEST_SESSION',
           source: 'B',
-          sourceUid: 'b$6',
+          sourceUid: 'b$7',
         },
       ],
     },

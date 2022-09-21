@@ -5,7 +5,7 @@ const deleteIndiceIx = require('../../helpers/esHelpers/deleteIndiceIx');
 const createIndiceNx = require('../../helpers/esHelpers/createIndiceNx');
 const { putCreationAndModificationDatePipeline, deleteCreationAndModificationDatePipeline } = require(
   '../../helpers/esHelpers/putCreationAndModificationDatePipeline');
-const { elastic: { indices }, deduplicate: { target } } = require('@istex/config-component').get(module);
+const { elastic: { indices }, deduplicate: { target }, currentSessionName } = require('@istex/config-component').get(module);
 const { elastic: { mapping } } = require('corhal-config');
 const business = require('../../index');
 const { doTheJob } = business;
@@ -15,7 +15,7 @@ const { bulkCreate } = require('../../src/documentsManager');
 const { _, reject, filter, some, find, isEmpty } = require('lodash');
 const { get: fpGet } = require('lodash/fp');
 const { logInfo, logError } = require('../../helpers/logger');
-const { hasDuplicateFromOtherSession, hasOwnDuplicateFromOtherSession, buildSourceUidChain, buildSources } = require('../../helpers/deduplicates/helpers');
+const { hasDuplicateFromOtherSession, buildSourceUidChain, buildSources } = require('../../helpers/deduplicates/helpers');
 
 logInfo('Total of documents: ' + (duplicatesFixtures.length + notDuplicatesFixtures.length));
 
@@ -51,9 +51,7 @@ describe('doTheJob', function () {
     });
   });
 
-  // Test every docObjectWithDuplicates exept 'crossref$10.1001/jama.2014.15912', 'b$5'
   reject(duplicatesFixtures, (docObject) => ['crossref$10.1001/jama.2014.15912', 'b$5'].includes(docObject.sourceUid))
-  // _.filter(duplicatesFixtures, {sourceUid:'pubmed$25603006'})
     .forEach((docObjectWithDuplicates) => {
       it(`Must find duplicates for docObject, sourceUid: ${docObjectWithDuplicates.sourceUid}`, (done) => {
         doTheJob(docObjectWithDuplicates, (err) => {
@@ -65,17 +63,26 @@ describe('doTheJob', function () {
             .uniq()
             .size();
 
-          //console.log(docObjectWithDuplicates.business.sources);
-          //console.log(docObjectWithDuplicates.business.sourceUidChain);
           docObjectWithDuplicates.business.should.have.property('isDuplicate').equal(true);
           docObjectWithDuplicates.business.should.have.property('isDeduplicable').equal(true);
           docObjectWithDuplicates.business.should.have.property('sources').with.lengthOf(expectedSourcesLength);
           docObjectWithDuplicates.business.sourceUidChain.should.equal(buildSourceUidChain(docObjectWithDuplicates));
-          assert.isNotTrue(hasDuplicateFromOtherSession(docObjectWithDuplicates), 'Expect no duplicate from other session');
+          assert.isNotTrue(hasDuplicateFromOtherSession(docObjectWithDuplicates, currentSessionName), 'Expect no duplicate from other session');
           done();
         });
       });
     });
+
+  it('Must update duplicates of "b$6"', function () {
+    return search({ q: 'sourceUid:"b$6"', index: target })
+      .then((result) => {
+        const docObject = result.body.hits.hits[0]._source;
+        docObject.business.sourceUidChain.should.containEql('crossref$10.1001/jama.2014.10498');
+        docObject.business.sourceUidChain.should.containEql('pubmed$25247512');
+        docObject.business.sourceUidChain.should.equal(buildSourceUidChain(docObject));
+        docObject.business.sources.should.eql(buildSources(docObject));
+      });
+  });
 });
 
 const crossrefSourceuid = 'crossref$10.1001/jama.2014.15912';
@@ -93,7 +100,7 @@ describe(`For the docObject sourceUid:${crossrefSourceuid}`, function () {
       docObjectCrossref.business.should.have.property('isDeduplicable').equal(true);
       docObjectCrossref.business.sourceUidChain.should.equal(buildSourceUidChain(docObjectCrossref));
       docObjectCrossref.business.sources.should.eql(buildSources(docObjectCrossref));
-      assert.isNotTrue(hasDuplicateFromOtherSession(docObjectCrossref), 'Expect no  duplicate from other session');
+      assert.isNotTrue(hasDuplicateFromOtherSession(docObjectCrossref, currentSessionName), 'Expect no  duplicate from other session');
       docObjectCrossref.business.sourceUidChain.should.not.containEql('crossref$10.1001/jama.2014.10498');
       docObjectCrossref.business.sourceUidChain.should.not.containEql('h$1');
       docObjectCrossref.business.sourceUidChain.should.not.containEql('w$1');
@@ -180,3 +187,28 @@ describe(`For the docObject sourceUid:${crossrefSourceuid}`, function () {
       });
   });
 });
+
+// describe.only(`For the docObject sourceUid:${crossrefSourceuid}`, function () {
+//  it('Must find {duplicates}', function (done) {
+//    this.timeout(50000);
+//    doTheJob(docObjectCrossref, (err) => { /* Just for triggering version error */});
+//    doTheJob(docObjectCrossref, (err) => {
+//      if (err) return done(err);
+//
+//      docObjectCrossref.business.should.have.property('isDuplicate').equal(true);
+//      docObjectCrossref.business.should.have.property('isDeduplicable').equal(true);
+//      docObjectCrossref.business.sourceUidChain.should.equal(buildSourceUidChain(docObjectCrossref));
+//      docObjectCrossref.business.sources.should.eql(buildSources(docObjectCrossref));
+//      assert.isNotTrue(hasDuplicateFromOtherSession(docObjectCrossref), 'Expect no  duplicate from other session');
+//      docObjectCrossref.business.sourceUidChain.should.not.containEql('crossref$10.1001/jama.2014.10498');
+//      docObjectCrossref.business.sourceUidChain.should.not.containEql('h$1');
+//      docObjectCrossref.business.sourceUidChain.should.not.containEql('w$1');
+//      docObjectCrossref.business.duplicates.should.not.containEql({
+//        sessionName: 'TEST_SESSION',
+//        source: 'k',
+//        sourceUid: 'k$1',
+//      });
+//      done();
+//    });
+//  });
+// });
