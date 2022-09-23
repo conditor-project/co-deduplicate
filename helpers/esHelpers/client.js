@@ -9,9 +9,12 @@ module.exports = (function () {
     const client = new Client(config.elastic.clients.default);
     client.on('response', (err, result) => {
       if (err) {
-        const failuresList = err?.meta?.body?.failures?.map((failure) => failure?.cause?.reason) || [];
-        err.failuresList = failuresList;
+        const failuresReasons = err?.meta?.body?.failures?.map((failure) => failure?.cause?.reason) || [];
+        const failuresTypes = err?.meta?.body?.failures?.map((failure) => failure?.cause?.type) || [];
+        err.failuresList = failuresReasons;
+        err.failuresTypes = failuresTypes;
         logError(err);
+
         if (['version_conflict_engine_exception', 'script_exception'].includes(err?.meta?.body?.error?.type)) {
           logError(`[Error details] name: ${err.name}, type: ${err?.meta?.body?.error?.type}, status: ${err?.meta?.body?.status}`);
           console.dir(err?.meta?.body?.error);

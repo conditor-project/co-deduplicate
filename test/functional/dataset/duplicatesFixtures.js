@@ -573,6 +573,12 @@ module.exports.duplicatesFixtures = [
           sourceUid: 'crossref$10.1001/jama.2014.15912',
           rules: ['RULE_66'],
         },
+        //{
+        //  sessionName: 'TEST_SESSION',
+        //  source: 'crossref',
+        //  sourceUid: 'crossref$10.1001/jama.2014.66666',
+        //  rules: ['RULE_66'],
+        //},
         {
           sessionName: 'ANOTHER_SESSION',
           source: 'z',

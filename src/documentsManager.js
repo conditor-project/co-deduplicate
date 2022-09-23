@@ -171,11 +171,13 @@ function searchSubDuplicates (subDuplicateSourceUids, loadedDocumentSourceUids, 
             )
             .value();
 
-        if (newSubDuplicateSourceUids.length > 0) {
-          set(accumulator, 'i', (accumulator.i ?? 0) + 1);
+        accumulator.push(...subDuplicateDocuments);
+        accumulator.graphLevel = (accumulator.graphLevel ?? 0) + 1;
+
+        if (newSubDuplicateSourceUids.length !== 0 && accumulator.graphLevel <= 5) {
           return searchSubDuplicates(newSubDuplicateSourceUids, newLoadedDocumentSourceUids, accumulator);
         } else {
-          return subDuplicateDocuments;
+          return accumulator;
         }
       },
     );
@@ -188,7 +190,8 @@ function searchDuplicatesBySourceUid (sourceUid) {
 }
 
 async function updateDuplicatesGraph (docObject, duplicateDocumentsEsHits, currentSessionName) {
-  assert.ok(isString(currentSessionName) && currentSessionName !== '', 'Expect <currentSessionName> to be a not empty {string}');
+  assert.ok(isString(currentSessionName) && currentSessionName !== '',
+    'Expect <currentSessionName> to be a not empty {string}');
   const newFoundDuplicateDocuments = unwrapEsHits(duplicateDocumentsEsHits);
   let subDuplicateDocuments = [];
   let allNotDuplicateSourceUids = [];
@@ -245,7 +248,8 @@ async function updateDuplicatesGraph (docObject, duplicateDocumentsEsHits, curre
           .value(),
       )
       .uniqBy('sourceUid')
-      .pullAllWith(allNotDuplicateSourceUids, (duplicate, sourceUidToRemove) => duplicate.sourceUid === sourceUidToRemove)
+      .pullAllWith(allNotDuplicateSourceUids,
+        (duplicate, sourceUidToRemove) => duplicate.sourceUid === sourceUidToRemove)
       .map((duplicate) => {
         duplicate.sessionName = currentSessionName;
         return duplicate;
@@ -298,5 +302,8 @@ async function updateDuplicatesGraph (docObject, duplicateDocumentsEsHits, curre
   return updateByQuery(target, q, body, { refresh: true })
     .then(({ body: bulkResponse }) => {
       if (bulkResponse.total !== allSourceUids.length) { logWarning(`Update diff. between targets documents: ${allSourceUids.length} and updated documents total: ${bulkResponse.total} for {docObject}, internalId: ${docObject.technical.internalId}, q=${q}`); }
+    })
+    .catch((err) => {
+      const failuresTypes = err?.meta?.body?.failures?.map((failure) => failure?.cause?.type) || [];
     });
 }
