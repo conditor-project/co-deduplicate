@@ -12,9 +12,9 @@ const { doTheJob } = business;
 const { notDuplicatesFixtures } = require('./dataset/notDuplicatesFixtures');
 const { duplicatesFixtures } = require('./dataset/duplicatesFixtures');
 const { bulkCreate } = require('../../src/documentsManager');
-const { _, reject, filter, some, find, isEmpty } = require('lodash');
+const { _, reject, cloneDeep, find } = require('lodash');
 const { get: fpGet } = require('lodash/fp');
-const { logInfo, logError } = require('../../helpers/logger');
+const { logInfo } = require('../../helpers/logger');
 const { hasDuplicateFromOtherSession, buildSourceUidChain, buildSources } = require('../../helpers/deduplicates/helpers');
 
 logInfo('Total of documents: ' + (duplicatesFixtures.length + notDuplicatesFixtures.length));
@@ -89,10 +89,10 @@ const crossrefSourceuid = 'crossref$10.1001/jama.2014.15912';
 const pubmedSourceUid = 'pubmed$25603006';
 const halSourceUid = 'hal$hal-02462375';
 
-const docObjectCrossref = find(duplicatesFixtures, (docObject) => docObject.sourceUid === crossrefSourceuid);
 describe(`For the docObject sourceUid:${crossrefSourceuid}`, function () {
   it('Must find {duplicates}', function (done) {
     this.timeout(50000);
+    const docObjectCrossref = _.chain(duplicatesFixtures).find((docObject) => docObject.sourceUid === crossrefSourceuid).cloneDeep().value();
     doTheJob(docObjectCrossref, (err) => {
       if (err) return done(err);
 
@@ -188,10 +188,22 @@ describe(`For the docObject sourceUid:${crossrefSourceuid}`, function () {
   });
 });
 
-describe.skip(`For the docObject sourceUid:${crossrefSourceuid}`, function () {
+describe(`For the docObject sourceUid:${crossrefSourceuid}`, function () {
   it('Must find {duplicates} and handle race conditons', function (done) {
     this.timeout(50000);
-    doTheJob(docObjectCrossref, (err) => { /* Just for triggering version error */ });
+    const docObjectCrossref =
+      _.chain(duplicatesFixtures)
+        .find((docObject) => docObject.sourceUid === crossrefSourceuid)
+        .cloneDeep()
+        .value();
+
+    const docObjectCrossrefDecoy =
+      _.chain(duplicatesFixtures)
+        .find((docObject) => docObject.sourceUid === crossrefSourceuid)
+        .cloneDeep()
+        .value();
+
+    doTheJob(docObjectCrossrefDecoy, (err) => { /* Just for triggering version error */ });
     doTheJob(docObjectCrossref, (err) => {
       if (err) return done(err);
 
@@ -199,7 +211,7 @@ describe.skip(`For the docObject sourceUid:${crossrefSourceuid}`, function () {
       docObjectCrossref.business.should.have.property('isDeduplicable').equal(true);
       docObjectCrossref.business.sourceUidChain.should.equal(buildSourceUidChain(docObjectCrossref));
       docObjectCrossref.business.sources.should.eql(buildSources(docObjectCrossref));
-      assert.isNotTrue(hasDuplicateFromOtherSession(docObjectCrossref), 'Expect no  duplicate from other session');
+      assert.isNotTrue(hasDuplicateFromOtherSession(docObjectCrossref, currentSessionName), 'Expect no  duplicate from other session');
       docObjectCrossref.business.sourceUidChain.should.not.containEql('crossref$10.1001/jama.2014.10498');
       docObjectCrossref.business.sourceUidChain.should.not.containEql('h$1');
       docObjectCrossref.business.sourceUidChain.should.not.containEql('w$1');

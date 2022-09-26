@@ -19,7 +19,7 @@ const {
 
 const validateDuplicates = fs.readFileSync(path.join(__dirname, '../painless/updateDuplicatesGraph.painless'), 'utf8');
 
-module.exports = { search, deleteById, index, bulk, bulkCreate, update, updateByQuery, updateDuplicatesGraph };
+module.exports = { search, deleteById, index, bulk, bulkCreate, update, updateByQuery, updateDuplicatesGraph, updateDuplicatesGraphRetry };
 
 function search ({ q, body = {}, index = '*', size }) {
   return esClient
@@ -302,8 +302,41 @@ async function updateDuplicatesGraph (docObject, duplicateDocumentsEsHits, curre
   return updateByQuery(target, q, body, { refresh: true })
     .then(({ body: bulkResponse }) => {
       if (bulkResponse.total !== allSourceUids.length) { logWarning(`Update diff. between targets documents: ${allSourceUids.length} and updated documents total: ${bulkResponse.total} for {docObject}, internalId: ${docObject.technical.internalId}, q=${q}`); }
-    })
-    .catch((err) => {
-      const failuresTypes = err?.meta?.body?.failures?.map((failure) => failure?.cause?.type) || [];
     });
 }
+
+Promise.retry = function (fn, times, delay) {
+  return new Promise(function (resolve, reject) {
+    let error;
+    var attempt = function () {
+      if (times === 0) {
+        reject(error);
+      } else {
+        fn().then(resolve)
+          .catch(function (e) {
+            times--;
+            error = e;
+            setTimeout(function () { attempt(); }, delay);
+          });
+      }
+    };
+    attempt();
+  });
+};
+
+function updateDuplicatesGraphRetry (docObject, duplicateDocumentsEsHits, currentSessionName) {
+  return Promise.retry(updateDuplicatesGraph.bind(null, docObject, duplicateDocumentsEsHits, currentSessionName), 5, 150);
+}
+
+// function updateDuplicatesGraphRetry (docObject, duplicateDocumentsEsHits, currentSessionName, attemptCount = 0) {
+//  console.log(attemptCount)
+//  return new Promise((resolve, reject) => {
+//    if (attemptCount > 20) return reject(new Error('Too many retry'));
+//    updateDuplicatesGraph(docObject, duplicateDocumentsEsHits, currentSessionName)
+//      .then(resolve)
+//      .catch((reason) => {
+//        return updateDuplicatesGraphRetry(docObject, duplicateDocumentsEsHits, currentSessionName, ++attemptCount);
+//      })
+//    ;
+//  });
+// }

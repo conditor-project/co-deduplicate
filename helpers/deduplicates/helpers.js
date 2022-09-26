@@ -116,6 +116,7 @@ function buildDuplicatesFromEsHits (hits, sessionName) {
 
 // Duplicates behaviors
 function hasDuplicateFromOtherSession (docObject, currentSessionName) {
+  assert.strictEqual(typeof currentSessionName, 'string', 'Expect <currentSessionName> to be a {string}');
   return _.chain(docObject)
     .get(DUPLICATES_PATH)
     .some((duplicate) => duplicate.sessionName !== currentSessionName)
@@ -123,6 +124,7 @@ function hasDuplicateFromOtherSession (docObject, currentSessionName) {
 }
 
 function hasOwnDuplicateFromOtherSession (docObject, currentSessionName) {
+  assert.strictEqual(typeof currentSessionName, 'string', 'Expect <currentSessionName> to be a {string}');
   return _.chain(docObject)
     .get(DUPLICATES_PATH)
     .some((duplicate) => duplicate.sessionName !== currentSessionName && !isEmpty(duplicate.rules))
@@ -130,6 +132,7 @@ function hasOwnDuplicateFromOtherSession (docObject, currentSessionName) {
 }
 
 function hasTransDuplicateFromOtherSession (docObject, currentSessionName) {
+  assert.strictEqual(typeof currentSessionName, 'string', 'Expect <currentSessionName> to be a {string}');
   return _.chain(docObject)
     .get(DUPLICATES_PATH)
     .some((duplicate) => duplicate.sessionName !== currentSessionName && isEmpty(duplicate.rules))

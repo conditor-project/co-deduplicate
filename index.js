@@ -1,10 +1,9 @@
-const { has, pick, _ } = require('lodash');
+const { has } = require('lodash');
 const EventEmitter = require('events');
 
 const { deduplicate: { target }, currentSessionName } = require('@istex/config-component').get(module);
-const { search, update, updateDuplicatesGraph } = require('./src/documentsManager');
+const { search, updateDuplicatesGraphRetry: updateDuplicatesGraph } = require('./src/documentsManager');
 const { buildQuery } = require('./src/deduplicateQueryBuilder');
-const { hasDuplicateFromOtherSession } = require('./helpers/deduplicates/helpers');
 
 class Business extends EventEmitter {
   doTheJob (docObject, cb) {
