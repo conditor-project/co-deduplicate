@@ -2,7 +2,7 @@ const { has } = require('lodash');
 const EventEmitter = require('events');
 
 const { deduplicate: { target }, currentSessionName } = require('@istex/config-component').get(module);
-const { search, updateDuplicatesGraphRetry: updateDuplicatesGraph } = require('./src/documentsManager');
+const { search, updateDuplicatesGraph } = require('./src/documentsManager');
 const { buildQuery } = require('./src/deduplicateQueryBuilder');
 
 class Business extends EventEmitter {
@@ -45,7 +45,7 @@ function deduplicate (docObject) {
       if (request.query.bool.should.length === 0) {
         business.emit('info', `Not deduplicable {docObject}, internalId: ${docObject.technical.internalId}`);
         docObject.business.isDeduplicable = false;
-        return updateDuplicatesGraph(docObject, [], currentSessionName);
+        return updateDuplicatesGraph(docObject, currentSessionName);
       }
 
       docObject.business.isDeduplicable = true;
@@ -61,7 +61,7 @@ function deduplicate (docObject) {
             `No duplicates found for {docObject}, internalId: ${docObject.technical.internalId}`);
         }
 
-        return updateDuplicatesGraph(docObject, hits.hits, currentSessionName);
+        return updateDuplicatesGraph(docObject, currentSessionName, hits.hits);
       });
     },
   );

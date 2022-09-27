@@ -19,7 +19,7 @@ const {
 
 const validateDuplicates = fs.readFileSync(path.join(__dirname, '../painless/updateDuplicatesGraph.painless'), 'utf8');
 
-module.exports = { search, deleteById, index, bulk, bulkCreate, update, updateByQuery, updateDuplicatesGraph, updateDuplicatesGraphRetry };
+module.exports = { search, deleteById, index, bulk, bulkCreate, update, updateByQuery, updateDuplicatesGraph };
 
 function search ({ q, body = {}, index = '*', size }) {
   return esClient
@@ -189,7 +189,7 @@ function searchDuplicatesBySourceUid (sourceUid) {
     .then((result) => { return result?.[0]?.business?.duplicates; });
 }
 
-async function updateDuplicatesGraph (docObject, duplicateDocumentsEsHits, currentSessionName) {
+async function _updateDuplicatesGraph (docObject, currentSessionName, duplicateDocumentsEsHits = []) {
   assert.ok(isString(currentSessionName) && currentSessionName !== '',
     'Expect <currentSessionName> to be a not empty {string}');
   const newFoundDuplicateDocuments = unwrapEsHits(duplicateDocumentsEsHits);
@@ -305,38 +305,24 @@ async function updateDuplicatesGraph (docObject, duplicateDocumentsEsHits, curre
     });
 }
 
-Promise.retry = function (fn, times, delay) {
-  return new Promise(function (resolve, reject) {
-    let error;
-    var attempt = function () {
-      if (times === 0) {
-        reject(error);
-      } else {
-        fn().then(resolve)
-          .catch(function (e) {
-            times--;
-            error = e;
-            setTimeout(function () { attempt(); }, delay);
-          });
-      }
-    };
-    attempt();
+function updateDuplicatesGraph (docObject, currentSessionName, duplicateDocumentsEsHits = [], { times = 5, delay = 150 } = {}) {
+  return new Promise((resolve, reject) => {
+    function attempt (docObject, currentSessionName, duplicateDocumentsEsHits) {
+      _updateDuplicatesGraph(docObject, currentSessionName, duplicateDocumentsEsHits)
+        .then(resolve)
+        .catch(async (reason) => {
+          if (times === 0) return reject(reason);
+          times--;
+          const updatedDuplicateDocumentsEsHits = await Promise.all(duplicateDocumentsEsHits.map(async (hit) => {
+            const refreshedDuplicates = await searchDuplicatesBySourceUid(hit._source.sourceUid);
+            _.set(hit, '_source.business.duplicates', refreshedDuplicates ?? []);
+            return hit;
+          }));
+
+          setTimeout(() => { attempt(docObject, currentSessionName, updatedDuplicateDocumentsEsHits); }, delay);
+        });
+    }
+
+    attempt(docObject, currentSessionName, duplicateDocumentsEsHits);
   });
-};
-
-function updateDuplicatesGraphRetry (docObject, duplicateDocumentsEsHits, currentSessionName) {
-  return Promise.retry(updateDuplicatesGraph.bind(null, docObject, duplicateDocumentsEsHits, currentSessionName), 5, 150);
 }
-
-// function updateDuplicatesGraphRetry (docObject, duplicateDocumentsEsHits, currentSessionName, attemptCount = 0) {
-//  console.log(attemptCount)
-//  return new Promise((resolve, reject) => {
-//    if (attemptCount > 20) return reject(new Error('Too many retry'));
-//    updateDuplicatesGraph(docObject, duplicateDocumentsEsHits, currentSessionName)
-//      .then(resolve)
-//      .catch((reason) => {
-//        return updateDuplicatesGraphRetry(docObject, duplicateDocumentsEsHits, currentSessionName, ++attemptCount);
-//      })
-//    ;
-//  });
-// }
