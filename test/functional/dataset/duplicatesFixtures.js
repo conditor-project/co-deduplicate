@@ -504,7 +504,7 @@ module.exports.duplicatesFixtures = [
       name: 'corhal',
       duplicateGenre: 'Article',
       xissn: '0098-7484',
-      xPublicationDate: '2015-01-20',
+      xPublicationDate: '2015-',
       first3AuthorNames: 'Marret Stéphane Bénichou Jacques',
       first3AuthorNamesWithInitials: 'Marret S Bénichou J',
       pageRange: '306',

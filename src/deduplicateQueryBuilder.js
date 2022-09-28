@@ -4,13 +4,13 @@ const { getBaseRequest } = require('./getBaseRequest');
 
 module.exports = { buildQuery, buildQueryFromRule };
 
-function buildQuery (docObject) {
+function buildQuery (docObject, ignoredFields = []) {
   const request = getBaseRequest();
 
   if (scenario[docObject.business.duplicateGenre]) {
     _.each(rules, (rule) => {
       if (_.includes(scenario[docObject.business.duplicateGenre], rule.rule) &&
-          validateRequiredAndForbiddenParameters(docObject, rule)
+          validateRequiredAndForbiddenParameters(docObject, rule, ignoredFields)
       ) {
         request.query.bool.should.push(buildQueryFromRule(docObject, rule));
       }
@@ -22,20 +22,24 @@ function buildQuery (docObject) {
   return request;
 }
 
-function validateRequiredAndForbiddenParameters (docObject, rule) {
+function validateRequiredAndForbiddenParameters (docObject, rule, ignoredFields = []) {
   let isAllParametersValid = true;
   _.each(rule.non_empty, function (requiredParameter) {
+    if (ignoredFields.includes(requiredParameter)) {
+      isAllParametersValid = false; return false;
+    }
+
     if (_.get(docObject, requiredParameter) == null ||
         (_.isArray(_.get(docObject, requiredParameter)) && _.get(docObject, requiredParameter).length === 0) ||
         (_.isString(_.get(docObject, requiredParameter)) && _.get(docObject, requiredParameter)
-          .trim() === '')) { isAllParametersValid = false; }
+          .trim() === '')) { isAllParametersValid = false; return false; }
   });
 
   _.each(rules.is_empty, function (forbiddenParameter) {
     if (_.get(docObject, forbiddenParameter) != null &&
         ((_.isArray(_.get(docObject, forbiddenParameter)) && _.get(docObject, forbiddenParameter).length > 0) ||
          (_.isString(_.get(docObject, forbiddenParameter)) && _.get(docObject, forbiddenParameter).trim() !== '')
-        )) { isAllParametersValid = false; }
+        )) { isAllParametersValid = false; return false; }
   });
 
   return isAllParametersValid;

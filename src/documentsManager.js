@@ -19,7 +19,7 @@ const {
 
 const validateDuplicates = fs.readFileSync(path.join(__dirname, '../painless/updateDuplicatesGraph.painless'), 'utf8');
 
-module.exports = { search, deleteById, index, bulk, bulkCreate, update, updateByQuery, updateDuplicatesGraph };
+module.exports = { search, deleteById, index, bulk, bulkCreate, update, updateByQuery, updateDuplicatesGraph: updateDuplicatesGraphWithRetry, searchIgnoredBySourceUid };
 
 function search ({ q, body = {}, index = '*', size }) {
   return esClient
@@ -189,7 +189,21 @@ function searchDuplicatesBySourceUid (sourceUid) {
     .then((result) => { return result?.[0]?.business?.duplicates; });
 }
 
-async function _updateDuplicatesGraph (docObject, currentSessionName, duplicateDocumentsEsHits = []) {
+function searchIgnoredBySourceUid (sourceUid) {
+  return Promise.resolve()
+    .then(
+      () => {
+        assert.ok(isString(sourceUid) && sourceUid !== '', 'Expect <sourceUid> to be a not empty {string}');
+        const q = `sourceUid:"${sourceUid}"`;
+        return search({ q, index: target })
+          .then((result) => {
+            return result?.body?.hits?.hits?.[0]?._ignored;
+          });
+      },
+    );
+}
+
+async function updateDuplicatesGraph (docObject, currentSessionName, duplicateDocumentsEsHits = []) {
   assert.ok(isString(currentSessionName) && currentSessionName !== '',
     'Expect <currentSessionName> to be a not empty {string}');
   const newFoundDuplicateDocuments = unwrapEsHits(duplicateDocumentsEsHits);
@@ -305,10 +319,10 @@ async function _updateDuplicatesGraph (docObject, currentSessionName, duplicateD
     });
 }
 
-function updateDuplicatesGraph (docObject, currentSessionName, duplicateDocumentsEsHits = [], { times = 5, delay = 150 } = {}) {
+function updateDuplicatesGraphWithRetry (docObject, currentSessionName, duplicateDocumentsEsHits = [], { times = 5, delay = 150 } = {}) {
   return new Promise((resolve, reject) => {
     function attempt (docObject, currentSessionName, duplicateDocumentsEsHits) {
-      _updateDuplicatesGraph(docObject, currentSessionName, duplicateDocumentsEsHits)
+      updateDuplicatesGraph(docObject, currentSessionName, duplicateDocumentsEsHits)
         .then(resolve)
         .catch(async (reason) => {
           if (times === 0) return reject(reason);

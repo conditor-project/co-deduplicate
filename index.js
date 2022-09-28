@@ -2,7 +2,7 @@ const { has } = require('lodash');
 const EventEmitter = require('events');
 
 const { deduplicate: { target }, currentSessionName } = require('@istex/config-component').get(module);
-const { search, updateDuplicatesGraph } = require('./src/documentsManager');
+const { search, updateDuplicatesGraph, searchIgnoredBySourceUid } = require('./src/documentsManager');
 const { buildQuery } = require('./src/deduplicateQueryBuilder');
 
 class Business extends EventEmitter {
@@ -30,7 +30,7 @@ module.exports = business;
 
 function deduplicate (docObject) {
   return Promise.resolve().then(
-    () => {
+    async () => {
       if (!has(docObject, 'technical.internalId')) {
         throw new Error('Expected Object N/A to have property technical.internalId');
       }
@@ -39,8 +39,8 @@ function deduplicate (docObject) {
       if (!has(docObject, 'business.duplicateGenre')) {
         throw new Error(`Expected Object ${docObject.technical.internalId} to have property business.duplicateGenre`);
       }
-
-      const request = buildQuery(docObject);
+      const ignoredFields = await searchIgnoredBySourceUid(docObject.sourceUid);
+      const request = buildQuery(docObject, ignoredFields);
 
       if (request.query.bool.should.length === 0) {
         business.emit('info', `Not deduplicable {docObject}, internalId: ${docObject.technical.internalId}`);
@@ -73,6 +73,7 @@ function _setDocObjectError (docObject, error) {
     message: error?.message,
     stack: error?.stack,
     failuresList: error?.failuresList,
+    failuresTypes: error?.failuresTypes,
   };
   return docObject;
 }
