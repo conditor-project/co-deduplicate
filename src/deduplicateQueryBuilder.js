@@ -12,14 +12,22 @@ function buildQuery (docObject, ignoredFields = []) {
       if (_.includes(scenario[docObject.business.duplicateGenre], rule.rule) &&
           validateRequiredAndForbiddenParameters(docObject, rule, ignoredFields)
       ) {
-        request.query.bool.should.push(buildQueryFromRule(docObject, rule));
+        request.bool.should.push(buildQueryFromRule(docObject, rule));
       }
     });
   }
 
-  request.query.bool.must_not = { term: { _id: docObject.technical.internalId } };
+  request.bool.must_not = { term: { _id: docObject.technical.internalId } };
 
-  return request;
+  return {
+    query: {
+      bool: {
+        filter:
+        request,
+
+      },
+    },
+  };
 }
 
 function validateRequiredAndForbiddenParameters (docObject, rule, ignoredFields = []) {

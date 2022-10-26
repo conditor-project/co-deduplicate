@@ -42,7 +42,7 @@ function deduplicate (docObject) {
       const ignoredFields = await searchIgnoredBySourceUid(docObject.sourceUid);
       const request = buildQuery(docObject, ignoredFields);
 
-      if (request.query.bool.should.length === 0) {
+      if (request.query.bool.filter.bool.should.length === 0) {
         business.emit('info', `Not deduplicable {docObject}, internalId: ${docObject.technical.internalId}`);
         docObject.business.isDeduplicable = false;
         return updateDuplicatesGraph(docObject, currentSessionName);

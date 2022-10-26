@@ -23,6 +23,8 @@ module.exports = {
   buildDuplicatesFromEsHits,
   buildSources,
   unwrapEsHits,
+  unwrapResult,
+  getHits,
 };
 
 /*
@@ -187,10 +189,18 @@ function buildDuplicateFromDocObject (docObject, sessionName, rules) {
   );
 }
 
+function unwrapResult (result) {
+  return unwrapEsHits(getHits(result));
+}
+
 function unwrapEsHits (hits) {
   return hits.map(unwrapEsHit);
 }
 
 function unwrapEsHit (hit) {
   return hit._source;
+}
+
+function getHits (result) {
+  return result.body.hits.hits;
 }

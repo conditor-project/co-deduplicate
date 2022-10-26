@@ -3,6 +3,7 @@ const { elastic: { indices, aliases }, deduplicate: { target } } = require('@ist
 const { _, isString, set } = require('lodash');
 const { omit, get } = require('lodash/fp');
 const fs = require('fs-extra');
+const esb = require('elastic-builder');
 const path = require('path');
 const assert = require('assert').strict;
 const { logError, logInfo, logWarning } = require('../helpers/logger');
@@ -13,6 +14,7 @@ const {
   partitionDuplicatesClusters,
   buildDuplicatesFromEsHits,
   unwrapEsHits,
+  unwrapResult,
   hasDuplicateFromOtherSession,
   hasDuplicate,
 } = require('../helpers/deduplicates/helpers');
@@ -138,22 +140,33 @@ function buildCreateBody (docObjects) {
     .value();
 }
 
-function searchBySourceUid (...sourceUids) {
+function filterBySourceUids (sourceUids) {
   return Promise.resolve()
     .then(
       () => {
-        if (_.compact(sourceUids).length === 0) return [];
-        const q = `sourceUid:("${sourceUids.join('" OR "')}")`;
-        return search({ q, index: target })
-          .then((result) => {
-            return unwrapEsHits(result?.body?.hits?.hits);
-          });
+        assert.ok(Array.isArray(sourceUids), 'Expect <sourceUids> to be a {array}');
+        return search({ body: buildFilterBySourceUids(sourceUids) });
       },
     );
 }
 
+function buildFilterBySourceUids (sourceUids = []) {
+  const q = `sourceUid:("${sourceUids.join('" OR "')}")`;
+  return esb
+    .requestBodySearch()
+    .size(sourceUids.length)
+    .query(
+      esb
+        .boolQuery()
+        .filter(
+          esb.queryStringQuery(q),
+        ),
+    );
+}
+
 function searchSubDuplicates (subDuplicateSourceUids, loadedDocumentSourceUids, accumulator = []) {
-  return searchBySourceUid(...subDuplicateSourceUids)
+  return filterBySourceUids(subDuplicateSourceUids)
+    .then(unwrapResult)
     .then(
       (subDuplicateDocuments) => {
         const newLoadedDocumentSourceUids = _(subDuplicateSourceUids)
@@ -185,7 +198,8 @@ function searchSubDuplicates (subDuplicateSourceUids, loadedDocumentSourceUids, 
 
 function searchDuplicatesBySourceUid (sourceUid) {
   return Promise.resolve()
-    .then(() => searchBySourceUid(sourceUid))
+    .then(() => filterBySourceUids([sourceUid]))
+    .then(unwrapResult)
     .then((result) => { return result?.[0]?.business?.duplicates; });
 }
 
@@ -319,7 +333,7 @@ async function updateDuplicatesGraph (docObject, currentSessionName, duplicateDo
     });
 }
 
-function updateDuplicatesGraphWithRetry (docObject, currentSessionName, duplicateDocumentsEsHits = [], { times = 5, delay = 150 } = {}) {
+function updateDuplicatesGraphWithRetry (docObject, currentSessionName, duplicateDocumentsEsHits = [], { times = 6, delay = 166} = {}) {
   return new Promise((resolve, reject) => {
     function attempt (docObject, currentSessionName, duplicateDocumentsEsHits) {
       updateDuplicatesGraph(docObject, currentSessionName, duplicateDocumentsEsHits)
