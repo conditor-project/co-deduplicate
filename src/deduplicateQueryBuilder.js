@@ -17,7 +17,7 @@ function buildQuery (docObject, ignoredFields = []) {
     });
   }
 
-  request.bool.must_not = { term: { _id: docObject.technical.internalId } };
+  request.bool.must_not = { term: { sourceUid: docObject.sourceUid } };
 
   return {
     query: {
